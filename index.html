@@ -345,7 +345,7 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
-
+  
   // 로그인
   window.signInWithGoogle = async function () {
     try {
@@ -395,23 +395,53 @@
     alert("로그인에 실패했습니다. 콘솔을 확인해주세요.");
   });
 
-  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const db = getFirestore(app);
+
+signInWithPopup(auth, provider)
+  .then(async (result) => {
+    const user = result.user;
+
+    // Firestore에 사용자 정보 저장
+    await setDoc(doc(db, "users", user.uid), {
+      name: user.displayName,
+      email: user.email,
+      photoURL: user.photoURL,
+      lastLogin: new Date()
+    });
+
+    // 로그인 UI 갱신
+    document.querySelector(".top-right-buttons").innerHTML = `
+      <img src="${user.photoURL}" alt="프로필 이미지" style="width:40px;height:40px;border-radius:50%;border:2px solid #ffcc00;">
+      <span style="margin-left:0.5rem;">${user.displayName}</span>
+      <button id="logoutBtn" class="logout-button">로그아웃</button>
+    `;
+  })
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    document.querySelector(".top-right-buttons").innerHTML = `
-      <span>${user.displayName}님</span>
-      <button id="logoutBtn" class="logout-button">로그아웃</button>
+    document.getElementById("authArea").innerHTML = `
+      <span style="margin-right: 0.5rem; font-weight: 600; color: #ffcc00;">
+        환영합니다, ${user.displayName}님
+      </span>
+      <img src="${user.photoURL}" alt="프로필" 
+        style="width:40px;height:40px;border-radius:50%;border:2px solid #ffcc00;vertical-align:middle;">
+      <button id="logoutBtn" class="logout-button" style="
+        margin-left: 0.6rem; background-color: #ffcc00; border:none; color:#000; 
+        padding: 0.5rem 1rem; border-radius:50px; cursor:pointer; font-weight:bold;">
+        로그아웃
+      </button>
     `;
+
     document.getElementById("logoutBtn").addEventListener("click", async () => {
       await signOut(auth);
+      alert("로그아웃 되었습니다.");
       location.reload();
     });
   }
 });
 
-
-  
 </script>
 
 </body>
