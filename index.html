@@ -307,11 +307,6 @@
       });
     }
 
-    // 언어 전환 기본 구조 (한글/영어 번역문 추후 구현 예정)
-    function toggleLang() {
-      alert('언어 전환 기능은 곧 업데이트 예정입니다.');
-    }
-
     // 예시 데이터 (실제 데이터는 서버나 결제 시스템 연동 후 업데이트)
     let totalDonation = 100000; // 10만 원 예시
     let donorCount = 150;
@@ -332,5 +327,56 @@
 
     updateDonationUI();
   </script>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+  // ✅ 여기에 onedollar-drive의 Firebase 설정 복사해 넣기 
+  const firebaseConfig = {
+  apiKey: "AIzaSyDTJFT5aBr2km6_Z-Q8gXdBvkKGxLVmOyo",
+  authDomain: "onedollardrive-3bbee.firebaseapp.com",
+  projectId: "onedollardrive-3bbee",
+  storageBucket: "onedollardrive-3bbee.firebasestorage.app",
+  messagingSenderId: "37980557245",
+  appId: "1:37980557245:web:9c752ecf11cdb6ff270cd4",
+  measurementId: "G-LWQCX5XZ9D"
+};
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  // 로그인
+  window.signInWithGoogle = async function () {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      alert(`${user.displayName}님 환영합니다!`);
+    } catch (error) {
+      console.error("로그인 오류:", error);
+      alert("로그인에 실패했습니다.");
+    }
+  };
+
+  // 로그아웃
+  window.signOutFromGoogle = async function () {
+    await signOut(auth);
+    alert("로그아웃 되었습니다.");
+  };
+
+  // 로그인 상태 감시
+  onAuthStateChanged(auth, (user) => {
+    const loginBtn = document.querySelector('.login-button');
+    const logoutBtn = document.querySelector('.logout-button');
+    if (user) {
+      loginBtn.style.display = 'none';
+      logoutBtn.style.display = 'inline-block';
+    } else {
+      loginBtn.style.display = 'inline-block';
+      logoutBtn.style.display = 'none';
+    }
+  });
+</script>
+
 </body>
 </html>
