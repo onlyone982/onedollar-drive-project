@@ -329,118 +329,99 @@
   </script>
   <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+  import { 
+    getAuth, 
+    GoogleAuthProvider, 
+    signInWithPopup, 
+    signOut, 
+    onAuthStateChanged 
+  } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+  import { 
+    getFirestore, 
+    doc, 
+    setDoc 
+  } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-  // ✅ 여기에 onedollar-drive의 Firebase 설정 복사해 넣기 
+  // ✅ onedollar-drive Firebase 설정
   const firebaseConfig = {
-  apiKey: "AIzaSyDTJFT5aBr2km6_Z-Q8gXdBvkKGxLVmOyo",
-  authDomain: "onedollardrive-3bbee.firebaseapp.com",
-  projectId: "onedollardrive-3bbee",
-  storageBucket: "onedollardrive-3bbee.firebasestorage.app",
-  messagingSenderId: "37980557245",
-  appId: "1:37980557245:web:9c752ecf11cdb6ff270cd4",
-  measurementId: "G-LWQCX5XZ9D"
-};
+    apiKey: "AIzaSyDTJFT5aBr2km6_Z-Q8gXdBvkKGxLVmOyo",
+    authDomain: "onedollardrive-3bbee.firebaseapp.com",
+    projectId: "onedollardrive-3bbee",
+    storageBucket: "onedollardrive-3bbee.firebasestorage.app",
+    messagingSenderId: "37980557245",
+    appId: "1:37980557245:web:9c752ecf11cdb6ff270cd4",
+    measurementId: "G-LWQCX5XZ9D"
+  };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
-  
-  // 로그인
+  const db = getFirestore(app);
+
+  // ✅ 버튼 요소 가져오기
+  const loginBtn = document.querySelector(".login-button");
+  const signupBtn = document.querySelector(".signup-button");
+  const logoutBtn = document.querySelector(".logout-button");
+  const topRight = document.querySelector(".top-right-buttons");
+
+  // ✅ 로그인 함수
   window.signInWithGoogle = async function () {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      alert(`${user.displayName}님 환영합니다!`);
+
+      // Firestore에 사용자 정보 저장
+      await setDoc(doc(db, "users", user.uid), {
+        name: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+        lastLogin: new Date()
+      });
+
+      renderUserInfo(user);
     } catch (error) {
       console.error("로그인 오류:", error);
-      alert("로그인에 실패했습니다.");
+      alert("로그인에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
-  // 로그아웃
+  // ✅ 로그아웃 함수
   window.signOutFromGoogle = async function () {
     await signOut(auth);
     alert("로그아웃 되었습니다.");
+    location.reload();
   };
 
-  // 로그인 상태 감시
+  // ✅ 로그인 상태 변화 감지
   onAuthStateChanged(auth, (user) => {
-    const loginBtn = document.querySelector('.login-button');
-    const logoutBtn = document.querySelector('.logout-button');
-    if (user) {
-      loginBtn.style.display = 'none';
-      logoutBtn.style.display = 'inline-block';
-    } else {
-      loginBtn.style.display = 'inline-block';
-      logoutBtn.style.display = 'none';
-    }
+    if (user) renderUserInfo(user);
+    else resetUI();
   });
 
-  signInWithPopup(auth, provider)
-  .then((result) => {
-    const user = result.user;
-    document.querySelector(".top-right-buttons").innerHTML = `
-      <span>${user.displayName}님 환영합니다!</span>
-      <button id="logoutBtn" class="logout-button">로그아웃</button>
+  // ✅ 사용자 정보 표시 (환영 문구 + 프로필 이미지 + 로그아웃 버튼)
+  function renderUserInfo(user) {
+    topRight.innerHTML = `
+      <div class="user-info" style="display:flex;align-items:center;gap:10px;">
+        <span style="font-weight:600;color:#ffcc00;">환영합니다, ${user.displayName}님</span>
+        <img src="${user.photoURL}" alt="프로필 이미지" style="width:40px;height:40px;border-radius:50%;border:2px solid #ffcc00;">
+        <button class="logout-button" onclick="signOutFromGoogle()" 
+          style="background-color:#ffcc00;border:none;color:#000;padding:0.5rem 1rem;
+                 border-radius:50px;font-weight:bold;cursor:pointer;">
+          로그아웃
+        </button>
+      </div>
     `;
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      await signOut(auth);
-      alert("로그아웃 되었습니다.");
-      location.reload();
-    });
-  })
-  .catch((error) => {
-    console.error(error);
-    alert("로그인에 실패했습니다. 콘솔을 확인해주세요.");
-  });
-
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
-const db = getFirestore(app);
-
-signInWithPopup(auth, provider)
-  .then(async (result) => {
-    const user = result.user;
-
-    // Firestore에 사용자 정보 저장
-    await setDoc(doc(db, "users", user.uid), {
-      name: user.displayName,
-      email: user.email,
-      photoURL: user.photoURL,
-      lastLogin: new Date()
-    });
-
-    // 로그인 UI 갱신
-    document.querySelector(".top-right-buttons").innerHTML = `
-      <img src="${user.photoURL}" alt="프로필 이미지" style="width:40px;height:40px;border-radius:50%;border:2px solid #ffcc00;">
-      <span style="margin-left:0.5rem;">${user.displayName}</span>
-      <button id="logoutBtn" class="logout-button">로그아웃</button>
-    `;
-  })
-
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    document.getElementById("authArea").innerHTML = `
-      <span style="margin-right: 0.5rem; font-weight: 600; color: #ffcc00;">
-        환영합니다, ${user.displayName}님
-      </span>
-      <img src="${user.photoURL}" alt="프로필" 
-        style="width:40px;height:40px;border-radius:50%;border:2px solid #ffcc00;vertical-align:middle;">
-      <button id="logoutBtn" class="logout-button" style="
-        margin-left: 0.6rem; background-color: #ffcc00; border:none; color:#000; 
-        padding: 0.5rem 1rem; border-radius:50px; cursor:pointer; font-weight:bold;">
-        로그아웃
-      </button>
-    `;
-
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      await signOut(auth);
-      alert("로그아웃 되었습니다.");
-      location.reload();
-    });
   }
-});
+
+  // ✅ 비로그인 상태일 때 기본 UI 복원
+  function resetUI() {
+    topRight.innerHTML = `
+      <button class="login-button" onclick="signInWithGoogle()">로그인</button>
+      <button class="signup-button" onclick="alert('회원가입 기능이 곧 추가됩니다!')">회원가입</button>
+    `;
+  }
+
+</script>
 
 </script>
 
