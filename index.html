@@ -203,6 +203,42 @@
       transform: scale(1.05);
       box-shadow: 0 0 15px #ffcc00aa;
     }
+
+   .user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.welcome-text {
+  color: #333;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.profile-pic {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+}
+
+.logout-button {
+  background-color: #0078ff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+  background-color: #005fcc;
+}
+ 
+
   </style>
 </head>
 <div class="top-right-buttons">
@@ -392,12 +428,6 @@
     location.reload();
   };
 
-  // ✅ 로그인 상태 변화 감지
-  onAuthStateChanged(auth, (user) => {
-    if (user) renderUserInfo(user);
-    else resetUI();
-  });
-
   // ✅ 사용자 정보 표시 (환영 문구 + 프로필 이미지 + 로그아웃 버튼)
   function renderUserInfo(user) {
     topRight.innerHTML = `
@@ -420,8 +450,28 @@
       <button class="signup-button" onclick="alert('회원가입 기능이 곧 추가됩니다!')">회원가입</button>
     `;
   }
+// 로그인 상태 변경 감지
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-</script>
+const userInfoContainer = document.createElement('div');
+userInfoContainer.className = 'user-info';
+document.querySelector('.top-right-buttons').insertBefore(userInfoContainer, document.querySelector('.logout-button'));
+
+// 로그인 상태 감시
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    const profileImg = user.photoURL || 'https://via.placeholder.com/40';
+    const displayName = user.displayName || '사용자';
+
+    userInfoContainer.innerHTML = `
+      <span class="welcome-text">환영합니다, ${displayName}님!</span>
+      <img src="${profileImg}" alt="프로필" class="profile-img" />
+    `;
+  } else {
+    userInfoContainer.innerHTML = ''; // 로그아웃 시 초기화
+  }
+});
+
 
 </script>
 
