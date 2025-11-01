@@ -443,13 +443,6 @@
     `;
   }
 
-  // ✅ 비로그인 상태일 때 기본 UI 복원
-  function resetUI() {
-    topRight.innerHTML = `
-      <button class="login-button" onclick="signInWithGoogle()">로그인</button>
-      <button class="signup-button" onclick="alert('회원가입 기능이 곧 추가됩니다!')">회원가입</button>
-    `;
-  }
 // 로그인 상태 변경 감지
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
@@ -472,6 +465,13 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
+  // ✅ 비로그인 상태일 때 기본 UI 복원
+  function resetUI() {
+    topRight.innerHTML = `
+      <button class="login-button" onclick="signInWithGoogle()">로그인</button>
+      <button class="signup-button" onclick="alert('회원가입 기능이 곧 추가됩니다!')">회원가입</button>
+    `;
+  }
 
 </script>
 
