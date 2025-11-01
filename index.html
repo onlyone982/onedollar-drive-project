@@ -363,7 +363,7 @@
 
     updateDonationUI();
   </script>
-  <script type="module">
+<script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
   import { 
     getAuth, 
@@ -378,7 +378,7 @@
     setDoc 
   } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-  // ✅ onedollar-drive Firebase 설정
+  // ✅ Firebase 설정
   const firebaseConfig = {
     apiKey: "AIzaSyDTJFT5aBr2km6_Z-Q8gXdBvkKGxLVmOyo",
     authDomain: "onedollardrive-3bbee.firebaseapp.com",
@@ -389,15 +389,12 @@
     measurementId: "G-LWQCX5XZ9D"
   };
 
+  // ✅ Firebase 초기화
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
   const db = getFirestore(app);
 
-  // ✅ 버튼 요소 가져오기
-  const loginBtn = document.querySelector(".login-button");
-  const signupBtn = document.querySelector(".signup-button");
-  const logoutBtn = document.querySelector(".logout-button");
   const topRight = document.querySelector(".top-right-buttons");
 
   // ✅ 로그인 함수
@@ -417,7 +414,11 @@
       renderUserInfo(user);
     } catch (error) {
       console.error("로그인 오류:", error);
-      alert("로그인에 실패했습니다. 다시 시도해주세요.");
+      if (error.code === 'auth/popup-blocked') {
+        alert("팝업이 차단되었습니다. 팝업 허용을 확인해주세요.");
+      } else {
+        alert("로그인에 실패했습니다. 다시 시도해주세요.");
+      }
     }
   };
 
@@ -428,7 +429,7 @@
     location.reload();
   };
 
-  // ✅ 사용자 정보 표시 (환영 문구 + 프로필 이미지 + 로그아웃 버튼)
+  // ✅ 로그인 UI 표시
   function renderUserInfo(user) {
     topRight.innerHTML = `
       <div class="user-info" style="display:flex;align-items:center;gap:10px;">
@@ -443,37 +444,18 @@
     `;
   }
 
-// 로그인 상태 변경 감지
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-const userInfoContainer = document.createElement('div');
-userInfoContainer.className = 'user-info';
-document.querySelector('.top-right-buttons').insertBefore(userInfoContainer, document.querySelector('.logout-button'));
-
-// 로그인 상태 감시
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    const profileImg = user.photoURL || 'https://via.placeholder.com/40';
-    const displayName = user.displayName || '사용자';
-
-    userInfoContainer.innerHTML = `
-      <span class="welcome-text">환영합니다, ${displayName}님!</span>
-      <img src="${profileImg}" alt="프로필" class="profile-img" />
-    `;
-  } else {
-    userInfoContainer.innerHTML = ''; // 로그아웃 시 초기화
-  }
-});
-
-  // ✅ 비로그인 상태일 때 기본 UI 복원
-  function resetUI() {
-    topRight.innerHTML = `
-      <button class="login-button" onclick="signInWithGoogle()">로그인</button>
-      <button class="signup-button" onclick="alert('회원가입 기능이 곧 추가됩니다!')">회원가입</button>
-    `;
-  }
-
+  // ✅ 로그인 상태 감시
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      renderUserInfo(user);
+    } else {
+      topRight.innerHTML = `
+        <button class="login-button" onclick="signInWithGoogle()">로그인</button>
+      `;
+    }
+  });
 </script>
+
 
 </body>
 </html>
