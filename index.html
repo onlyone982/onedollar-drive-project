@@ -402,14 +402,28 @@
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
+   await saveUserToFirestore(user);
 
       // Firestore에 사용자 정보 저장
-      await setDoc(doc(db, "users", user.uid), {
-        name: user.displayName,
-        email: user.email,
-        photoURL: user.photoURL,
-        lastLogin: new Date()
-      });
+async function saveUserToFirestore(user) {
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+
+  if (userSnap.exists()) {
+    // ✅ 기존 사용자 → 로그인 시간 갱신
+    await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
+  } else {
+    // ✅ 신규 사용자 → 전체 정보 등록
+    await setDoc(userRef, {
+      name: user.displayName,
+      email: user.email,
+      photoURL: user.photoURL,
+      createdAt: serverTimestamp(),
+      lastLogin: serverTimestamp(),
+      membership: "free"
+    });
+  }
+}
 
       renderUserInfo(user);
     } catch (error) {
