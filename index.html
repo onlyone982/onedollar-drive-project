@@ -240,6 +240,18 @@
  
 
   </style>
+
+<!-- ✅ Firebase / Google Analytics 추적 코드 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LWQCX5XZ9D"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-LWQCX5XZ9D', {
+    send_page_view: true
+  });
+</script>
+
 </head>
 <div class="top-right-buttons">
   <button class="login-button" onclick="signInWithGoogle()">구글 로그인 / 회원가입</button>
