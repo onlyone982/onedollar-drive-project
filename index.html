@@ -375,7 +375,9 @@
   import { 
     getFirestore, 
     doc, 
-    setDoc 
+    setDoc,
+    getDoc, 
+  serverTimestamp 
   } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
   // ✅ Firebase 설정
@@ -391,6 +393,9 @@
 
   // ✅ Firebase 초기화
   const app = initializeApp(firebaseConfig);
+  import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics.js";
+const analytics = getAnalytics(app);
+
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
   const db = getFirestore(app);
@@ -402,10 +407,11 @@
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-   await saveUserToFirestore(user);
+  await saveUserToFirestore(user);
 
       // Firestore에 사용자 정보 저장
-async function saveUserToFirestore(user) {
+
+      async function saveUserToFirestore(user) {
   const userRef = doc(db, "users", user.uid);
   const userSnap = await getDoc(userRef);
 
