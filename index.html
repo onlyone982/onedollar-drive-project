@@ -12,10 +12,9 @@
   <meta property="og:title" content="후원으로 드림카 사기 | Dreamcar Donation" />
   <meta property="og:description" content="천 원만 후원하고 여러분의 드림카를 완성해 주세요!" />
   <meta property="og:image" content="https://yourdomain.com/thumbnail.jpg" />
-  <meta property="og:url" content="https://yourdreamcar.vercel.app" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <style>
+ <style>
     body {
       margin: 0;
       padding: 0;
@@ -68,33 +67,7 @@
       color: #ccc;
       text-align: left;
     }
-    .video-section {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-    .video-container iframe {
-      width: 100%;
-      max-width: 2560px;
-      aspect-ratio: 16 / 9;
-      border: none;
-      border-radius: 10px;
-    }
-    .video-details {
-      max-width: 240px;
-      text-align: left;
-    }
-    .video-caption {
-      font-size: 1rem;
-      margin: 0.5rem 0;
-      color: #ccc;
-    }
-    .video-specs {
-      font-size: 0.95rem;
-      color: #aaa;
-    }
+  
     .sns-share {
       margin-top: 1rem;
       display: flex;
@@ -135,6 +108,53 @@
     .founder-message {
       margin-bottom: 2rem;
     }
+.video-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.video-container {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.video-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  border-radius: 10px;
+}
+
+/* ✅ 영상 하단 중앙 캡션 */
+.video-caption {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #dc143c;
+  margin-top: 0.5rem;
+}
+
+/* ✅ 영상 하단 왼쪽 스펙 */
+.video-specs {
+  align-self: center;
+  font-size: 0.95rem;
+  color: #ccc;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 8px 12px;
+  border-radius: 6px;
+  line-height: 1.5;
+  margin-left: 1rem;
+}
 
     /* 후원 10% 기부 UI */
     .green-support-container {
@@ -263,24 +283,30 @@
 
   <div class="container">
     <h1 id="title">🔥 천 원만 후원하고 여러분의 드림카를 완성해 주세요! 🔥</h1>
+<div class="video-section">
+  <div class="video-container">
+    <iframe
+      src="https://www.youtube.com/embed/XdBDWTLe49g?si=l7gzsfvrxRGBnEEA"
+      allowfullscreen
+    ></iframe>
+  </div>
 
-    <div class="video-section">
-      <div class="video-container">
-        <iframe src="https://www.youtube.com/embed/XdBDWTLe49g?si=l7gzsfvrxRGBnEEA" allowfullscreen></iframe>
-        <div class="video-caption">🚗 Porsche 911 Gt3 Rs</div>
-        <div class="emotion-text">이 드림카를 함께 현실로 만들어주세요</div>
-      </div>
-      <div class="video-details">
-        <div class="video-specs">
-          <strong>스펙 요약:</strong><br />
-          - 최고출력: 518마력<br />
-          - 0→100km/h: 3.2초<br />
-          - 최고속도: 296km/h<br />
-          - 무게: 약 1,450kg<br />
-          - 가격: 약 3억 원대 (한화 기준)<br />
-        </div>
-      </div>
-    </div>
+  <!-- ✅ 영상 아래 중앙 캡션 -->
+  <div class="video-caption">
+    🚗 Porsche 911 GT3 RS
+  </div>
+
+  <!-- ✅ 영상 아래 왼쪽 스펙 요약 -->
+  <div class="video-specs">
+    <strong>스펙 요약:</strong><br />
+    - 최고출력: 518마력<br />
+    - 0→100km/h: 3.2초<br />
+    - 최고속도: 296km/h<br />
+    - 무게: 약 1,450kg<br />
+    - 가격: 약 3억 원대 (한화 기준)
+  </div>
+</div>
+
 
     <div class="sns-share">
       <a href="#" onclick="shareTo('facebook')"><i class="fab fa-facebook"></i></a>
@@ -288,9 +314,9 @@
       <button onclick="copyToClipboard()" title="링크 복사"><i class="fab fa-instagram"></i></button>
     </div>
 
-    <div class="goal-label" id="goalLabel">목표금액: ₩350,000,000</div>
+    <div class="goal-label" id="goalLabel">목표금액: ₩400,000,000</div>
     <div class="progress-container">
-      <div class="progress-bar" id="progressBar">₩0 / ₩350,000,000</div>
+      <div class="progress-bar" id="progressBar">₩0 / ₩400,000,000</div>
     </div>
     <div class="donor-count" id="donorCount">후원자 수: 0명</div>
 
@@ -304,9 +330,11 @@
     <div id="messageSlide"></div>
     <p id="description">
       차를 좋아하고 드라이브를 즐기는 사람들이라면 한번쯤은 생각하셨을 나만의 드림카... 생각만 해도 가슴이 두근거립니다.<br /><br />
-      면허를 따고 난 후 처음 자동차를 접했을 때, 저는 왠지 모를 해방감과 자유를 느꼈습니다. 그때부터 저는 마음속에 나만의 드림카를 품기 시작했습니다. 하지만 제가 하고 있는 아르바이트와 직장으로는 평생 벌어도 사기 힘듭니다.<br /><br />
-      그러나 젊음의 피와 열정이 끓는 지금이 아니면, 죽기 전에 타더라도 그때의 두근거림과 짜릿함을 느낄 수 있을까요?<br /><br />
-      그래서 저는 단순히 생각했습니다. 모두가 똑같이 열망하고 갖고 싶어하는 드림카가 있다면, 조금이라도 후원을 받아서 언젠가 우리 모두가 꿈꿔왔던 드림카를 타볼 수 있는 그런 날들을 만들어보자고 말이죠.
+      면허를 따고 난 후 처음 자동차를 접했을 때, 저는 왠지 모를 해방감과 자유를 느꼈습니다. 그때부터 저는 마음속에 나만의 드림카를 품기 시작했습니다.<br /><br />
+      하지만 제가 하고 있는 아르바이트와 직장으로는 평생 벌어도 사기 힘듭니다.
+      그러나 젊음의 피와 열정이 끓는 지금이 아니면,<br /><br />죽기 전에 타더라도 그때의 두근거림과 짜릿함을 느낄 수 있을까요?<br /><br />
+      그래서 저는 단순히 생각했습니다. 모두가 똑같이 열망하고 갖고 싶어하는 드림카가 있다면, 조금이라도 후원을 받아서 언젠가 우리 모두가 꿈꿔왔던<br /><br />
+      드림카를 타볼 수 있는 그런 날들을 만들어보자고 말이죠.
     </p>
 
     <footer>
@@ -315,7 +343,7 @@
         <p>
           <strong>Q: 후원은 실제로 어디에 사용되나요?</strong
           ><br />
-          모든 후원금은 드림카 구매 및 후원자분들께 경험을 공유하고자 투명하게 사용될 예정입니다. (만약 후원금이 진짜 모이면요 🥲).
+          모든 후원금은 드림카 구매 및 후원자분들께 즐거운 경험을 공유하고자 추첨을 통해 투명하게 사용될 예정입니다. (만약 후원금이 진짜 모이면요 🥲).
         </p>
         <p>
           <strong>Q: 후원은 환불 가능한가요?</strong
@@ -326,9 +354,9 @@
       <div class="founder-message">
         <h3>창립자의 메시지</h3>
         <p>
-          저는 24살 차를 좋아하는 대학생입니다. 이 사이트는 단순한 자동차 구매 프로젝트가 아니라, 꿈을 현실로 만들 수 있다는 믿음으로 시작했습니다.<br />
-          여러분의 작은 후원이 저뿐 아니라 많은 이들의 마음속 드림카를 향한 꿈을 실현시켜줄 수 있다고 믿습니다.<br />
-          여러분의 소중한 후원 다시 한번 감사드립니다.
+          저는 어릴떄나 지금이나 차를 좋아합니다. 이 사이트는 단순한 크라우드 펀딩이 아니라, 모두의 꿈을 현실로 만들고 싶다는 믿음으로 시작했습니다.<br />
+          여러분의 후원이 저뿐 아니라 많은 이들의 마음속 드림카를 향한 동기부여를 자극시켜줄 수 있다고 생각합니다.<br />
+          여러분의 소중한 후원 다시 한번 감사드립니다!
         </p>
       </div>
     </footer>
