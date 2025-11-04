@@ -258,8 +258,104 @@
   background-color: #005fcc;
 }
  
+.live-chat-container {
+  position: absolute;          /* 화면에서 절대 위치로 배치 */
+  top: 50%;                    /* 세로 중앙 정렬 */
+  left: calc(50% + 520px);     /* 영상 오른쪽으로 이동 (영상이 중앙에 있고 폭 약 1000px 가정) */
+  transform: translateY(-50%); /* 세로 정렬 보정 */
+  width: 350px;
+  height: 590px;
+  background-color: #111;
+  border: 1px solid #333;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 100;
+}
 
-  </style>
+/* ✅ 상단 헤더 */
+.chat-header {
+  background: #222;
+  padding: 10px;
+  font-weight: bold;
+  color: #ffcc00;
+  border-bottom: 1px solid #333;
+  text-align: left;
+}
+
+/* ✅ 채팅 메시지 영역 */
+.chat-messages {
+  flex-grow: 1;
+  padding: 10px;
+  overflow-y: auto;
+  font-size: 0.9rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ✅ 각 메시지 */
+.chat-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  word-break: break-word;
+}
+
+.chat-message img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.chat-username {
+  font-weight: bold;
+  color: #ffcc00;
+  margin-right: 5px;
+}
+
+/* ✅ 입력창 */
+.chat-input-area {
+  display: flex;
+  border-top: 1px solid #333;
+  padding: 10px;
+  background: #222;
+}
+
+#chatInput {
+  flex: 1;
+  background: #000;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 5px;
+  padding: 8px;
+}
+
+#chatInput:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#sendMessageBtn {
+  background-color: #ffcc00;
+  border: none;
+  color: #000;
+  font-weight: bold;
+  padding: 8px 14px;
+  border-radius: 6px;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#sendMessageBtn:hover {
+  background-color: #ffdb4d;
+}
+
+</style>
 
 <!-- ✅ Firebase / Google Analytics 추적 코드 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-LWQCX5XZ9D"></script>
@@ -290,7 +386,23 @@
       allowfullscreen
     ></iframe>
   </div>
+  
+  <!-- ✅ 라이브 채팅 박스 -->
+<div class="live-chat-container">
+  <div class="chat-header">💬 실시간 채팅</div>
+  <div class="chat-messages" id="chatMessages"></div>
 
+  <div class="chat-input-area">
+    <input
+      type="text"
+      id="chatInput"
+      placeholder="로그인 후 메시지를 입력하세요..."
+      disabled
+    />
+    <button id="sendMessageBtn" disabled>보내기</button>
+  </div>
+  
+</div>
   <!-- ✅ 영상 아래 중앙 캡션 -->
   <div class="video-caption">
     🚗 Porsche 911 GT3 RS
@@ -307,13 +419,11 @@
   </div>
 </div>
 
-
     <div class="sns-share">
       <a href="#" onclick="shareTo('facebook')"><i class="fab fa-facebook"></i></a>
       <a href="#" onclick="shareTo('twitter')"><i class="fab fa-twitter"></i></a>
       <button onclick="copyToClipboard()" title="링크 복사"><i class="fab fa-instagram"></i></button>
     </div>
-
     <div class="goal-label" id="goalLabel">목표금액: ₩400,000,000</div>
     <div class="progress-container">
       <div class="progress-bar" id="progressBar">₩0 / ₩400,000,000</div>
@@ -435,13 +545,13 @@
   const app = initializeApp(firebaseConfig);
   import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics.js";
 const analytics = getAnalytics(app);
-
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
   const db = getFirestore(app);
-
   const topRight = document.querySelector(".top-right-buttons");
 
+
+  
   // ✅ 로그인 함수
   window.signInWithGoogle = async function () {
     try {
