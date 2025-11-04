@@ -14,6 +14,9 @@
   <meta property="og:image" content="https://yourdomain.com/thumbnail.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+ </head>
+</body>
+
  <style>
     body {
       margin: 0;
@@ -793,6 +796,25 @@ onSnapshot(query(donationsRef, orderBy("amount", "desc"), limit(10)), (snapshot)
         <span class="amount">₩${d.amount.toLocaleString()}</span>
       </div>`;
   });
+});
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    renderUserInfo(user);
+
+    // ✅ 로그인 시 채팅 활성화
+    chatInput.disabled = false;
+    sendMessageBtn.disabled = false;
+
+  } else {
+    topRight.innerHTML = `
+      <button class="login-button" onclick="signInWithGoogle()">로그인</button>
+    `;
+
+    // ✅ 로그아웃 시 채팅 비활성화
+    chatInput.disabled = true;
+    sendMessageBtn.disabled = true;
+  }
 });
 
 </script>
