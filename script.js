@@ -34,19 +34,20 @@ onAuthStateChanged(auth, (user) => {
     logoutBtn.style.display = "inline-block";
     chatInput.disabled = false;
     sendMessageBtn.disabled = false;
+    chatInput.placeholder = "메시지를 입력하세요..."; // 🔧 문구 변경
   } else {
     loginBtn.style.display = "inline-block";
     logoutBtn.style.display = "none";
     chatInput.disabled = true;
     sendMessageBtn.disabled = true;
+    chatInput.placeholder = "로그인 후 메시지를 입력하세요...";
   }
 });
 
 // ✅ 메시지 전송
 sendMessageBtn.addEventListener("click", async () => {
-  if (!chatInput.value.trim()) return;
   const user = auth.currentUser;
-  if (!user) return;
+  if (!user || !chatInput.value.trim()) return;
 
   await addDoc(messagesRef, {
     name: user.displayName || "익명",
@@ -58,23 +59,26 @@ sendMessageBtn.addEventListener("click", async () => {
   chatInput.value = "";
 });
 
-// ✅ 실시간 메시지 수신
-const q = query(messagesRef, orderBy("timestamp", "asc"));
-onSnapshot(q, (snapshot) => {
-  chatMessages.innerHTML = "";
-  snapshot.forEach((doc) => {
-    const data = doc.data();
-    const messageEl = document.createElement("div");
-    messageEl.classList.add("chat-message");
-    messageEl.innerHTML = `
-      <div class="chat-item">
-        <img src="${data.photoURL}" class="chat-profile">
-        <div class="chat-text">
-          <strong>${data.name}</strong>
-          <p>${data.message}</p>
-        </div>
-      </div>`;
-    chatMessages.appendChild(messageEl);
+// ✅ 실시간 메시지 수신 (중복 방지)
+if (!window.chatListenerActive) {
+  window.chatListenerActive = true; // 🔧 한 번만 실행되도록 방지
+  const q = query(messagesRef, orderBy("timestamp", "asc"));
+  onSnapshot(q, (snapshot) => {
+    chatMessages.innerHTML = "";
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const messageEl = document.createElement("div");
+      messageEl.classList.add("chat-message");
+      messageEl.innerHTML = `
+        <div class="chat-item">
+          <img src="${data.photoURL}" class="chat-profile">
+          <div class="chat-text">
+            <strong>${data.name}</strong>
+            <p>${data.message}</p>
+          </div>
+        </div>`;
+      chatMessages.appendChild(messageEl);
+    });
+    chatMessages.scrollTop = chatMessages.scrollHeight;
   });
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-});
+}
