@@ -55,6 +55,13 @@ sendMessageBtn.addEventListener("click", async () => {
     message: chatInput.value.trim(),
     timestamp: serverTimestamp(),
   });
+  // ✅ Enter 키로 메시지 전송
+chatInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault(); // 줄바꿈 방지
+    sendMessageBtn.click(); // 버튼 클릭과 동일 동작
+  }
+});
 
   chatInput.value = "";
 });
