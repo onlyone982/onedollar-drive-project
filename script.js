@@ -1,86 +1,103 @@
-// ✅ Firebase 불러오기
-import { 
-  getFirestore, collection, addDoc, onSnapshot, query, orderBy 
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-import { app } from "./firebase-config.js";
+import { auth, provider, db } from "./firebase-config.js";
+import {
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
-const db = getFirestore(app);
-const auth = getAuth(app);
-
-// ✅ DOM 요소
-const chatMessages = document.getElementById("chatMessages");
+// ✅ UI 요소
+const topRight = document.querySelector(".top-right-buttons");
 const chatInput = document.getElementById("chatInput");
-const sendMessageBtn = document.getElementById("sendMessageBtn");
+const sendBtn = document.getElementById("sendMessageBtn");
+const chatMessages = document.getElementById("chatMessages");
 
-// ✅ 랜덤 색상 지정 함수
-function randomColor() {
-  const colors = ["#ffcc00", "#00ffcc", "#ff6699", "#00ff00", "#66a3ff", "#ff9933", "#cc66ff"];
-  return colors[Math.floor(Math.random() * colors.length)];
+// ✅ 로그인
+window.signInWithGoogle = async function () {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    await saveUserToFirestore(user);
+    renderUserInfo(user);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+// ✅ 로그아웃
+window.signOutFromGoogle = async function () {
+  await signOut(auth);
+  location.reload();
+};
+
+// ✅ Firestore에 사용자 저장
+async function saveUserToFirestore(user) {
+  const ref = doc(db, "users", user.uid);
+  const snap = await getDoc(ref);
+  if (snap.exists()) {
+    await setDoc(ref, { lastLogin: serverTimestamp() }, { merge: true });
+  } else {
+    await setDoc(ref, {
+      name: user.displayName,
+      email: user.email,
+      photoURL: user.photoURL,
+      createdAt: serverTimestamp(),
+      lastLogin: serverTimestamp(),
+      membership: "free"
+    });
+  }
 }
 
-// ✅ Firestore 실시간 수신
-const messagesRef = collection(db, "live_chat");
-onSnapshot(query(messagesRef, orderBy("timestamp", "asc")), (snapshot) => {
-  chatMessages.innerHTML = "";
-  snapshot.forEach((doc) => {
-    const data = doc.data();
-    const color = data.color || "#ffcc00"; // 색상 없으면 기본값
-    const messageEl = document.createElement("div");
-    messageEl.classList.add("chat-message");
-    messageEl.innerHTML = `
-      <img src="${data.photoURL}" class="chat-profile" style="border-color:${color};">
-      <div>
-        <span class="chat-username">${data.name}</span>
-        <span>${data.message}</span>
-      </div>`;
-    chatMessages.appendChild(messageEl);
-  });
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-});
-
-// ✅ 메시지 전송 함수
-async function sendMessage() {
-  if (!chatInput.value.trim()) return;
-  const user = auth.currentUser;
-  if (!user) {
-    alert("로그인 후 이용해주세요.");
-    return;
-  }
-
-  const color = randomColor();
-
-  await addDoc(messagesRef, {
-    name: user.displayName,
-    photoURL: user.photoURL,
-    message: chatInput.value.trim(),
-    color: color,
-    timestamp: new Date()
-  });
-
-  chatInput.value = "";
+// ✅ UI 렌더링
+function renderUserInfo(user) {
+  topRight.innerHTML = `
+    <div class="user-info" style="display:flex;align-items:center;gap:10px;">
+      <span style="font-weight:600;color:#ffcc00;">환영합니다, ${user.displayName}님</span>
+      <img src="${user.photoURL}" style="width:40px;height:40px;border-radius:50%;border:2px solid #ffcc00;">
+      <button class="logout-button" onclick="signOutFromGoogle()">로그아웃</button>
+    </div>
+  `;
 }
-
-// ✅ 클릭으로 전송
-sendMessageBtn.addEventListener("click", sendMessage);
-
-// ✅ 엔터키로 전송
-chatInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    sendMessage();
-  }
-});
 
 // ✅ 로그인 상태 감시
 onAuthStateChanged(auth, (user) => {
   if (user) {
+    renderUserInfo(user);
     chatInput.disabled = false;
-    sendMessageBtn.disabled = false;
+    sendBtn.disabled = false;
     chatInput.placeholder = "메시지를 입력하세요...";
   } else {
+    topRight.innerHTML = `<button onclick="signInWithGoogle()">로그인</button>`;
     chatInput.disabled = true;
-    sendMessageBtn.disabled = true;
+    sendBtn.disabled = true;
     chatInput.placeholder = "로그인 후 메시지를 입력하세요...";
   }
 });
+
+// ✅ 채팅 전송
+sendBtn.addEventListener("click", sendMessage);
+chatInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") sendMessage();
+});
+
+function sendMessage() {
+  const text = chatInput.value.trim();
+  if (!text) return;
+  const user = auth.currentUser;
+  if (!user) return;
+
+  chatMessages.insertAdjacentHTML(
+    "beforeend",
+    `<div class="chat-message">
+      <img src="${user.photoURL}" class="chat-profile" />
+      <div><span class="chat-username">${user.displayName}</span> ${text}</div>
+    </div>`
+  );
+  chatInput.value = "";
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
