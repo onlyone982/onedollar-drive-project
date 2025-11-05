@@ -731,45 +731,7 @@ logEvent(analytics, 'login', { method: 'google' }); // 로그인 기록
     }
   });
  
-  import { 
-  collection, addDoc, onSnapshot, query, orderBy 
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-const chatMessages = document.getElementById("chatMessages");
-const chatInput = document.getElementById("chatInput");
-const sendMessageBtn = document.getElementById("sendMessageBtn");
-const messagesRef = collection(db, "live_chat");
-
-onSnapshot(query(messagesRef, orderBy("timestamp", "asc")), (snapshot) => {
-  chatMessages.innerHTML = "";
-  snapshot.forEach((doc) => {
-    const data = doc.data();
-    const messageEl = document.createElement("div");
-    messageEl.classList.add("chat-message");
-    messageEl.innerHTML = `
-      <img src="${data.photoURL}" />
-      <div>
-        <span class="chat-username">${data.name}</span>
-        <span>${data.message}</span>
-      </div>`;
-    chatMessages.appendChild(messageEl);
-  });
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-});
-
-sendMessageBtn.addEventListener("click", async () => {
-  if (!chatInput.value.trim()) return;
-  const user = auth.currentUser;
-  if (!user) return alert("로그인 후 이용해주세요.");
-
-  await addDoc(messagesRef, {
-    name: user.displayName,
-    photoURL: user.photoURL,
-    message: chatInput.value.trim(),
-    timestamp: new Date()
-  });
-  chatInput.value = "";
-});
 </script>
 <script src="https://js.tosspayments.com/v1/payment-widget"></script>
 <script>
