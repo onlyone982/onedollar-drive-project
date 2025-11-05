@@ -798,6 +798,7 @@ onSnapshot(query(donationsRef, orderBy("amount", "desc"), limit(10)), (snapshot)
   });
 });
 
+// ✅ 로그인 상태 감시 및 UI 업데이트
 onAuthStateChanged(auth, (user) => {
   if (user) {
     renderUserInfo(user);
@@ -805,7 +806,7 @@ onAuthStateChanged(auth, (user) => {
     // ✅ 로그인 시 채팅 활성화
     chatInput.disabled = false;
     sendMessageBtn.disabled = false;
-
+    chatInput.placeholder = "메시지를 입력하세요..."; // ✅ 문구 변경
   } else {
     topRight.innerHTML = `
       <button class="login-button" onclick="signInWithGoogle()">로그인</button>
@@ -814,13 +815,12 @@ onAuthStateChanged(auth, (user) => {
     // ✅ 로그아웃 시 채팅 비활성화
     chatInput.disabled = true;
     sendMessageBtn.disabled = true;
+    chatInput.placeholder = "로그인 후 메시지를 입력하세요...";
   }
 });
 
+
 </script>
 
-  <!-- Firebase와 Script 연결 -->
-  <script type="module" src="./firebase-config.js"></script>
-  <script type="module" src="./script.js"></script>
 </body>
 </html>
