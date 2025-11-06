@@ -745,7 +745,7 @@
     </footer>
   </div>
 <script>
-let currentLang = 'ko';
+let currentLang = localStorage.getItem('lang') || 'ko'; // 저장된 언어 불러오기 (없으면 기본은 ko)
 
 
 const translations = {
@@ -811,47 +811,43 @@ const translations = {
   }
 };
 
+// ✅ 언어를 실제로 적용하는 함수
+function applyLang(lang) {
+  const t = translations[lang];
+  document.getElementById('title').innerHTML = t.title;
+  document.getElementById('donateBtn').innerHTML = t.donateButton;
+  document.getElementById('goalLabel').innerHTML = t.goalLabel;
+  document.getElementById('donorCount').innerHTML = t.donorCount + " 0";
+  document.querySelector('.green-support-text').innerHTML = t.greenSupportText;
+  document.getElementById('closePopup').innerHTML = t.popupClose;
+  document.getElementById('videoSpecs').innerHTML = t.videoSpecs;
+  document.getElementById('description').innerHTML = t.description;
 
+  // 로그인, 로그아웃 버튼
+  document.querySelector('.login-button').innerText = t.googleLoginBtn;
+  document.querySelector('.logout-button').innerText = t.logoutBtn;
+
+  // FAQ 및 창립자 섹션
+  document.querySelector('.faq h3').innerText = t.faqTitle;
+  const faqParas = document.querySelectorAll('.faq p');
+  faqParas[0].innerHTML = `<strong>${t.faqQ1}</strong><br>${t.faqA1}`;
+  faqParas[1].innerHTML = `<strong>${t.faqQ2}</strong><br>${t.faqA2}`;
+  document.querySelector('.founder-message h3').innerText = t.founderTitle;
+  document.querySelector('.founder-message p').innerHTML = t.founderMessage;
+}
+
+// ✅ 언어 토글 버튼 클릭 시
 function toggleLang() {
   currentLang = currentLang === 'ko' ? 'en' : 'ko';
-  const t = translations[currentLang];
-
-  document.getElementById("title").innerText = t.title;
-  document.getElementById("donateBtn").innerText = t.donateButton;
-  document.getElementById("goalLabel").innerText = t.goalLabel;
-  document.getElementById("donorCount").innerText = `${t.donorCount}0`;
-  document.querySelector(".green-support-text").innerText = t.greenSupportText;
-  document.querySelector("#donatePopup h2").innerText = t.popupTitle;
-  document.querySelector("#closePopup").innerText = t.popupClose;
-
-  // FAQ
-  document.querySelector(".faq h3").innerText = t.faqTitle;
-  const faqPs = document.querySelectorAll(".faq p");
-  faqPs[0].innerHTML = `<strong>${t.faqQ1}</strong><br>${t.faqA1}`;
-  faqPs[1].innerHTML = `<strong>${t.faqQ2}</strong><br>${t.faqA2}`;
-
-  // Founder message
-  document.querySelector(".founder-message h3").innerText = t.founderTitle;
-  document.querySelector(".founder-message p").innerText = t.founderMessage;
-
-  // 버튼 텍스트 변경
-  document.getElementById("langToggle").innerText =
-    currentLang === "ko" ? "Language" : "언어";
-      const videoSpecsEl = document.querySelector(".video-specs");
-  if (videoSpecsEl) videoSpecsEl.innerHTML = t.videoSpecs;
-
-  const descEl = document.getElementById("description");
-  if (descEl) descEl.innerHTML = t.description;
-
-  // 로그인/로그아웃 버튼 텍스트
-  const loginBtnEl = document.querySelector(".login-button");
-  if (loginBtnEl) loginBtnEl.innerText = t.googleLoginBtn;
-
-  const logoutBtnEl = document.querySelector(".logout-button");
-  if (logoutBtnEl) logoutBtnEl.innerText = t.logoutBtn;
+  localStorage.setItem('lang', currentLang); // 언어 상태 저장
+  applyLang(currentLang);
 }
-</script>
 
+// ✅ 페이지 로드 시 자동 적용
+window.addEventListener('DOMContentLoaded', () => {
+  applyLang(currentLang);
+});
+</script>
   <script>
     // 공유 기능 예시
     function shareTo(platform) {
