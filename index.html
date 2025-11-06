@@ -750,12 +750,12 @@ let currentLang = 'ko';
 
 const translations = {
   en: {
-    title: "🔥 Support with just $1 and complete your dream car! 🔥",
+    title: "🔥 Support with just 1$ and complete your dream car! 🔥",
     donateButton: "🔥 Donate Now | Support Dream Car 🔥",
-    goalLabel: "Goal Amount: $276262",
+    goalLabel: "Goal Amount: 276262$",
     donorCount: "Donors:",
     greenSupportText: "10% of all donations are given to charity and children’s organizations.",
-    popupTitle: "Become the hero of the future with just 1$.",
+    popupTitle: "Become the owner of the future with just 1$.",
     popupClose: "Close",
     faqTitle: "Frequently Asked Questions (FAQ)",
     faqQ1: "Q: How will the donations be used?",
@@ -849,46 +849,6 @@ function toggleLang() {
 
   const logoutBtnEl = document.querySelector(".logout-button");
   if (logoutBtnEl) logoutBtnEl.innerText = t.logoutBtn;
-
-  // 페이지 로드 시 저장된 언어 불러오기
-window.addEventListener("DOMContentLoaded", () => {
-  const savedLang = localStorage.getItem("siteLang");
-  if (savedLang) {
-    currentLang = savedLang;
-    applyLanguage();
-  }
-});
-
-// 언어 변경 시 호출되는 함수
-function toggleLang() {
-  currentLang = currentLang === "ko" ? "en" : "ko";
-  localStorage.setItem("siteLang", currentLang); // ✅ 언어 저장
-  applyLanguage();
-}
-
-// 언어 적용 로직 분리
-function applyLanguage() {
-  const t = translations[currentLang];
-
-  document.getElementById("title").innerText = t.title;
-  document.getElementById("donateButton").innerText = t.donateButton;
-  document.getElementById("goalLabel").innerText = t.goalLabel;
-  document.getElementById("donorCount").innerText = t.donorCount;
-  document.getElementById("greenSupportText").innerText = t.greenSupportText;
-
-  const videoSpecsEl = document.querySelector(".video-specs");
-  if (videoSpecsEl) videoSpecsEl.innerHTML = t.videoSpecs;
-
-  const descEl = document.getElementById("description");
-  if (descEl) descEl.innerHTML = t.description;
-
-  const loginBtnEl = document.querySelector(".login-button");
-  if (loginBtnEl) loginBtnEl.innerText = t.googleLoginBtn;
-
-  const logoutBtnEl = document.querySelector(".logout-button");
-  if (logoutBtnEl) logoutBtnEl.innerText = t.logoutBtn;
-}
-
 }
 </script>
 
