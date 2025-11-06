@@ -112,3 +112,32 @@ onSnapshot(q, (snapshot) => {
     chatMessages.scrollTop = chatMessages.scrollHeight;
   });
 });
+// ====== 후원 팝업 기능 ======
+const donateBtn = document.getElementById('donateBtn');
+const donatePopup = document.getElementById('donatePopup');
+const closePopup = document.getElementById('closePopup');
+
+// 팝업 열기
+donateBtn.addEventListener('click', () => {
+  donatePopup.style.display = 'flex';
+});
+
+// 팝업 닫기
+closePopup.addEventListener('click', () => {
+  donatePopup.style.display = 'none';
+});
+
+// 장바구니 버튼 클릭 → 계좌번호 표시/숨김
+document.querySelectorAll('.cart-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const parent = btn.closest('.donate-card');
+    const text = parent.querySelector('.account-text');
+
+    if (text.style.display === 'block') {
+      text.style.display = 'none';
+    } else {
+      text.textContent = btn.dataset.account;
+      text.style.display = 'block';
+    }
+  });
+});

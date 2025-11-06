@@ -437,6 +437,118 @@
   height: 40px;
   object-fit: cover;
 }
+/* 팝업 전체 */
+.popup {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* 팝업 내용 */
+.popup-content {
+  background: #ffB6C1;
+  border-radius: 15px;
+  padding: 30px;
+  max-width: 700px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+/* 후원 카드들 */
+.donate-options {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin: 20px 0;
+}
+
+/* 개별 카드 */
+.donate-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 150px;
+  min-height: 260px; /* 높이 최소 보장 */
+  background: #f8f8f8;
+  border-radius: 10px;
+  padding: 15px 10px 40px; /* 하단 여백 확보 (장바구니 자리) */
+  transition: transform 0.2s ease;
+  box-sizing: border-box;
+}
+
+.donate-card:hover {
+  transform: translateY(-5px);
+}
+
+/* 가격표 (GIF 위) */
+.price-tag {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #222;
+}
+
+/* GIF 이미지 */
+.donate-gif {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  object-fit: contain;
+}
+
+/* 장바구니 버튼 (하단 고정) */
+.cart-btn {
+  position: absolute;
+  bottom: 10px; /* 카드 하단에서 10px 위 */
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  z-index: 2;
+}
+
+.cart-btn:hover {
+  transform: translateX(-50%) scale(1.2);
+}
+
+/* 계좌번호 텍스트 */
+.account-text {
+  display: none;
+  font-size: 0.9rem;
+  color: #333;
+  background: #fff7d1;
+  border-radius: 8px;
+  padding: 4px 8px;
+  margin-top: 5px;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+/* 닫기 버튼 */
+.close-btn {
+  background: #ff5252;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  background: #d32f2f;
+}
+
 </style>
 
 <!-- ✅ Firebase / Google Analytics 추적 코드 -->
@@ -542,7 +654,46 @@
       <div class="green-support-text">전체 기부금의 10%는 불우이웃 및 어린이 단체에 기부됩니다.</div>
     </div>
 
-    <button class="donate-button" onclick="alert('후원 시스템이 곧 열립니다!')">🔥 지금 후원하기 | Donate Now</button>
+   <!-- 기존 버튼에서 onclick 제거 -->
+<button class="donate-button" id="donateBtn">🔥 지금 후원하기 | Donate Now</button>
+
+<!-- 팝업 구조 -->
+<div id="donatePopup" class="popup">
+  <div class="popup-content">
+    <h2>후원 금액 선택</h2>
+
+    <div class="donate-options">
+
+      <!-- 1달러 -->
+      <div class="donate-card">
+        <p class="price-tag">1$</p>
+        <img src="https://gifdb.com/images/high/spinning-curve-potato-chip-bbjg3w7u5mgzlrh5.webp" alt="1 dollar gif" class="donate-gif">
+        <button class="cart-btn" data-account="💳 계좌번호: 123-456-7890">🛒</button>
+        <p class="account-text"></p>
+      </div>
+
+      <!-- 10달러 -->
+      <div class="donate-card">
+        <p class="price-tag">10$</p>
+        <img src="https://media.tenor.com/FE0HbiCmZP4AAAAi/burger-cheese-burger.gif" alt="10 dollar gif" class="donate-gif">
+        <button class="cart-btn" data-account="💳 계좌번호: 987-654-3210">🛒</button>
+        <p class="account-text"></p>
+      </div>
+
+      <!-- 100달러 -->
+      <div class="donate-card">
+        <p class="price-tag">100$</p>
+        <img src="https://media1.tenor.com/m/cJTEd9pETkEAAAAC/goat-the-goat.gif" alt="100 dollar gif" class="donate-gif">
+        <button class="cart-btn" data-account="💳 계좌번호: 111-222-3333">🛒</button>
+        <p class="account-text"></p>
+      </div>
+
+    </div>
+
+    <button id="closePopup" class="close-btn">닫기</button>
+  </div>
+</div>
+
 
     <div id="messageSlide"></div>
     <p id="description">
