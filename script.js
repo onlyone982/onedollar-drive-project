@@ -126,6 +126,33 @@ donateBtn.addEventListener('click', () => {
 closePopup.addEventListener('click', () => {
   donatePopup.style.display = 'none';
 });
+function applyLang(lang) {
+  const t = translations[lang];
+  // ✅ 채팅창 placeholder 갱신
+  const chatInput = document.querySelector('#chatInput');
+  if (chatInput) {
+    // 로그인 상태에 따라 다른 placeholder 표시
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    chatInput.placeholder = isLoggedIn
+      ? t.placeholderAfterLogin
+      : t.placeholderBeforeLogin;
+  }
+}
+function handleLogin() {
+  localStorage.setItem("isLoggedIn", "true");
+  const chatInput = document.querySelector('#chatInput');
+  const lang = localStorage.getItem("selectedLang") || "ko";
+  const t = translations[lang];
+  if (chatInput) chatInput.placeholder = t.placeholderAfterLogin;
+}
+
+function handleLogout() {
+  localStorage.removeItem("isLoggedIn");
+  const chatInput = document.querySelector('#chatInput');
+  const lang = localStorage.getItem("selectedLang") || "ko";
+  const t = translations[lang];
+  if (chatInput) chatInput.placeholder = t.placeholderBeforeLogin;
+}
 
 // 장바구니 버튼 클릭 → 계좌번호 표시/숨김
 document.querySelectorAll('.cart-btn').forEach(btn => {
@@ -139,5 +166,20 @@ document.querySelectorAll('.cart-btn').forEach(btn => {
       text.textContent = btn.dataset.account;
       text.style.display = 'block';
     }
+  });
+});
+// ✅ 팝업 닫기 버튼 이벤트
+document.querySelector(".close-popup")?.addEventListener("click", () => {
+  const popup = document.querySelector(".popup");
+  popup.style.display = "none";
+
+  // ✅ 팝업이 닫힐 때 모든 계좌번호 초기화
+  document.querySelectorAll(".account-text").forEach((acc) => {
+    acc.textContent = ""; // 계좌번호 숨김
+  });
+
+  // ✅ 버튼 상태(활성화 표시) 초기화 (선택사항)
+  document.querySelectorAll(".cart-btn").forEach((btn) => {
+    btn.classList.remove("active");
   });
 });
