@@ -476,7 +476,7 @@
   align-items: center;
   width: 150px;
   min-height: 260px; /* 높이 최소 보장 */
-  background: #f8f8f8;
+  background: #E6E6FA;
   border-radius: 10px;
   padding: 15px 10px 40px; /* 하단 여백 확보 (장바구니 자리) */
   transition: transform 0.2s ease;
@@ -548,24 +548,18 @@
 .close-btn:hover {
   background: #d32f2f;
 }
-.lang-toggle {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  border-radius: 50px;
-  font-weight: bold;
-  cursor: pointer;
-  background-color: #0078ff;
-  color: white;
-  border: none;
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
-  white-space: nowrap;
+#popupTitle {
+  color: #ffcc00; /* ✅ 원하는 색상 코드로 변경 가능 */
+  font-weight: 700;
+  font-size: 1.6rem;
+  text-align: center;
+  margin-bottom: 15px;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.2); /* 약간의 입체감 효과 */
+  transition: color 0.3s ease;
 }
-
-.lang-toggle:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px #0078ffaa;
+#popupTitle:hover {
+  color: #ffd633; /* 마우스 올릴 때 색상 강조 */
 }
-
 </style>
 
 <!-- ✅ Firebase / Google Analytics 추적 코드 -->
@@ -675,7 +669,7 @@
 <!-- 팝업 구조 -->
 <div id="donatePopup" class="popup">
   <div class="popup-content">
-    <h2>천원으로 미래의 주인공이 되세요.</h2>
+    <h2 id="popupTitle">천원으로 미래의 주인공이 되어주세요.</h2>
 
     <div class="donate-options">
 
@@ -683,7 +677,7 @@
       <div class="donate-card">
         <p class="price-tag">1$</p>
         <img src="https://gifdb.com/images/high/spinning-curve-potato-chip-bbjg3w7u5mgzlrh5.webp" alt="1 dollar gif" class="donate-gif">
-        <button class="cart-btn" data-account="💳 계좌번호: 123-456-7890">🛒</button>
+        <button class="cart-btn" data-account="💳 계좌번호:국민은행:908901-00-042802 (옐로우 호라이즌)">🛒</button>
         <p class="account-text"></p>
       </div>
 
@@ -691,7 +685,7 @@
       <div class="donate-card">
         <p class="price-tag">10$</p>
         <img src="https://media.tenor.com/FE0HbiCmZP4AAAAi/burger-cheese-burger.gif" alt="10 dollar gif" class="donate-gif">
-        <button class="cart-btn" data-account="💳 계좌번호: 987-654-3210">🛒</button>
+        <button class="cart-btn" data-account="💳 계좌번호:국민은행:908901-00-042802 (옐로우 호라이즌)">🛒</button>
         <p class="account-text"></p>
       </div>
 
@@ -699,7 +693,7 @@
       <div class="donate-card">
         <p class="price-tag">100$</p>
         <img src="https://media1.tenor.com/m/cJTEd9pETkEAAAAC/goat-the-goat.gif" alt="100 dollar gif" class="donate-gif">
-        <button class="cart-btn" data-account="💳 계좌번호: 111-222-3333">🛒</button>
+        <button class="cart-btn" data-account="💳 계좌번호:국민은행:908901-00-042802 (옐로우 호라이즌)">🛒</button>
         <p class="account-text"></p>
       </div>
 
@@ -716,7 +710,8 @@
       면허를 따고 난 후 처음 자동차를 접했을 때, 저는 왠지 모를 해방감과 자유를 느꼈습니다. 그때부터 저는 마음속에 나만의 드림카를 품기 시작했습니다.<br /><br />
       하지만 제가 하고 있는 아르바이트와 직장으로는 평생 벌어도 사기 힘듭니다.
       그러나 젊음의 피와 열정이 끓는 지금이 아니면,<br /><br />죽기 전에 타더라도 그때의 두근거림과 짜릿함을 느낄 수 있을까요?<br /><br />
-      그래서 저는 단순히 생각했습니다. 모두가 똑같이 열망하고 갖고 싶어하는 드림카가 있다면, 조금이라도 후원을 받아서 언젠가 우리 모두가 꿈꿔왔던<br /><br />
+      그래서 저는 단순히 생각했습니다. 모두가 똑같이 열망하고 갖고 싶어하는 드림카가 있다면, 
+      조금이라도 후원을 받아서 언젠가 우리 모두가 꿈꿔왔던<br /><br />
       드림카를 타볼 수 있는 그런 날들을 만들어보자고 말이죠.
     </p>
 
@@ -755,8 +750,9 @@ const translations = {
     goalLabel: "Goal Amount: 276262$",
     donorCount: "Donors:",
     greenSupportText: "10% of all donations are given to charity and children’s organizations.",
-    popupTitle: "Become the owner of the future with just 1$.",
+    popupTitle: "please Become the owner of the future with just 1$.",
     popupClose: "Close",
+    accountText: "💳 Bank Account: paypal will be updated soon!",
     faqTitle: "Frequently Asked Questions (FAQ)",
     faqQ1: "Q: How will the donations be used?",
     faqA1: "All donations will be used transparently for the dream car project and giveaways for supporters.",
@@ -778,6 +774,7 @@ const translations = {
     - Top Speed: 296 km/h<br />
     - Weight: approx. 1,450 kg<br />
     - Price: around 241,300$ `   
+   
   },
   ko: {
     title: "🔥 천 원만 후원하고 여러분의 드림카를 완성해 주세요! 🔥",
@@ -785,8 +782,9 @@ const translations = {
     goalLabel: "목표금액: ₩400,000,000",
     donorCount: "후원자 수: ",
     greenSupportText: "전체 기부금의 10%는 불우이웃 및 어린이 단체에 기부됩니다.",
-    popupTitle: "천원으로 미래의 주인공이 되세요.",
+    popupTitle: "천원으로 미래의 주인공이 되어주세요.",
     popupClose: "닫기",
+    accountText: "💳 계좌번호: 국민은행 908901-00-042802 (옐로우 호라이즌)",
     faqTitle: "자주 묻는 질문 (FAQ)",
     faqQ1: "Q: 후원은 실제로 어디에 사용되나요?",
     faqA1: "모든 후원금은 드림카 구매 및 후원자분들께 즐거운 경험을 공유하기 위한 용도로 투명하게 사용됩니다.",
@@ -826,7 +824,14 @@ function applyLang(lang) {
   // 로그인, 로그아웃 버튼
   document.querySelector('.login-button').innerText = t.googleLoginBtn;
   document.querySelector('.logout-button').innerText = t.logoutBtn;
-
+  
+  // ✅ 추가된 부분 (팝업 제목 번역)
+  const popupTitle = document.getElementById('popupTitle');
+  if (popupTitle) popupTitle.textContent = t.popupTitle;
+   // 💳 계좌번호 번역
+  document.querySelectorAll(".cart-btn").forEach(btn => {
+    btn.setAttribute("data-account", translations[lang].accountText);
+  });
   // FAQ 및 창립자 섹션
   document.querySelector('.faq h3').innerText = t.faqTitle;
   const faqParas = document.querySelectorAll('.faq p');
