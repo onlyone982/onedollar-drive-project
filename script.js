@@ -126,6 +126,7 @@ donateBtn.addEventListener('click', () => {
 closePopup.addEventListener('click', () => {
   donatePopup.style.display = 'none';
 });
+
 function applyLang(lang) {
   const t = translations[lang];
   // ✅ 채팅창 placeholder 갱신
