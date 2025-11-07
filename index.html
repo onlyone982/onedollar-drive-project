@@ -752,7 +752,7 @@ const translations = {
     greenSupportText: "10% of all donations are given to charity and children’s organizations.",
     popupTitle: "please Become the owner of the future with just 1$.",
     popupClose: "Close",
-    placeholderBeforeLogin: "1. Log in first to send a message...",//Live chat added//
+    placeholderBeforeLogin: "Log in first to send a message...",//Live chat added//
     placeholderAfterLogin: "Leave your message!", 
     accountText: "💳 Account: paypal will be updated soon thank you for your patience.",
     faqTitle: "Frequently Asked Questions (FAQ)",
@@ -786,7 +786,7 @@ const translations = {
     greenSupportText: "전체 기부금의 10%는 불우이웃 및 어린이 단체에 기부됩니다.",
     popupTitle: "천원으로 미래의 주인공이 되어주세요.",
     popupClose: "닫기",
-     placeholderBeforeLogin: "1. 로그인 후 메시지를 입력하세요...",//Live chat 추가//
+     placeholderBeforeLogin: "로그인 후 메시지를 입력하세요...",//Live chat 추가//
     placeholderAfterLogin: "메시지를 남겨주세요!",
     accountText: "💳 계좌번호:국민은행:908901-00-042802 (옐로우 호라이즌)",
     faqTitle: "자주 묻는 질문 (FAQ)",
@@ -830,7 +830,16 @@ function applyLang(lang) {
   // ✅ 추가된 부분 (팝업 제목 번역)
   const popupTitle = document.getElementById('popupTitle');
   if (popupTitle) popupTitle.textContent = t.popupTitle;
- 
+  
+  // ✅ 채팅창 placeholder 갱신
+  const chatInput = document.querySelector('#chatInput');
+  if (chatInput) {
+    // 로그인 상태에 따라 다른 placeholder 표시
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    chatInput.placeholder = isLoggedIn
+      ? t.placeholderAfterLogin
+      : t.placeholderBeforeLogin;
+  }
   // ✅ 계좌번호 번역 추가
   document.querySelectorAll('.cart-btn').forEach(btn => {
     btn.setAttribute('data-account', t.accountText);
@@ -850,6 +859,21 @@ function toggleLang() {
   currentLang = currentLang === 'ko' ? 'en' : 'ko';
   localStorage.setItem('lang', currentLang); // 언어 상태 저장
   applyLang(currentLang);
+}
+function handleLogin() {
+  localStorage.setItem("isLoggedIn", "true");
+  const chatInput = document.querySelector('#chatInput');
+  const lang = localStorage.getItem("selectedLang") || "ko";
+  const t = translations[lang];
+  if (chatInput) chatInput.placeholder = t.placeholderAfterLogin;
+}
+
+function handleLogout() {
+  localStorage.removeItem("isLoggedIn");
+  const chatInput = document.querySelector('#chatInput');
+  const lang = localStorage.getItem("selectedLang") || "ko";
+  const t = translations[lang];
+  if (chatInput) chatInput.placeholder = t.placeholderBeforeLogin;
 }
 
 // ✅ 페이지 로드 시 자동 적용
