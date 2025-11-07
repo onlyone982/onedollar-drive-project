@@ -752,7 +752,7 @@ const translations = {
     greenSupportText: "10% of all donations are given to charity and children’s organizations.",
     popupTitle: "please Become the owner of the future with just 1$.",
     popupClose: "Close",
-    accountText: "💳 Bank Account: paypal will be updated soon!",
+    accountText: "💳 Account: paypal will be updated soon thank you for your patience.",
     faqTitle: "Frequently Asked Questions (FAQ)",
     faqQ1: "Q: How will the donations be used?",
     faqA1: "All donations will be used transparently for the dream car project and giveaways for supporters.",
@@ -784,7 +784,7 @@ const translations = {
     greenSupportText: "전체 기부금의 10%는 불우이웃 및 어린이 단체에 기부됩니다.",
     popupTitle: "천원으로 미래의 주인공이 되어주세요.",
     popupClose: "닫기",
-    accountText: "💳 계좌번호: 국민은행 908901-00-042802 (옐로우 호라이즌)",
+    accountText: "💳 계좌번호:국민은행:908901-00-042802 (옐로우 호라이즌)",
     faqTitle: "자주 묻는 질문 (FAQ)",
     faqQ1: "Q: 후원은 실제로 어디에 사용되나요?",
     faqA1: "모든 후원금은 드림카 구매 및 후원자분들께 즐거운 경험을 공유하기 위한 용도로 투명하게 사용됩니다.",
@@ -821,6 +821,7 @@ function applyLang(lang) {
   document.getElementById('videoSpecs').innerHTML = t.videoSpecs;
   document.getElementById('description').innerHTML = t.description;
 
+
   // 로그인, 로그아웃 버튼
   document.querySelector('.login-button').innerText = t.googleLoginBtn;
   document.querySelector('.logout-button').innerText = t.logoutBtn;
@@ -828,10 +829,12 @@ function applyLang(lang) {
   // ✅ 추가된 부분 (팝업 제목 번역)
   const popupTitle = document.getElementById('popupTitle');
   if (popupTitle) popupTitle.textContent = t.popupTitle;
-   // 💳 계좌번호 번역
-  document.querySelectorAll(".cart-btn").forEach(btn => {
-    btn.setAttribute("data-account", translations[lang].accountText);
+ 
+  // ✅ 계좌번호 번역 추가
+  document.querySelectorAll('.cart-btn').forEach(btn => {
+    btn.setAttribute('data-account', t.accountText);
   });
+
   // FAQ 및 창립자 섹션
   document.querySelector('.faq h3').innerText = t.faqTitle;
   const faqParas = document.querySelectorAll('.faq p');
