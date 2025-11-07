@@ -141,18 +141,41 @@ document.querySelectorAll('.cart-btn').forEach(btn => {
     }
   });
 });
-// ✅ 팝업 닫기 버튼 이벤트
+// 🛒 cart 버튼 클릭 시 계좌번호 표시 / 숨기기
+document.querySelectorAll(".cart-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const accountText = btn.nextElementSibling;
+
+    // 이미 열려 있으면 닫기
+    if (btn.classList.contains("active")) {
+      btn.classList.remove("active");
+      accountText.textContent = "";
+    } 
+    // 닫혀 있으면 열기
+    else {
+      // 다른 모든 버튼 닫기 (하나만 열리게)
+      document.querySelectorAll(".cart-btn").forEach((b) => {
+        b.classList.remove("active");
+        b.nextElementSibling.textContent = "";
+      });
+      // 현재 버튼만 활성화
+      btn.classList.add("active");
+      accountText.textContent = btn.getAttribute("data-account");
+    }
+  });
+});
+
+
+// 🚀 팝업 닫기 버튼 클릭 시 모든 cart 초기화
 document.querySelector(".close-popup")?.addEventListener("click", () => {
   const popup = document.querySelector(".popup");
   popup.style.display = "none";
 
-  // ✅ 팝업이 닫힐 때 모든 계좌번호 초기화
-  document.querySelectorAll(".account-text").forEach((acc) => {
-    acc.textContent = ""; // 계좌번호 숨김
-  });
-
-  // ✅ 버튼 상태(활성화 표시) 초기화 (선택사항)
+  // 모든 cart 버튼 및 계좌번호 초기화
   document.querySelectorAll(".cart-btn").forEach((btn) => {
     btn.classList.remove("active");
+    const accountText = btn.nextElementSibling;
+    if (accountText) accountText.textContent = "";
   });
 });
+
