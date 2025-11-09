@@ -898,6 +898,51 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
   </script>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getFirestore, collection, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ✅ Firestore의 donations 컬렉션 실시간 감시
+  const q = query(collection(db, "donations"), orderBy("amount", "desc"));
+  const rankingList = document.getElementById("rankingList");
+
+  onSnapshot(q, (snapshot) => {
+    rankingList.innerHTML = ""; // 기존 리스트 초기화
+
+    const donations = [];
+    snapshot.forEach((doc) => donations.push(doc.data()));
+
+    // 금액이 같을 경우 최신 업데이트 순으로 정렬
+    donations.sort((a, b) => {
+      if (b.amount === a.amount) {
+        return b.updatedAt?.seconds - a.updatedAt?.seconds;
+      }
+      return b.amount - a.amount;
+    });
+
+    // 상위 10명만 표시 (원한다면 limit 변경 가능)
+    donations.slice(0, 10).forEach((donation, index) => {
+      const item = document.createElement("div");
+      item.classList.add("ranking-item");
+      item.innerHTML = `
+        <span class="rank">${index + 1}</span>
+        <span class="name">${donation.userName || "Anonymous"}</span>
+        <span class="amount">₩${donation.amount.toLocaleString()}</span>
+      `;
+      rankingList.appendChild(item);
+    });
+  });
+</script>
+
 <div id="chatMessages"></div>
  <script type="module" src="./firebase-config.js"></script>
 <script type="module" src="./script.js"></script>
