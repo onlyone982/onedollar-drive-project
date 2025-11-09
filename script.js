@@ -62,26 +62,27 @@ window.signOutFromGoogle = async () => {
   }
 };
 
-// ✅ 로그인 상태 감시
 onAuthStateChanged(auth, (user) => {
-  if (user) {
+  const isLoggedIn = !!user;
+  localStorage.setItem("isLoggedIn", isLoggedIn ? "true" : "false");
+
+  if (isLoggedIn) {
     loginBtn.style.display = "none";
     logoutBtn.style.display = "inline-block";
     chatInput.disabled = false;
     sendMessageBtn.disabled = false;
-
-    // ✅ [수정] 로그인 후 placeholder 변경
-    chatInput.placeholder = placeholderAfterLogin;
   } else {
     loginBtn.style.display = "inline-block";
     logoutBtn.style.display = "none";
     chatInput.disabled = true;
     sendMessageBtn.disabled = true;
-
-    // ✅ [수정] 로그인 전 placeholder 변경
-    chatInput.placeholder = placeholderBeforeLogin;
   }
+
+  // ✅ 언어에 맞게 placeholder를 자동 반영
+  const lang = localStorage.getItem("lang") || "ko";
+  if (window.applyLang) window.applyLang(lang);
 });
+
 
 // ✅ 채팅 전송 기능
 const messagesRef = collection(db, "messages");
