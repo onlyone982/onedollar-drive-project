@@ -19,13 +19,15 @@ import {
 
 // ✅ 2. Firebase 설정
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_APP.firebaseapp.com",
-  projectId: "YOUR_APP_ID",
-  storageBucket: "YOUR_APP.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID"
+  apiKey: "AIzaSyDTJFT5aBr2km6_Z-Q8gXdBvkKGxLVmOyo",
+  authDomain: "onedollardrive-3bbee.firebaseapp.com",
+  projectId: "onedollardrive-3bbee",
+  storageBucket: "onedollardrive-3bbee.firebasestorage.app",
+  messagingSenderId: "37980557245",
+  appId: "1:37980557245:web:9c752ecf11cdb6ff270cd4",
+  measurementId: "G-LWQCX5XZ9D"
 };
+
 
 // ✅ 3. Firebase 초기화
 const app = initializeApp(firebaseConfig);
@@ -127,18 +129,23 @@ onSnapshot(qMessages, (snapshot) => {
 });
 
 // ✅ 후원 팝업
-const donateBtn = document.getElementById('donateBtn');
-const donatePopup = document.getElementById('donatePopup');
-const closePopup = document.getElementById('closePopup');
+document.addEventListener("DOMContentLoaded", () => {
+  const donateBtn = document.getElementById('donateBtn');
+  const donatePopup = document.getElementById('donatePopup');
+  const closePopup = document.getElementById('closePopup');
 
-donateBtn.addEventListener('click', () => {
-  donatePopup.style.display = 'flex';
+  if (donateBtn && donatePopup && closePopup) {
+    donateBtn.addEventListener('click', () => {
+      donatePopup.style.display = 'flex';
+    });
+    closePopup.addEventListener('click', () => {
+      donatePopup.style.display = 'none';
+      document.querySelectorAll(".account-text").forEach((acc) => (acc.textContent = ""));
+      document.querySelectorAll(".cart-btn").forEach((btn) => btn.classList.remove("active"));
+    });
+  }
 });
-closePopup.addEventListener('click', () => {
-  donatePopup.style.display = 'none';
-  document.querySelectorAll(".account-text").forEach((acc) => (acc.textContent = ""));
-  document.querySelectorAll(".cart-btn").forEach((btn) => btn.classList.remove("active"));
-});
+
 
 // ✅ 계좌번호 표시 토글
 document.querySelectorAll('.cart-btn').forEach(btn => {
