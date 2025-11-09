@@ -1,0 +1,18 @@
+
+    <div class="ranking-item">
+      <span class="rank">1</span>
+      <span class="name">John Doe</span>
+      <span class="amount">₩120,000</span>
+    </div>
+    <div class="ranking-item">
+      <span class="rank">2</span>
+      <span class="name">Jane Kim</span>
+      <span class="amount">₩85,000</span>
+    </div>
+    <div class="ranking-item">
+      <span class="rank">3</span>
+      <span class="name">Alex Park</span>
+      <span class="amount">₩60,000</span>
+    </div>
+  </div>
+</div>

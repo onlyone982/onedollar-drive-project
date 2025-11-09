@@ -160,6 +160,7 @@ document.querySelectorAll('.cart-btn').forEach(btn => {
 // ✅ 후원 게이지 + 랭킹
 const donationGauge = document.querySelector("#donationGauge");
 const rankingList = document.querySelector("#rankingList");
+rankingList.innerHTML = "<p>Loading...</p>"; // ✅ 초기 로딩 메시지 표시
 let totalDonation = 0;
 
 // 실시간 수신 (자동 정렬: 금액 desc + 최신순)
