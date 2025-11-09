@@ -42,6 +42,9 @@ const chatInput = document.getElementById("chatInput");
 const sendMessageBtn = document.getElementById("sendMessageBtn");
 const chatMessages = document.getElementById("chatMessages");
 
+const placeholderBeforeLogin = "로그인 후 메시지를 입력하세요..."; 
+const placeholderAfterLogin = "메시지를 남겨주세요!";
+
 // ✅ 로그인 / 로그아웃
 window.signInWithGoogle = async () => {
   try {
@@ -66,13 +69,17 @@ onAuthStateChanged(auth, (user) => {
     logoutBtn.style.display = "inline-block";
     chatInput.disabled = false;
     sendMessageBtn.disabled = false;
-    chatInput.placeholder = "Leave a message!";
+
+    // ✅ [수정] 로그인 후 placeholder 변경
+    chatInput.placeholder = placeholderAfterLogin;
   } else {
     loginBtn.style.display = "inline-block";
     logoutBtn.style.display = "none";
     chatInput.disabled = true;
     sendMessageBtn.disabled = true;
-    chatInput.placeholder = "Please log in to send a message...";
+
+    // ✅ [수정] 로그인 전 placeholder 변경
+    chatInput.placeholder = placeholderBeforeLogin;
   }
 });
 
