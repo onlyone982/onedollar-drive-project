@@ -261,12 +261,12 @@
   background-color: #005fcc;
 }
 .donation-ranking-container {
-  position: absolute;              /* 영상 기준 좌측 고정 */
-  top: 50%;                        /* 세로 중앙 정렬 */
-  right: calc(50% + 520px);        /* 영상의 왼쪽으로 이동 (live chat은 반대로 +520px) */
-  transform: translateY(-50%);     /* 세로 정렬 보정 */
-  width: 350px;
-  height: 590px;
+  position: absolute;
+  top: 50%;
+  right: calc(50% + 520px);
+  transform: translateY(-50%);
+  width: 300px;
+  height: 500px;
   background-color: #111;
   border: 1px solid #333;
   border-radius: 10px;
@@ -279,7 +279,7 @@
 
 .ranking-header {
   text-align: center;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   padding: 0.8rem;
   background-color: #222;
   color: gold;
@@ -300,7 +300,7 @@
   background-color: #181818;
   border-radius: 8px;
   margin-bottom: 0.6rem;
-  padding: 0.4rem 0.6rem;
+  padding: 0.5rem 0.8rem;
   transition: background 0.2s ease;
 }
 
@@ -312,27 +312,23 @@
   color: gold;
   font-weight: bold;
   font-size: 1.2rem;
-  width: 30px;
+  width: 25px;
   text-align: center;
-}
-
-.profile-img {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  margin-right: 0.5rem;
 }
 
 .name {
   flex: 1;
+  text-align: left;
   color: #fff;
-  margin-left: 0.3rem;
+  margin-left: 0.5rem;
 }
 
 .amount {
   color: #0f0;
   font-weight: bold;
+  font-size: 1rem;
 }
+
 .live-chat-container {
   position: absolute;          /* 화면에서 절대 위치로 배치 */
   top: 50%;                    /* 세로 중앙 정렬 */
@@ -607,30 +603,28 @@
  </div>
 <div>
 
-  <!-- ✅ Donation Ranking 창 (이제 live chat 밖으로 이동) -->
-  <div class="donation-ranking-container">
-    <div class="ranking-header">👑 Donation Ranking 👑</div>
-    <div class="ranking-list">
-      <div class="ranking-item">
-        <span class="rank">1</span>
-        <img src="profile1.jpg" alt="User 1" class="profile-img">
-        <span class="name">John Doe</span>
-        <span class="amount">₩120,000</span>
-      </div>
-      <div class="ranking-item">
-        <span class="rank">2</span>
-        <img src="profile2.jpg" alt="User 2" class="profile-img">
-        <span class="name">Jane Kim</span>
-        <span class="amount">₩85,000</span>
-      </div>
-      <div class="ranking-item">
-        <span class="rank">3</span>
-        <img src="profile3.jpg" alt="User 3" class="profile-img">
-        <span class="name">Alex Park</span>
-        <span class="amount">₩60,000</span>
-      </div>
+ <!-- ✅ Donation Ranking (이름 + 금액만 표시) -->
+<div class="donation-ranking-container">
+  <div class="ranking-header">👑 Donation Ranking 👑</div>
+  <div class="ranking-list" id="rankingList">
+    <div class="ranking-item">
+      <span class="rank">1</span>
+      <span class="name">John Doe</span>
+      <span class="amount">₩120,000</span>
+    </div>
+    <div class="ranking-item">
+      <span class="rank">2</span>
+      <span class="name">Jane Kim</span>
+      <span class="amount">₩85,000</span>
+    </div>
+    <div class="ranking-item">
+      <span class="rank">3</span>
+      <span class="name">Alex Park</span>
+      <span class="amount">₩60,000</span>
     </div>
   </div>
+</div>
+
 
   <!-- ✅ 영상 아래 중앙 캡션 -->
   <div class="video-caption">
@@ -726,7 +720,7 @@
         <p>
           <strong>Q: 후원은 환불 가능한가요?</strong
           ><br />
-          기부 성격상 원칙적으로 환불이 불가하지만, 특별한 사유가 있을 경우 이메일로 문의하실 수 있습니다.
+         네 가능합니다. 특별한 사유가 있을 경우 이메일로 문의하실 수 있습니다. "하지만 명확한 사실 여부를 위해 꼭 로그인을 하시고 후원해주시길 부탁드립니다"
         </p>
       </div>
       <div class="founder-message">
@@ -759,7 +753,7 @@ const translations = {
     faqQ1: "Q: How will the donations be used?",
     faqA1: "All donations will be used transparently for the dream car project and giveaways for supporters.",
     faqQ2: "Q: Can I get a refund?",
-    faqA2: "Due to the nature of donations, refunds are not available except in special cases.",
+    faqA2: "Yes, it's possible. If you have a special reason, you can contact us by e-mail. However, please log in and support us for clear facts.",
     founderTitle: "Message from the Founder",
     founderMessage: "I've loved cars since childhood. This project is about making our collective dream come true, not just crowdfunding. Thank you for being part of it!",
     googleLoginBtn: "Google Login / Sign Up",
@@ -793,7 +787,7 @@ const translations = {
     faqQ1: "Q: 후원은 실제로 어디에 사용되나요?",
     faqA1: "모든 후원금은 드림카 구매 및 후원자분들께 즐거운 경험을 공유하기 위한 용도로 투명하게 사용됩니다.",
     faqQ2: "Q: 후원은 환불 가능한가요?",
-    faqA2: "기부 성격상 원칙적으로 환불이 불가하지만, 특별한 사유가 있을 경우 이메일로 문의하실 수 있습니다.",
+    faqA2: "네 가능합니다. 특별한 사유가 있을 경우 이메일로 문의하실 수 있습니다. 하지만 명확한 사실 여부를 위해 꼭 로그인을 하시고 후원해주시길 부탁드립니다.",
     founderTitle: "창립자의 메시지",
     founderMessage: "저는 어릴때나 지금이나 차를 좋아합니다. 이 사이트는 단순한 크라우드 펀딩이 아니라, 모두의 꿈을 현실로 만들고 싶다는 믿음으로 시작했습니다. 여러분의 소중한 후원 감사드립니다!",
     googleLoginBtn: "구글 로그인 / 회원가입",
