@@ -896,56 +896,78 @@ window.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-
-  </script>
-  <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getFirestore, collection, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  // ✅ Firestore의 donations 컬렉션 실시간 감시
-  const q = query(collection(db, "donations"), orderBy("amount", "desc"));
-  const rankingList = document.getElementById("rankingList");
-
-  onSnapshot(q, (snapshot) => {
-    rankingList.innerHTML = ""; // 기존 리스트 초기화
-
-    const donations = [];
-    snapshot.forEach((doc) => donations.push(doc.data()));
-
-    // 금액이 같을 경우 최신 업데이트 순으로 정렬
-    donations.sort((a, b) => {
-      if (b.amount === a.amount) {
-        return b.updatedAt?.seconds - a.updatedAt?.seconds;
-      }
-      return b.amount - a.amount;
-    });
-
-    // 상위 10명만 표시 (원한다면 limit 변경 가능)
-    donations.slice(0, 10).forEach((donation, index) => {
-      const item = document.createElement("div");
-      item.classList.add("ranking-item");
-      item.innerHTML = `
-        <span class="rank">${index + 1}</span>
-        <span class="name">${donation.userName || "Anonymous"}</span>
-        <span class="amount">₩${donation.amount.toLocaleString()}</span>
-      `;
-      rankingList.appendChild(item);
-    });
-  });
 </script>
 
 <div id="chatMessages"></div>
  <script type="module" src="./firebase-config.js"></script>
 <script type="module" src="./script.js"></script>
+</script>
+
+
+<!-- ✅ Firebase SDK -->
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyDTJFT5aBr2km6_Z-Q8gXdBvkKGxLVmOyo",
+    authDomain: "onedollardrive-3bbee.firebaseapp.com",
+    projectId: "onedollardrive-3bbee",
+    storageBucket: "onedollardrive-3bbee.firebasestorage.app",
+    messagingSenderId: "37980557245",
+    appId: "1:37980557245:web:9c752ecf11cdb6ff270cd4",
+    measurementId: "G-LWQCX5XZ9D"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+
+  // ✅ Firestore에서 donations 컬렉션 읽기
+  async function loadDonations() {
+    const rankingList = document.getElementById("rankingList");
+    rankingList.innerHTML = "<p>Loading...</p>";
+
+    try {
+      // donations 컬렉션에서 금액순 정렬 후 상위 10명만 표시
+      const q = query(collection(db, "donations"), orderBy("amount", "desc"), limit(10));
+      const querySnapshot = await getDocs(q);
+
+      rankingList.innerHTML = ""; // 기존 리스트 제거
+      let rank = 1;
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const name = data.name || "Anonymous";
+        const amount = data.amount || 0;
+
+        const item = `
+          <div class="ranking-item">
+            <span class="rank">${rank}</span>
+            <span class="name">${name}</span>
+            <span class="amount">₩${amount.toLocaleString()}</span>
+          </div>
+        `;
+        rankingList.innerHTML += item;
+        rank++;
+      });
+
+      if (rank === 1) rankingList.innerHTML = "<p>아직 후원이 없습니다 😢</p>";
+
+    } catch (error) {
+      console.error("❌ Firestore 읽기 오류:", error);
+      rankingList.innerHTML = "<p style='color:red;'>데이터를 불러올 수 없습니다.</p>";
+    }
+  }
+
+  // ✅ 페이지 로드 시 실행
+  window.addEventListener("load", loadDonations);
+</script>
 
 </body>
 </html>
