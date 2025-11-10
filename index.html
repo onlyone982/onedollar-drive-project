@@ -237,6 +237,26 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
     font-size: 0.9rem;
   }
 }
+@media (max-width: 900px) {
+
+  /* 순서 정렬 */
+  .video-caption, #videoSpecs, .donation-ranking-container,
+  .donate-button, .goal-label, .progress-container,
+  .donor-count, .green-support-container, .live-chat-container {
+    width: 90%;
+    max-width: 500px;
+    margin: 1rem auto;
+    order: unset;
+  }
+
+  /* 랭킹 3명까지만 */
+  #rankingList li:nth-child(n+4) { display: none; }
+
+  /* 채팅 높이 5줄 정도 */
+  .live-chat-container {
+    height: 260px;
+  }
+}
 
 </style>
 
@@ -262,81 +282,80 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
   <div class="container">
     <h1 id="title">🔥 천 원만 후원하고 여러분의 드림카를 완성해 주세요! 🔥</h1>
 <div class="video-section">
+
+  <!-- ✅ 영상 -->
   <div class="video-container">
     <iframe
       src="https://www.youtube.com/embed/XdBDWTLe49g?si=l7gzsfvrxRGBnEEA"
       allowfullscreen
     ></iframe>
   </div>
-  
-  <!-- ✅ 라이브 채팅 박스 -->
-<div class="live-chat-container">
-<div class="chat-header">
-  💬 실시간 채팅
-  <span class="online-badge">
-    <span id="onlineLabel">현재 접속자수:</span>
-    <span class="online-dot"></span>
-    <span id="onlineCount">0</span>
-  </span>
+
+</div> <!-- video-section END -->
+
+
+<!-- ✅ 영상 아래 캡션 -->
+<div class="video-caption">
+  🚗 Porsche 911 GT3 RS
 </div>
+
+<!-- ✅ 스펙 -->
+<div class="video-specs" id="videoSpecs">
+  <strong>스펙 요약:</strong><br />
+  - 최고출력: 518마력<br />
+  - 0→100km/h: 3.2초<br />
+  - 최고속도: 296km/h<br />
+  - 무게: 약 1,450kg<br />
+  - 가격: 약 3억 원대 (한화 기준)
+</div>
+
+
+<!-- ✅ Donation Ranking -->
+<div class="donation-ranking-container">
+  <div class="ranking-header">👑 미래의 오너분들 👑</div>
+  <div class="ranking-list">
+    <ul id="rankingList"></ul>
+  </div>
+</div>
+
+
+<!-- ✅ 후원하기 버튼 -->
+<button class="donate-button" id="donateBtn">🔥 지금 후원하기 | Donate Now</button>
+
+
+<!-- ✅ 목표 금액 & 후원 정보 -->
+<div class="goal-label" id="goalLabel">목표금액: ₩400,000,000</div>
+
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar">₩0 / ₩400,000,000</div>
+</div>
+
+<div class="donor-count" id="donorCount">후원자 수: 0</div>
+
+<div class="green-support-container">
+  <div class="green-support-amount" id="supportAmount">₩0</div>
+  <div class="green-support-text">전체 기부금의 10%는 불우이웃 및 어린이 단체에 기부됩니다.</div>
+</div>
+
+<!-- ✅ 실시간 채팅 박스 (마지막) -->
+<div class="live-chat-container">
+  <div class="chat-header">
+    💬 실시간 채팅
+    <span class="online-badge">
+      <span id="onlineLabel">현재 접속자수:</span>
+      <span class="online-dot"></span>
+      <span id="onlineCount">0</span>
+    </span>
+  </div>
+  
   <div class="chat-messages" id="chatMessages"></div>
 
   <div class="chat-input-area">
-    <input
-      type="text"
-      id="chatInput"
-      placeholder="로그인 후 메시지를 입력하세요..."
-      disabled
-    />    
+    <input type="text" id="chatInput" placeholder="로그인 후 메시지를 입력하세요..." disabled>
     <button id="sendMessageBtn" disabled>보내기</button>
   </div>
- </div>
-<div>
-
- <!-- ✅ Donation Ranking (이름 + 금액만 표시) -->
-<div class="donation-ranking-container">
-  <div class="ranking-header">👑 Donation Ranking 👑</div>
-  <div class="ranking-list">
-  <ul id="rankingList"></ul>
-</div>
-  <!-- 초기 예시 데이터 제거 -->
-  </div>
 </div>
 
-
-  <!-- ✅ 영상 아래 중앙 캡션 -->
-  <div class="video-caption">
-    🚗 Porsche 911 GT3 RS
-  </div>
-
-  <!-- ✅ 영상 아래 왼쪽 스펙 요약 -->
-  <div class="video-specs" id="videoSpecs">
-    <strong>스펙 요약:</strong><br />
-    - 최고출력: 518마력<br />
-    - 0→100km/h: 3.2초<br />
-    - 최고속도: 296km/h<br />
-    - 무게: 약 1,450kg<br />
-    - 가격: 약 3억 원대 (한화 기준)
-  </div>
-</div>
-    <div class="sns-share">
-      <a href="#" onclick="shareTo('facebook')"><i class="fab fa-facebook"></i></a>
-      <a href="#" onclick="shareTo('twitter')"><i class="fab fa-twitter"></i></a>
-      <button onclick="copyToClipboard()" title="링크 복사"><i class="fab fa-instagram"></i></button>
-    </div>
-    <div class="goal-label" id="goalLabel">목표금액: ₩400,000,000</div>
-    <div class="progress-container">
-      <div class="progress-bar" id="progressBar">₩0 / ₩400,000,000</div>
-    </div>
-    <div class="donor-count" id="donorCount">후원자 수: 0</div>
-
-    <div class="green-support-container">
-      <div class="green-support-amount" id="supportAmount">₩0</div>
-      <div class="green-support-text">전체 기부금의 10%는 불우이웃 및 어린이 단체에 기부됩니다.</div>
-    </div>
-
-   <!-- 기존 버튼에서 onclick 제거 -->
-<button class="donate-button" id="donateBtn">🔥 지금 후원하기 | Donate Now</button>
 
 <!-- 팝업 구조 -->
 <div id="donatePopup" class="popup">
