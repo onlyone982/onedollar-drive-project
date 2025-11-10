@@ -696,7 +696,41 @@
   box-shadow:0 0 6px #30e060;
 }
 
+/* ✅ 모바일 레이아웃 전환 */
+@media (max-width: 900px) {
 
+  .video-section {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .live-chat-container,
+  .donation-ranking-container {
+    position: static !important;
+    transform: none !important;
+    width: 95% !important;
+    height: auto !important;
+    margin: 1rem auto;
+  }
+
+  .chat-messages {
+    max-height: 260px;
+  }
+
+  .donation-ranking-container {
+    max-height: 320px;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    white-space: normal;
+    line-height: 1.4;
+  }
+
+  .goal-label, .donor-count {
+    text-align: center;
+  }
+}
 
 </style>
 
