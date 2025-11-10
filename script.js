@@ -195,80 +195,117 @@ onSnapshot(qDonations, (snapshot) => {
     totalDonation += data.amount;
   });
 
-  updateDonationGauge(totalDonation);
-  updateRanking(donations);
-  updateDonorInfo(donations.length, totalDonation);
+});
+// ====== 상수 / 상태 ======
+const GOAL_AMOUNT = 400000000; // 4억
+let currentDisplayedTotal = 0; // 화면에 보여지는 총액(애니메이션용)
+const progressBarEl = document.getElementById("progressBar");
+const rankingListEl = document.getElementById("rankingList");
+
+// ====== 실시간 후원 데이터 감시 (onSnapshot) ======
+onSnapshot(qDonations, (snapshot) => {
+  const donations = [];
+  let totalDonation = 0;
+
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    // 안전하게 amount 확인
+    const amount = (typeof data.amount === "number") ? data.amount : Number(data.amount) || 0;
+    donations.push({ name: data.name || "Anonymous", amount, timestamp: data.timestamp || null });
+    totalDonation += amount;
+  });
+
+  // 정렬(금액 내림차순, 동일 금액이면 timestamp 최신 우선)
+  donations.sort((a, b) => {
+    if (b.amount !== a.amount) return b.amount - a.amount;
+    // timestamp 비교(없으면 0)
+    const ta = a.timestamp ? a.timestamp.seconds || 0 : 0;
+    const tb = b.timestamp ? b.timestamp.seconds || 0 : 0;
+    return tb - ta;
+  });
+
+  // 화면 업데이트 호출
+  animateProgressTo(totalDonation);
+  renderRanking(donations);
+  renderDonorInfo(donations.length, totalDonation);
 });
 
-// 목표 금액
-const goalAmount = 400000000; // 4억
-let currentAmount = 0; // 실제 누적 금액
+// ====== 프로그레스바 자연스러운 애니메이션 함수 ======
+function animateProgressTo(targetTotal) {
+  if (!progressBarEl) return;
+  // 멈춰 있는 애니메이션이 있다면 정리
+  if (progressBarEl._animInterval) {
+    clearInterval(progressBarEl._animInterval);
+    progressBarEl._animInterval = null;
+  }
 
-function updateProgressBarAnimated(targetAmount) {
-  const progressBar = document.getElementById("progressBar");
-  const duration = 2000; // 2초 동안 애니메이션
-  const frameRate = 20;  // 0.02초마다 업데이트
-  const totalFrames = duration / frameRate;
-  const increment = (targetAmount - currentAmount) / totalFrames;
-  let currentFrame = 0;
+  // 빠진 경우 방어
+  targetTotal = Math.max(0, Number(targetTotal) || 0);
 
-  const interval = setInterval(() => {
-    currentFrame++;
-    currentAmount += increment;
+  // 애니메이션 설정
+  const durationMs = 1200;         // 애니메이션 지속시간 (원하면 조정)
+  const tickMs = 30;               // 업데이트 간격 (ms)
+  const frames = Math.max(1, Math.round(durationMs / tickMs));
+  const delta = (targetTotal - currentDisplayedTotal) / frames;
+  let frame = 0;
 
-    const percentage = Math.min((currentAmount / goalAmount) * 100, 100);
-    progressBar.style.width = percentage + "%";
-    progressBar.textContent = `₩${Math.floor(currentAmount).toLocaleString()} / ₩${goalAmount.toLocaleString()}`;
+  progressBarEl._animInterval = setInterval(() => {
+    frame++;
+    currentDisplayedTotal += delta;
 
-    if (currentFrame >= totalFrames || currentAmount >= targetAmount) {
-      clearInterval(interval);
-      currentAmount = targetAmount; // 보정
+    // 마지막 프레임이면 정확히 목표로 보정
+    if (frame >= frames) {
+      currentDisplayedTotal = targetTotal;
+      clearInterval(progressBarEl._animInterval);
+      progressBarEl._animInterval = null;
     }
-  }, frameRate);
+
+    // 퍼센트 계산 및 DOM 반영
+    const percent = Math.min((currentDisplayedTotal / GOAL_AMOUNT) * 100, 100);
+    progressBarEl.style.width = percent + "%";
+    progressBarEl.textContent = `₩${Math.floor(currentDisplayedTotal).toLocaleString()} / ₩${GOAL_AMOUNT.toLocaleString()}`;
+  }, tickMs);
 }
 
-  // 기존 애니메이션 중복 방지
-  if (progressBar.animationInterval) clearInterval(progressBar.animationInterval);
+// ====== 랭킹 렌더링 ======
+function renderRanking(donations) {
+  if (!rankingListEl) return;
+  rankingListEl.innerHTML = "";
 
-  // 목표값에 맞춰 점진적으로 증가
-  const step = Math.ceil((total - currentDisplayedTotal) / 60); // 속도 조절 (60프레임 정도)
-  progressBar.animationInterval = setInterval(() => {
-    if (currentDisplayedTotal >= total || step <= 0) {
-      currentDisplayedTotal = total;
-      clearInterval(progressBar.animationInterval);
-    } else {
-      currentDisplayedTotal += step;
-    }
+  if (donations.length === 0) {
+    rankingListEl.innerHTML = "<p>아직 후원이 없습니다 😢</p>";
+    return;
+  }
 
-    // 게이지 퍼센트 계산
-    const percent = Math.min((currentDisplayedTotal / GOAL_AMOUNT) * 100, 100);
-    progressBar.style.width = `${percent}%`;
-    progressBar.textContent = `₩${currentDisplayedTotal.toLocaleString()} / ₩${GOAL_AMOUNT.toLocaleString()}`;
-  }, 30); // 30ms마다 업데이트
+  donations.forEach((donor, index) => {
+    const item = document.createElement("div");
+    item.className = "ranking-item";
+    item.innerHTML = `
+      <span class="rank">${index + 1}</span>
+      <span class="name">${escapeHtml(donor.name)}</span>
+      <span class="amount">₩${donor.amount.toLocaleString()}</span>
+    `;
+    rankingListEl.appendChild(item);
+  });
+}
 
-// ✅ 후원자 수 + 10% 기부금 표시
-function updateDonorInfo(count, total) {
-  const donorCount = document.getElementById("donorCount");
-  const supportAmount = document.getElementById("supportAmount");
+// ====== 후원자 수 + 10% 표시 ======
+function renderDonorInfo(count, total) {
+  const donorCountEl = document.getElementById("donorCount");
+  const supportAmountEl = document.getElementById("supportAmount");
 
-  if (donorCount) donorCount.textContent = count.toLocaleString();
-  if (supportAmount) {
-    const donation10Percent = total * 0.1;
-    supportAmount.textContent = `₩${donation10Percent.toLocaleString()}`;
+  if (donorCountEl) donorCountEl.textContent = `후원자 수: ${Number(count).toLocaleString()}`;
+  if (supportAmountEl) {
+    const tenPercent = Math.round(total * 0.1);
+    supportAmountEl.textContent = `₩${tenPercent.toLocaleString()}`;
   }
 }
 
-// ✅ 중복 금액 시 최신 후원자 우선 순위
-function updateRanking(donations) {
-  rankingList.innerHTML = "";
-
-  donations.forEach((donor, index) => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <span class="rank">${index + 1}</span>
-      <span class="name">${donor.name}</span>
-      <span class="amount">₩${donor.amount.toLocaleString()}</span>
-    `;
-    rankingList.appendChild(li);
-  });
+// ====== 도우미: XSS 방지용 아주 간단한 escape ======
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }
+
