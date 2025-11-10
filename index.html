@@ -67,7 +67,7 @@
       margin-top: 0.5rem;
       font-size: 1rem;
       color: #ccc;
-      text-align: left;
+      text-align: center;
     }
   
     .sns-share {
@@ -696,104 +696,98 @@
   box-shadow:0 0 6px #30e060;
 }
 
-/* ✅ 모바일 전용 UI (가로폭 900px 이하) */
-@media (max-width: 900px) {
+/* ✅ PC 기본 유지 (900px 이상) */
+@media (min-width: 901px) {
 
-  /* 영상 */
+  /* 영상 + 주변 레이아웃 그대로 */
   .video-section {
-    max-width: 100%;
-    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
+  /* Donation Ranking 오른쪽 고정 */
+  .donation-ranking-container {
+    position: absolute;
+    top: 50%;
+    right: calc(50% + 520px);
+    transform: translateY(-50%);
+    width: 300px;
+    height: 500px;
+  }
+
+  /* Live Chat 오른쪽 고정 */
+  .live-chat-container {
+    position: absolute;
+    top: 50%;
+    left: calc(50% + 520px);
+    transform: translateY(-50%);
+    width: 350px;
+    height: 590px;
+  }
+}
+
+/* ✅ 모바일 전용 (900px 이하) */
+@media (max-width: 900px) {
+
+  /* 전체 컬럼 정렬 */
+  .video-section,
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* 영상 100% */
   .video-container {
     width: 100%;
   }
 
-  /* ✅ Donation Ranking 완전 초기화 + 모바일 정렬 */
+  /* 🔥 영상 → 스펙 → 랭킹 → 후원 → 목표금액 → 채팅 순서 */
+  #videoSpecs { order: 1; }
+
   .donation-ranking-container {
+    order: 2;
     position: static !important;
-    top: auto !important;
-    right: auto !important;
-    left: auto !important;
     transform: none !important;
     width: 90%;
     max-width: 500px;
+    margin: 1rem auto;
     height: auto;
-    margin: 1.5rem auto;
   }
 
-  /* ✅ Live Chat 완전 초기화 + 5줄 높이 */
-  .live-chat-container {
-    position: static !important;
-    top: auto !important;
-    left: auto !important;
-    transform: none !important;
-    width: 90%;
-    max-width: 500px;
-    margin: 1.5rem auto;
-    height: 280px; /* 메시지 5개 정도 */
-    display: flex;
-    flex-direction: column;
-  }
-
-  .chat-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    white-space: nowrap;
-    padding: 10px 12px;
-  }
-
-  .online-badge {
-    font-size: 0.75rem;
-    gap: 4px;
-  }
-
-  .online-dot {
-    width: 6px;
-    height: 6px;
-  }
-
-  .chat-messages {
-    font-size: 0.85rem;
-  }
-
-  /* ✅ 후원 버튼 */
   .donate-button {
+    order: 3;
     width: 90%;
     max-width: 500px;
-    margin: 1.5rem auto;
-    display: block;
+    margin: 1rem auto;
   }
 
-  /* ✅ 목표/후원 UI */
   .goal-label,
   .donor-count,
   .green-support-container {
+    order: 4;
     width: 90%;
-    margin: 0.8rem auto;
     text-align: center;
-  }
-}
-/* ✅ PC 전용 (900px 이상일 때 원래 위치 유지) */
-@media (min-width: 901px) {
-  .goal-label {
-    text-align: left;
-    width: auto;
-    margin-left: 0;
+    margin: 0.5rem auto;
   }
 
-  .donor-count {
-    text-align: left;
-    width: auto;
-    margin-left: 0;
+  .live-chat-container {
+    order: 5;
+    position: static !important;
+    transform: none !important;
+    width: 90%;
+    max-width: 500px;
+    margin: 1rem auto;
+    height: 280px; /* ✅ 5줄 보이기 */
   }
 
-  .green-support-container {
-    width: 80%;
-    margin: 1rem auto 2rem;
+  /* ✅ 랭킹 3명까지만 표시 */
+  #rankingList li:nth-child(n+4) {
+    display: none;
   }
 }
+
 
 </style>
 
@@ -827,7 +821,7 @@
   </div>
   
   <!-- ✅ 라이브 채팅 박스 -->
-<div class="live-chat-container">
+<div class="live-chat-container" id="chatBox"></div>
 <div class="chat-header">
   💬 실시간 채팅
   <span class="online-badge">
@@ -851,7 +845,7 @@
 <div>
 
  <!-- ✅ Donation Ranking (이름 + 금액만 표시) -->
-<div class="donation-ranking-container">
+ <div class="donation-ranking-container" id="rankingBox"></div>
   <div class="ranking-header">👑 Donation Ranking 👑</div>
   <div class="ranking-list">
   <ul id="rankingList"></ul>
