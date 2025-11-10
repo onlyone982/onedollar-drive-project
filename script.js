@@ -18,11 +18,29 @@ const firebaseConfig = {
   appId: "1:37980557245:web:9c752ecf11cdb6ff270cd4",
   measurementId: "G-LWQCX5XZ9D"
 };
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+const auth = getAuth();
+const provider = new GoogleAuthProvider();
+
+async function signInWithGoogle() {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    console.log("로그인 성공:", user.displayName);
+    alert(`Welcome, ${user.displayName}!`);
+  } catch (error) {
+    console.error("Google 로그인 실패:", error.message);
+  }
+}
+window.signInWithGoogle = signInWithGoogle;
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-document.addEventListener("DOMContentLoaded", () => {
+d0ocument.addEventListener("DOMContentLoaded", () => {
+
   // ✅ 상수
   const GOAL_AMOUNT = 400000000;
   let currentDisplayedTotal = 0;
