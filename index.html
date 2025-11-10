@@ -696,41 +696,58 @@
   box-shadow:0 0 6px #30e060;
 }
 
-/* ✅ 모바일 레이아웃 전환 */
+/* ✅ 모바일 전용 UI (가로폭 900px 이하) */
 @media (max-width: 900px) {
 
   .video-section {
-    flex-direction: column;
-    align-items: center;
+    max-width: 100%;
+    padding: 0;
   }
 
-  .live-chat-container,
+  /* 영상은 그대로 */
+  .video-container {
+    width: 100%;
+  }
+
+  /* 📍 랭킹을 영상 아래로 이동시키기 */
   .donation-ranking-container {
     position: static !important;
     transform: none !important;
-    width: 95% !important;
-    height: auto !important;
-    margin: 1rem auto;
+    margin: 1.5rem auto;
+    width: 90%;
+    max-width: 500px;
+  }
+
+  /* 📍 후원 버튼은 그 아래 유지 */
+  .donate-button {
+    margin: 1.5rem auto;
+    width: 90%;
+    max-width: 500px;
+  }
+
+  /* 📍 목표/후원 텍스트들은 중앙 정렬 유지 */
+  .goal-label,
+  .donor-count,
+  .green-support-container {
+    width: 90%;
+    margin: 0.8rem auto;
+    text-align: center;
+  }
+
+  .live-chat-container {
+    position: static !important;
+    transform: none !important;
+    width: 90%;
+    max-width: 500px;
+    margin: 1.5rem auto;
+    height: 300px; /* ✅ 약 5줄 보이는 높이 */
   }
 
   .chat-messages {
-    max-height: 260px;
-  }
-
-  .donation-ranking-container {
-    max-height: 320px;
-  }
-
-  h1 {
-    font-size: 1.4rem;
-    white-space: normal;
-    line-height: 1.4;
-  }
-
-  .goal-label, .donor-count {
-    text-align: center;
+    font-size: 0.85rem;
   }
 }
+
 
 </style>
 
