@@ -708,10 +708,11 @@
   <!-- ✅ 라이브 채팅 박스 -->
 <div class="live-chat-container">
 <div class="chat-header">
-  <span id="chatTitle">💬 실시간 채팅</span>
+  💬 실시간 채팅
   <span class="online-badge">
-    <span class="online-dot"></span>
-    <span id="onlineLabel"></span><span id="onlineCount">0</span>
+    <span id="onlineLabel">현재 접속자수:</span>
+    <span class="dot"></span>
+    <span id="onlineCount">0</span>
   </span>
 </div>
   <div class="chat-messages" id="chatMessages"></div>
@@ -1044,7 +1045,9 @@ const firebaseConfig = {
   storageBucket: "onedollardrive-3bbee.firebasestorage.app",
   messagingSenderId: "37980557245",
   appId: "1:37980557245:web:9c752ecf11cdb6ff270cd4",
-  measurementId: "G-LWQCX5XZ9D"
+  measurementId: "G-LWQCX5XZ9D",
+ // ✅ 이 줄 추가 (정확히 그대로 복사)
+  databaseURL: "https://onedollardrive-3bbee-default-rtdb.asia-southeast1.firebasedatabase.app"
 };
 
 const app = initializeApp(firebaseConfig);

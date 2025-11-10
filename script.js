@@ -68,14 +68,6 @@ onValue(presenceListRef, (snap) => {
   if (countEl) countEl.textContent = count;
 });
 
-(() => {
-  const header = document.querySelector(".chat-header");
-  if (!header || header.querySelector(".online-badge")) return;
-  const badge = document.createElement("span");
-  badge.className = "online-badge";
-  badge.innerHTML = `<span class="label" id="onlineLabel"></span><span class="dot"></span><span id="onlineCount">0</span>`;
-  header.appendChild(badge);
-})();
 /* ----------------- 채팅 ----------------- */
 const messagesRef = collection(db, "messages");
 
@@ -197,6 +189,20 @@ function animateGauge(targetTotal) {
     progressBarEl.textContent = `₩${Math.floor(displayedTotal).toLocaleString()} / ₩${GOAL.toLocaleString()}`;
   }, frameRate);
 }
+// 채팅 헤더 오른쪽에 배지 삽입 (중복 생성 방지)
+(() => {
+  const header = document.querySelector(".chat-header");
+  if (!header || header.querySelector(".online-badge")) return;
+
+  const badge = document.createElement("span");
+  badge.className = "online-badge";
+  const lang = (localStorage.getItem("lang") || "ko") === "en";
+  badge.innerHTML =
+    `<span class="label" id="onlineLabel">${lang ? "Users Online: " : "현재 접속자수: "}</span>
+     <span class="dot"></span>
+     <span id="onlineCount">0</span>`;
+  header.appendChild(badge);
+})();
 
 // XSS 방지용
 function escapeHtml(str) {
