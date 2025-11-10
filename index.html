@@ -147,116 +147,77 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
 #popupTitle { color:#ffcc00; font-weight:700; font-size:1.6rem; text-align:center; margin-bottom:15px; text-shadow:0 2px 6px rgba(0,0,0,0.2); transition: color .3s; }
 #popupTitle:hover { color:#ffd633; }
 
-/* =========================
-   📱 모바일 전용 (900px 이하)
-   ========================= */
+
+/* ✅ 모바일 전용 UI 재정렬 (900px 이하) */
 @media (max-width: 900px) {
 
-  /* 전체 정렬을 세로 방향으로 */
-  body, .container, .video-section {
+  /* 모든 요소를 한 줄씩 세로 정렬 */
+  .container, .video-section {
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  /* 유튜브 영상 100% */
+  .video-container iframe {
     width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
   }
 
-  /* 영상 */
-  .video-container {
-    width: 100%;
-    max-width: 550px;
-  }
+  /* ✅ 영상 → 제목 / 캡션 / 스펙 */
+  .video-caption { order: 1; margin-top: 12px; }
+  #videoSpecs { order: 2; margin-top: 8px; margin-bottom: 16px; text-align:center; }
 
-  /* ✅ video caption을 영상 바로 다음으로 강제 */
-  .video-caption {
-    order: 2;
-    width: 90%;
-    max-width: 500px;
-    margin: 0.8rem auto;
-    text-align: center;
-  }
-
-  /* ✅ videoSpecs는 그 다음 */
-  #videoSpecs {
-    order: 3;
-    width: 90%;
-    max-width: 500px;
-    margin: 0.6rem auto 1rem;
-    text-align: center;
-  }
-
-  /* donation ranking */
+  /* ✅ Donation Ranking */
   .donation-ranking-container {
-    order: 4;
+    order: 3;
     position: static !important;
     width: 90%;
-    max-width: 500px;
-    margin: 1rem auto;
-    height: auto;
+    max-width: 450px;
+    margin: 18px auto;
   }
 
-  /* 랭킹 3명까지만 표시 */
-  #rankingList li:nth-child(n+4) {
-    display: none !important;
-  }
-
-  /* 지금 후원하기 버튼 */
+  /* ✅ 후원 버튼 */
   .donate-button {
-    order: 5;
+    order: 4;
     width: 90%;
-    max-width: 500px;
-    margin: 1.4rem auto;
-    display: block;
+    max-width: 450px;
+    margin: 18px auto;
   }
 
-  /* 목표 금액 + 후원자 수 + green support */
+  /* ✅ 목표 금액 + 후원자 수 + 10% 기부 박스 */
   .goal-label,
   .donor-count,
   .green-support-container {
-    order: 6;
+    order: 5;
     width: 90%;
-    max-width: 500px;
+    max-width: 450px;
     text-align: center;
-    margin: 0.6rem auto;
+    margin: 6px auto;
   }
 
-  /* live chat */
+  /* ✅ 실시간 채팅 박스 (5줄 정도 보이도록 높이 고정) */
   .live-chat-container {
-    order: 7;
+    order: 6;
     position: static !important;
     width: 90%;
-    max-width: 500px;
-    margin: 1.4rem auto;
-    height: 280px; /* 5줄 정도 표시 */
-    display: flex;
-    flex-direction: column;
+    max-width: 450px;
+    margin: 20px auto;
+    height: 260px;
   }
 
   .chat-messages {
-    flex: 1 1 auto;
+    height: 170px !important;
     overflow-y: auto;
-    font-size: 0.9rem;
+  }
+
+  /* ✅ 랭킹 리스트 3명까지만 보이기 */
+  #rankingList li:nth-child(n+4) {
+    display: none;
   }
 }
-@media (max-width: 900px) {
 
-  /* 순서 정렬 */
-  .video-caption, #videoSpecs, .donation-ranking-container,
-  .donate-button, .goal-label, .progress-container,
-  .donor-count, .green-support-container, .live-chat-container {
-    width: 90%;
-    max-width: 500px;
-    margin: 1rem auto;
-    order: unset;
-  }
-
-  /* 랭킹 3명까지만 */
-  #rankingList li:nth-child(n+4) { display: none; }
-
-  /* 채팅 높이 5줄 정도 */
-  .live-chat-container {
-    height: 260px;
-  }
-}
 
 </style>
 
