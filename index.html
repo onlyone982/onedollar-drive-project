@@ -646,7 +646,27 @@
   color: #46ff9d;
   font-weight: 700;
 }
+.online-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 10px;
+  font-size: 0.85rem;
+  color: #ffd952;
+  font-weight: 600;
+}
 
+.online-dot {
+  width: 7px;
+  height: 7px;
+  background: #4cff6a;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #4cff6a;
+}
+
+.chat-header{display:flex;align-items:center;justify-content:space-between}
+.online-badge{display:inline-flex;align-items:center;gap:6px;font-size:.9rem;color:#ffcc00;opacity:.95}
+.online-dot{width:8px;height:8px;border-radius:50%;background:#2bff88;box-shadow:0 0 6px #2bff88}
 
 </style>
 
@@ -681,9 +701,13 @@
   
   <!-- ✅ 라이브 채팅 박스 -->
 <div class="live-chat-container">
-  <div class="chat-header">💬 실시간 채팅
-  <span id="onlineLabel"></span><span id="onlineCount">0</span>
-</div> 
+<div class="chat-header">
+  <span id="chatTitle">💬 실시간 채팅</span>
+  <span class="online-badge">
+    <span class="online-dot"></span>
+    <span id="onlineLabel"></span><span id="onlineCount">0</span>
+  </span>
+</div>
   <div class="chat-messages" id="chatMessages"></div>
 
   <div class="chat-input-area">
