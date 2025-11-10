@@ -148,45 +148,95 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
 #popupTitle:hover { color:#ffd633; }
 
 /* =========================
-   모바일 전용 스타일 (<=900px)
+   📱 모바일 전용 (900px 이하)
    ========================= */
 @media (max-width: 900px) {
-  /* 레이아웃을 한 줄 흐름으로 만들고, video-section을 contents로 평탄화 */
-  .container { display: flex; flex-direction: column; align-items: center; }
-  .video-section { display: contents; } /* 자식들을 컨테이너의 직계로 만들어 order가 서로 비교되게 함 */
 
-  /* 순서 정의: 1) 스펙 2) 랭킹 3) 후원버튼 4) 목표/후원 텍스트들 5) 라이브채팅 */
-  .video-container { order: 0; width: 100%; }
-  #videoSpecs { order: 1; align-self: center; }
+  /* 전체 정렬을 세로 방향으로 */
+  body, .container, .video-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
 
-  .donation-ranking-container {
+  /* 영상 */
+  .video-container {
+    width: 100%;
+    max-width: 550px;
+  }
+
+  /* ✅ video caption을 영상 바로 다음으로 강제 */
+  .video-caption {
     order: 2;
-    position: static !important; top: auto !important; right: auto !important; left: auto !important; transform: none !important;
-    width: 90%; max-width: 500px; height: auto; margin: 1rem auto;
+    width: 90%;
+    max-width: 500px;
+    margin: 0.8rem auto;
+    text-align: center;
   }
 
-  .donate-button { order: 3; width: 90%; max-width: 500px; margin: 1rem auto; }
-
-  .goal-label, .progress-container, .donor-count, .green-support-container {
-    order: 4; width: 90%; max-width: 500px; margin: 0.5rem auto; text-align: center;
+  /* ✅ videoSpecs는 그 다음 */
+  #videoSpecs {
+    order: 3;
+    width: 90%;
+    max-width: 500px;
+    margin: 0.6rem auto 1rem;
+    text-align: center;
   }
 
-  .live-chat-container {
+  /* donation ranking */
+  .donation-ranking-container {
+    order: 4;
+    position: static !important;
+    width: 90%;
+    max-width: 500px;
+    margin: 1rem auto;
+    height: auto;
+  }
+
+  /* 랭킹 3명까지만 표시 */
+  #rankingList li:nth-child(n+4) {
+    display: none !important;
+  }
+
+  /* 지금 후원하기 버튼 */
+  .donate-button {
     order: 5;
-    position: static !important; top: auto !important; left: auto !important; transform: none !important;
-    width: 90%; max-width: 500px; margin: 1rem auto;
-    height: 280px;               /* 약 5줄 보이는 높이 */
-    display: flex; flex-direction: column;
+    width: 90%;
+    max-width: 500px;
+    margin: 1.4rem auto;
+    display: block;
   }
-  .chat-messages { font-size: 0.9rem; }
 
-  /* 모바일에서 랭킹 3명까지만 노출 */
-  #rankingList li:nth-child(n+4) { display: none; }
+  /* 목표 금액 + 후원자 수 + green support */
+  .goal-label,
+  .donor-count,
+  .green-support-container {
+    order: 6;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    margin: 0.6rem auto;
+  }
 
-  /* 모바일에서 텍스트 중앙 정렬 */
-  .goal-label, .donor-count { text-align: center; }
+  /* live chat */
+  .live-chat-container {
+    order: 7;
+    position: static !important;
+    width: 90%;
+    max-width: 500px;
+    margin: 1.4rem auto;
+    height: 280px; /* 5줄 정도 표시 */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chat-messages {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    font-size: 0.9rem;
+  }
 }
-
 
 </style>
 
