@@ -109,6 +109,32 @@ onSnapshot(qMessages, (snapshot) => {
   });
   chatMessages.scrollTop = chatMessages.scrollHeight;
 });
+/* ----------------- 팝업 ----------------- */
+document.addEventListener("DOMContentLoaded", () => {
+  const donateBtn = document.getElementById('donateBtn');
+  const donatePopup = document.getElementById('donatePopup');
+  const closePopup = document.getElementById('closePopup');
+
+  if (donateBtn && donatePopup && closePopup) {
+    donateBtn.addEventListener('click', () => donatePopup.style.display = 'flex');
+    closePopup.addEventListener('click', () => {
+      donatePopup.style.display = 'none';
+      document.querySelectorAll(".account-text").forEach((acc) => (acc.textContent = ""));
+      document.querySelectorAll(".cart-btn").forEach((btn) => btn.classList.remove("active"));
+    });
+  }
+
+  document.querySelectorAll('.cart-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const parent = btn.closest('.donate-card');
+      const text = parent.querySelector('.account-text');
+      const show = text.style.display === 'block';
+      text.style.display = show ? 'none' : 'block';
+      if (!show) text.textContent = btn.dataset.account || "";
+      btn.classList.toggle("active", !show);
+    });
+  });
+});
 
 /* ----------------- 후원 랭킹 & 게이지 ----------------- */
 const qDonations = query(collection(db, "donations"), orderBy("amount", "desc"), orderBy("timestamp", "desc"));
