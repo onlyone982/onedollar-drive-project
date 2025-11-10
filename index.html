@@ -984,9 +984,7 @@ function applyLang(lang) {
   document.querySelectorAll('.cart-btn').forEach(btn => {
     btn.setAttribute('data-account', t.accountText);
   });
-// ✅ 실시간 채팅 헤더 번역
-const chatHeader = document.querySelector(".chat-header");
-if (chatHeader) chatHeader.innerHTML = t.chatHeader;
+
 
 // ✅ 보내기 버튼 번역
 const sendBtn = document.getElementById("sendMessageBtn");
