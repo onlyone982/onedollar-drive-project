@@ -272,10 +272,6 @@ function renderRanking(donations) {
   if (!rankingListEl) return;
   rankingListEl.innerHTML = "";
 
-  if (donations.length === 0) {
-    rankingListEl.innerHTML = "<p>아직 후원이 없습니다 😢</p>";
-    return;
-  }
 
   donations.forEach((donor, index) => {
     const item = document.createElement("div");
