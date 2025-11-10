@@ -775,6 +775,25 @@
     text-align: center;
   }
 }
+/* ✅ PC 전용 (900px 이상일 때 원래 위치 유지) */
+@media (min-width: 901px) {
+  .goal-label {
+    text-align: left;
+    width: auto;
+    margin-left: 0;
+  }
+
+  .donor-count {
+    text-align: left;
+    width: auto;
+    margin-left: 0;
+  }
+
+  .green-support-container {
+    width: 80%;
+    margin: 1rem auto 2rem;
+  }
+}
 
 </style>
 
