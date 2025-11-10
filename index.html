@@ -596,7 +596,25 @@
   color: #00ff6a;
   font-weight: bold;
 }
+/* 🔥 1위 금색 그라데이션 */
+.ranking-item.top1 {
+  background: linear-gradient(135deg, #ffd700, #ffea8a);
+  color: #000;
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
 
+/* 🥈 2위 금색 테두리 */
+.ranking-item.top2 {
+  border: 2px solid #ffd700;
+  background-color: #181818;
+}
+
+/* 🥉 3위 금색 테두리 (조금 연하게) */
+.ranking-item.top3 {
+  border: 2px solid #e6c600;
+  background-color: #181818;
+}
 </style>
 
 <!-- ✅ Firebase / Google Analytics 추적 코드 -->
@@ -776,6 +794,10 @@ const translations = {
     greenSupportText: "10% of all donations are given to charity and children’s organizations.",
     popupTitle: "please Become the owner of the future with just 1$.",
     popupClose: "Close",
+    chatHeader: "💬 Live Chat",
+    sendMessage: "Send",
+    rankingHeader: "👑 Donation Ranking 👑",
+    onlineLabel: "Users Online: ",
     placeholderBeforeLogin: "Log in first to send a message...",//Live chat added//
     placeholderAfterLogin: "Leave your message!", 
     accountText: "💳 Account: paypal will be updated soon thank you for your patience.",
@@ -810,6 +832,10 @@ const translations = {
     greenSupportText: "전체 기부금의 10%는 불우이웃 및 어린이 단체에 기부됩니다.",
     popupTitle: "천원으로 미래의 주인공이 되어주세요.",
     popupClose: "닫기",
+    chatHeader: "💬 실시간 채팅",
+    sendMessage: "보내기",
+    rankingHeader: "👑 미래의 오너분들 👑",
+    onlineLabel: "현재 접속자수: ",
      placeholderBeforeLogin: "로그인 후 메시지를 입력하세요...",//Live chat 추가//
     placeholderAfterLogin: "메시지를 남겨주세요!",
     accountText: "💳 계좌번호:국민은행:908901-00-042802 (옐로우 호라이즌)",
@@ -868,6 +894,21 @@ function applyLang(lang) {
   document.querySelectorAll('.cart-btn').forEach(btn => {
     btn.setAttribute('data-account', t.accountText);
   });
+// ✅ 실시간 채팅 헤더 번역
+const chatHeader = document.querySelector(".chat-header");
+if (chatHeader) chatHeader.innerHTML = t.chatHeader;
+
+// ✅ 보내기 버튼 번역
+const sendBtn = document.getElementById("sendMessageBtn");
+if (sendBtn) sendBtn.innerText = t.sendMessage;
+
+// ✅ Donation Ranking 헤더 번역
+const rankingHeader = document.querySelector(".ranking-header");
+if (rankingHeader) rankingHeader.innerHTML = t.rankingHeader;
+
+// ✅ 실시간 접속자 라벨 (추가될 때 사용)
+const onlineLabel = document.getElementById("onlineLabel");
+if (onlineLabel) onlineLabel.textContent = t.onlineLabel;
 
   // FAQ 및 창립자 섹션
   document.querySelector('.faq h3').innerText = t.faqTitle;
