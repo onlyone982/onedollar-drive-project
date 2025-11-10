@@ -699,33 +699,74 @@
 /* ✅ 모바일 전용 UI (가로폭 900px 이하) */
 @media (max-width: 900px) {
 
+  /* 영상 */
   .video-section {
     max-width: 100%;
     padding: 0;
   }
 
-  /* 영상은 그대로 */
   .video-container {
     width: 100%;
   }
 
-  /* 📍 랭킹을 영상 아래로 이동시키기 */
+  /* ✅ Donation Ranking 완전 초기화 + 모바일 정렬 */
   .donation-ranking-container {
     position: static !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
     transform: none !important;
-    margin: 1.5rem auto;
     width: 90%;
     max-width: 500px;
+    height: auto;
+    margin: 1.5rem auto;
   }
 
-  /* 📍 후원 버튼은 그 아래 유지 */
+  /* ✅ Live Chat 완전 초기화 + 5줄 높이 */
+  .live-chat-container {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 90%;
+    max-width: 500px;
+    margin: 1.5rem auto;
+    height: 280px; /* 메시지 5개 정도 */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    white-space: nowrap;
+    padding: 10px 12px;
+  }
+
+  .online-badge {
+    font-size: 0.75rem;
+    gap: 4px;
+  }
+
+  .online-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .chat-messages {
+    font-size: 0.85rem;
+  }
+
+  /* ✅ 후원 버튼 */
   .donate-button {
-    margin: 1.5rem auto;
     width: 90%;
     max-width: 500px;
+    margin: 1.5rem auto;
+    display: block;
   }
 
-  /* 📍 목표/후원 텍스트들은 중앙 정렬 유지 */
+  /* ✅ 목표/후원 UI */
   .goal-label,
   .donor-count,
   .green-support-container {
@@ -733,21 +774,7 @@
     margin: 0.8rem auto;
     text-align: center;
   }
-
-  .live-chat-container {
-    position: static !important;
-    transform: none !important;
-    width: 90%;
-    max-width: 500px;
-    margin: 1.5rem auto;
-    height: 300px; /* ✅ 약 5줄 보이는 높이 */
-  }
-
-  .chat-messages {
-    font-size: 0.85rem;
-  }
 }
-
 
 </style>
 
