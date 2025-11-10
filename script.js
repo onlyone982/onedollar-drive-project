@@ -189,20 +189,33 @@ function animateGauge(targetTotal) {
     progressBarEl.textContent = `₩${Math.floor(displayedTotal).toLocaleString()} / ₩${GOAL.toLocaleString()}`;
   }, frameRate);
 }
-// 채팅 헤더 오른쪽에 배지 삽입 (중복 생성 방지)
-(() => {
-  const header = document.querySelector(".chat-header");
-  if (!header || header.querySelector(".online-badge")) return;
 
-  const badge = document.createElement("span");
-  badge.className = "online-badge";
+// ✅ 실시간 채팅 헤더 번역 + 뱃지 유지
+const chatHeader = document.querySelector(".chat-header");
+if (chatHeader) {
+  // 헤더 텍스트(첫 번째 노드)만 변경
+  const labelNode = chatHeader.childNodes[0];
+  if (labelNode && labelNode.nodeType === Node.TEXT_NODE) {
+    labelNode.textContent = t.chatHeader + " ";
+  }
+
+  // ✅ 기존 뱃지가 없을 때만 생성
+  let badge = chatHeader.querySelector(".online-badge");
+  if (!badge) {
+    badge = document.createElement("span");
+    badge.className = "online-badge";
+    chatHeader.appendChild(badge);
+  }
+
+  // ✅ 여기서 번역만 바꿔줌
   const lang = (localStorage.getItem("lang") || "ko") === "en";
-  badge.innerHTML =
-    `<span class="label" id="onlineLabel">${lang ? "Users Online: " : "현재 접속자수: "}</span>
-     <span class="dot"></span>
-     <span id="onlineCount">0</span>`;
-  header.appendChild(badge);
-})();
+  badge.innerHTML = `
+    <span id="onlineLabel">${lang ? "Users Online:" : "현재 접속자수:"}</span>
+    <span class="online-dot"></span>
+    <span id="onlineCount">0</span>
+  `;
+}
+
 
 // XSS 방지용
 function escapeHtml(str) {

@@ -656,6 +656,7 @@
   font-weight: 600;
 }
 
+/* ✅ 클래스명 통일: .online-dot → .dot */
 .online-dot {
   width: 7px;
   height: 7px;
@@ -664,14 +665,37 @@
   box-shadow: 0 0 6px #4cff6a;
 }
 
+/* ✅ header 잘려서 사라지는 현상 방지 */
 .chat-header {
-  background:#222; padding:10px; font-weight:bold; color:#ffcc00;
-  border-bottom:1px solid #333; display:flex; align-items:center; justify-content:space-between;
+  background:#222;
+  padding:10px;
+  font-weight:bold;
+  color:#ffcc00;
+  border-bottom:1px solid #333;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  overflow: visible;
 }
-.chat-header .online-badge { display:flex; gap:6px; align-items:center; font-weight:600; color:#aaa; }
-.chat-header .online-badge .dot {
-  width:8px; height:8px; border-radius:50%; background:#30e060; box-shadow:0 0 6px #30e060;
+
+/* ✅ 채팅 헤더 내 배지 스타일 */
+.chat-header .online-badge {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-weight:600;
+  color:#ffd952;
 }
+
+/* ✅ dot 크기 통일 */
+.chat-header .online-badge .online-dot {
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#30e060;
+  box-shadow:0 0 6px #30e060;
+}
+
 
 
 </style>
@@ -711,7 +735,7 @@
   💬 실시간 채팅
   <span class="online-badge">
     <span id="onlineLabel">현재 접속자수:</span>
-    <span class="dot"></span>
+    <span class="online-dot"></span>
     <span id="onlineCount">0</span>
   </span>
 </div>
