@@ -555,6 +555,48 @@
 #popupTitle:hover {
   color: #ffd633; /* 마우스 올릴 때 색상 강조 */
 }
+
+#rankingList {
+  list-style: none;   /* /랭킹 리스트 css/ */
+  padding: 0;
+  margin: 0;
+}
+
+#rankingList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #181818;
+  border-radius: 8px;
+  margin-bottom: 0.6rem;
+  padding: 0.5rem 0.8rem;
+  color: #fff;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+
+#rankingList li:hover {
+  background: #222;
+}
+
+#rankingList .rank {
+  color: gold;
+  font-weight: bold;
+  width: 30px;
+  text-align: center;
+}
+
+#rankingList .name {
+  flex: 1;
+  text-align: left;
+  margin-left: 0.4rem;
+}
+
+#rankingList .amount {
+  color: #00ff6a;
+  font-weight: bold;
+}
+
 </style>
 
 <!-- ✅ Firebase / Google Analytics 추적 코드 -->
@@ -606,7 +648,9 @@
  <!-- ✅ Donation Ranking (이름 + 금액만 표시) -->
 <div class="donation-ranking-container">
   <div class="ranking-header">👑 Donation Ranking 👑</div>
-  <div class="ranking-list" id="rankingList">
+  <div class="ranking-list">
+  <ul id="rankingList"></ul>
+</div>
   <!-- 초기 예시 데이터 제거 -->
   </div>
 </div>
