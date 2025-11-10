@@ -562,59 +562,92 @@
   margin: 0;
 }
 
+/* 기본 리스트 유지 */
 #rankingList li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #181818;
   border-radius: 8px;
   margin-bottom: 0.6rem;
-  padding: 0.5rem 0.8rem;
-  color: #fff;
+  padding: 0.6rem 0.8rem;
   font-size: 0.95rem;
-  transition: background 0.2s;
+  font-weight: 600;
+  position: relative;
+  overflow: visible;
+  z-index: 1;
+  background: #1a1a1a; /* 기본 */
 }
 
-#rankingList li:hover {
-  background: #222;
+/* ✅ 1~3위 네온 바깥 테두리 */
+#rankingList li:nth-child(-n + 3)::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 10px;
+  background: linear-gradient(90deg,#ffd700,#ffe680,#d1a300,#ffd700);
+  background-size: 300% 100%;
+  animation: glowFlow 4s linear infinite;
+  z-index: -1;
 }
 
+/* ✅ 내부를 가리는 레이어 (텍스트 보이는 레벨로 수정됨) */
+#rankingList li:nth-child(-n + 3)::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: 8px;
+  z-index: 0;
+}
+
+/* ✨ 순위별 내부 배경 색 */
+#rankingList li:nth-child(1)::after {
+  background: linear-gradient(135deg, #b7921b, #d6c057);
+}
+#rankingList li:nth-child(2)::after {
+  background: #2a2a1f;
+}
+#rankingList li:nth-child(3)::after {
+  background: #262418;
+}
+
+/* 🌈 네온 흐름 애니메이션 */
+@keyframes glowFlow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+/* 텍스트 계층 정리 */
+#rankingList .rank,
+#rankingList .name,
+#rankingList .amount {
+  position: relative;
+  z-index: 2;
+}
+
+/* 🏅 순위 */
 #rankingList .rank {
-  color: gold;
-  font-weight: bold;
-  width: 30px;
+  width: 35px;
   text-align: center;
+  color: #f3d34a;
+  font-weight: 700;
 }
 
+/* 이름 */
 #rankingList .name {
   flex: 1;
-  text-align: left;
-  margin-left: 0.4rem;
+  padding-left: 8px;
+  color: #ffffff;
 }
 
+/* 금액 */
 #rankingList .amount {
-  color: #00ff6a;
-  font-weight: bold;
-}
-/* 🔥 1위 금색 그라데이션 */
-.ranking-item.top1 {
-  background: linear-gradient(135deg, #ffd700, #ffea8a);
-  color: #000;
+  min-width: 90px;
+  text-align: right;
+  color: #46ff9d;
   font-weight: 700;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
-/* 🥈 2위 금색 테두리 */
-.ranking-item.top2 {
-  border: 2px solid #ffd700;
-  background-color: #181818;
-}
 
-/* 🥉 3위 금색 테두리 (조금 연하게) */
-.ranking-item.top3 {
-  border: 2px solid #e6c600;
-  background-color: #181818;
-}
 </style>
 
 <!-- ✅ Firebase / Google Analytics 추적 코드 -->
@@ -648,7 +681,9 @@
   
   <!-- ✅ 라이브 채팅 박스 -->
 <div class="live-chat-container">
-  <div class="chat-header">💬 실시간 채팅</div>
+  <div class="chat-header">💬 실시간 채팅
+  <span id="onlineLabel"></span><span id="onlineCount">0</span>
+</div> 
   <div class="chat-messages" id="chatMessages"></div>
 
   <div class="chat-input-area">
