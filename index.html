@@ -664,9 +664,15 @@
   box-shadow: 0 0 6px #4cff6a;
 }
 
-.chat-header{display:flex;align-items:center;justify-content:space-between}
-.online-badge{display:inline-flex;align-items:center;gap:6px;font-size:.9rem;color:#ffcc00;opacity:.95}
-.online-dot{width:8px;height:8px;border-radius:50%;background:#2bff88;box-shadow:0 0 6px #2bff88}
+.chat-header {
+  background:#222; padding:10px; font-weight:bold; color:#ffcc00;
+  border-bottom:1px solid #333; display:flex; align-items:center; justify-content:space-between;
+}
+.chat-header .online-badge { display:flex; gap:6px; align-items:center; font-weight:600; color:#aaa; }
+.chat-header .online-badge .dot {
+  width:8px; height:8px; border-radius:50%; background:#30e060; box-shadow:0 0 6px #30e060;
+}
+
 
 </style>
 

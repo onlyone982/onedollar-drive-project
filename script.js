@@ -68,6 +68,14 @@ onValue(presenceListRef, (snap) => {
   if (countEl) countEl.textContent = count;
 });
 
+(() => {
+  const header = document.querySelector(".chat-header");
+  if (!header || header.querySelector(".online-badge")) return;
+  const badge = document.createElement("span");
+  badge.className = "online-badge";
+  badge.innerHTML = `<span class="label" id="onlineLabel"></span><span class="dot"></span><span id="onlineCount">0</span>`;
+  header.appendChild(badge);
+})();
 /* ----------------- 채팅 ----------------- */
 const messagesRef = collection(db, "messages");
 
