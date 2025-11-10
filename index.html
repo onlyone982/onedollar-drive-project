@@ -555,23 +555,6 @@
 #popupTitle:hover {
   color: #ffd633; /* 마우스 올릴 때 색상 강조 */
 }
-.progress-container {
-  width: 100%;
-  background-color: #333;
-  border-radius: 8px;
-  overflow: hidden;
-  height: 24px;
-}
-
-.progress-bar {
-  height: 100%;
-  width: 0;
-  background-color: #4caf50;
-  color: white;
-  text-align: center;
-  transition: width 0.3s ease; /* 부드러운 기본 애니메이션 */
-}
-
 </style>
 
 <!-- ✅ Firebase / Google Analytics 추적 코드 -->
@@ -900,59 +883,75 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
 </script>
-
 <script type="module">
-  // ✅ Firebase SDK 불러오기
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-  import { getFirestore, collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-analytics.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-analytics.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyDTJFT5aBr2km6_Z-Q8gXdBvkKGxLVmOyo",
+  authDomain: "onedollardrive-3bbee.firebaseapp.com",
+  projectId: "onedollardrive-3bbee",
+  storageBucket: "onedollardrive-3bbee.firebasestorage.app",
+  messagingSenderId: "37980557245",
+  appId: "1:37980557245:web:9c752ecf11cdb6ff270cd4",
+  measurementId: "G-LWQCX5XZ9D"
+};
 
-  // ✅ Firebase 설정
-  const firebaseConfig = {
-    apiKey: "AIzaSyDTJFT5aBr2km6_Z-Q8gXdBvkKGxLVmOyo",
-    authDomain: "onedollardrive-3bbee.firebaseapp.com",
-    projectId: "onedollardrive-3bbee",
-    storageBucket: "onedollardrive-3bbee.firebasestorage.app",
-    messagingSenderId: "37980557245",
-    appId: "1:37980557245:web:9c752ecf11cdb6ff270cd4",
-    measurementId: "G-LWQCX5XZ9D"
-  };
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  // ✅ Firebase 초기화
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const analytics = getAnalytics(app);
+// ====== 요소 선택 ======
+const progressBar = document.getElementById("progressBar");
+const donorCount = document.getElementById("donorCount");
+const supportAmount = document.getElementById("supportAmount");
 
-  // ✅ 실시간 후원 랭킹 반영 함수
-  function loadDonationsRealtime() {
-    const rankingList = document.getElementById("rankingList");
-    const q = query(collection(db, "donations"), orderBy("amount", "desc"), limit(10));
+const GOAL = 400000000; // 목표 4억
+let displayedTotal = 0;
 
-    onSnapshot(q, (snapshot) => {
-      rankingList.innerHTML = "";
-      let rank = 1;
+// ====== 자연스럽게 증가 애니메이션 ======
+function animateGauge(total) {
+  const duration = 1200;
+  const frameRate = 20;
+  const frames = duration / frameRate;
+  const increment = (total - displayedTotal) / frames;
+  let frame = 0;
 
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        const name = data.name || "Anonymous";
-        const amount = data.amount || 0;
-        rankingList.innerHTML += `
-          <div class="ranking-item">
-            <span class="rank">${rank}</span>
-            <span class="name">${name}</span>
-            <span class="amount">₩${amount.toLocaleString()}</span>
-          </div>`;
-        rank++;
-      });
+  const timer = setInterval(() => {
+    frame++;
+    displayedTotal += increment;
 
-    });
-  }
+    if (frame >= frames) {
+      displayedTotal = total;
+      clearInterval(timer);
+    }
 
-  // ✅ 페이지 로드 시 실행
-  window.addEventListener("load", loadDonationsRealtime);
+    const percent = Math.min((displayedTotal / GOAL) * 100, 100);
+    progressBar.style.width = percent + "%";
+    progressBar.textContent = `₩${Math.floor(displayedTotal).toLocaleString()} / ₩${GOAL.toLocaleString()}`;
+  }, frameRate);
+}
+
+// ====== 실시간 반영 ======
+onSnapshot(collection(db, "donations"), (snapshot) => {
+  let total = 0;
+  let count = 0;
+
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    total += Number(data.amount) || 0;
+    count++;
+  });
+
+  animateGauge(total);
+  donorCount.textContent = `후원자 수: ${count.toLocaleString()}`;
+
+  const tenPercent = Math.round(total * 0.1);
+  supportAmount.textContent = `₩${tenPercent.toLocaleString()}`;
+});
 </script>
 
 <!-- 외부 JS 파일 -->
-<script type="module" src="script.js"></script>
+<script type="module" src="./script.js"></script>
+
 </body>
 </html>
