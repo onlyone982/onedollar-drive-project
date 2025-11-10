@@ -944,54 +944,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ====== 요소 선택 ======
-const progressBar = document.getElementById("progressBar");
-const donorCount = document.getElementById("donorCount");
-const supportAmount = document.getElementById("supportAmount");
-
-const GOAL = 400000000; // 목표 4억
-let displayedTotal = 0;
-
-// ====== 자연스럽게 증가 애니메이션 ======
-function animateGauge(total) {
-  const duration = 1200;
-  const frameRate = 20;
-  const frames = duration / frameRate;
-  const increment = (total - displayedTotal) / frames;
-  let frame = 0;
-
-  const timer = setInterval(() => {
-    frame++;
-    displayedTotal += increment;
-
-    if (frame >= frames) {
-      displayedTotal = total;
-      clearInterval(timer);
-    }
-
-    const percent = Math.min((displayedTotal / GOAL) * 100, 100);
-    progressBar.style.width = percent + "%";
-    progressBar.textContent = `₩${Math.floor(displayedTotal).toLocaleString()} / ₩${GOAL.toLocaleString()}`;
-  }, frameRate);
-}
-
-// ====== 실시간 반영 ======
-onSnapshot(collection(db, "donations"), (snapshot) => {
-  let total = 0;
-  let count = 0;
-
-  snapshot.forEach((doc) => {
-    const data = doc.data();
-    total += Number(data.amount) || 0;
-    count++;
-  });
-
-  animateGauge(total);
-  donorCount.textContent = `후원자 수: ${count.toLocaleString()}`;
-
-  const tenPercent = Math.round(total * 0.1);
-  supportAmount.textContent = `₩${tenPercent.toLocaleString()}`;
-});
 </script>
 
 <!-- 외부 JS 파일 -->
