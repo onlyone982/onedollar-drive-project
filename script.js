@@ -178,7 +178,7 @@ const rankingList = document.querySelector("#rankingList");
 rankingList.innerHTML = "<p>Loading...</p>"; // ✅ 초기 로딩 메시지 표시
 let totalDonation = 0;
 
-// 실시간 수신 (자동 정렬: 금액 desc + 최신순)
+// ✅ 실시간 후원 데이터 감시
 const qDonations = query(
   collection(db, "donations"),
   orderBy("amount", "desc"),
@@ -187,7 +187,7 @@ const qDonations = query(
 
 onSnapshot(qDonations, (snapshot) => {
   const donations = [];
-  totalDonation = 0;
+  let totalDonation = 0;
 
   snapshot.forEach(doc => {
     const data = doc.data();
@@ -197,13 +197,65 @@ onSnapshot(qDonations, (snapshot) => {
 
   updateDonationGauge(totalDonation);
   updateRanking(donations);
+  updateDonorInfo(donations.length, totalDonation);
 });
 
-function updateDonationGauge(total) {
-  const goal = 1000000; // 목표 금액 (원 단위)
-  const percent = Math.min((total / goal) * 100, 100);
-  donationGauge.style.width = `${percent}%`;
-  donationGauge.textContent = `${percent.toFixed(1)}%`;
+// 목표 금액
+const goalAmount = 400000000; // 4억
+let currentAmount = 0; // 실제 누적 금액
+
+function updateProgressBarAnimated(targetAmount) {
+  const progressBar = document.getElementById("progressBar");
+  const duration = 2000; // 2초 동안 애니메이션
+  const frameRate = 20;  // 0.02초마다 업데이트
+  const totalFrames = duration / frameRate;
+  const increment = (targetAmount - currentAmount) / totalFrames;
+  let currentFrame = 0;
+
+  const interval = setInterval(() => {
+    currentFrame++;
+    currentAmount += increment;
+
+    const percentage = Math.min((currentAmount / goalAmount) * 100, 100);
+    progressBar.style.width = percentage + "%";
+    progressBar.textContent = `₩${Math.floor(currentAmount).toLocaleString()} / ₩${goalAmount.toLocaleString()}`;
+
+    if (currentFrame >= totalFrames || currentAmount >= targetAmount) {
+      clearInterval(interval);
+      currentAmount = targetAmount; // 보정
+    }
+  }, frameRate);
+}
+
+  // 기존 애니메이션 중복 방지
+  if (progressBar.animationInterval) clearInterval(progressBar.animationInterval);
+
+  // 목표값에 맞춰 점진적으로 증가
+  const step = Math.ceil((total - currentDisplayedTotal) / 60); // 속도 조절 (60프레임 정도)
+  progressBar.animationInterval = setInterval(() => {
+    if (currentDisplayedTotal >= total || step <= 0) {
+      currentDisplayedTotal = total;
+      clearInterval(progressBar.animationInterval);
+    } else {
+      currentDisplayedTotal += step;
+    }
+
+    // 게이지 퍼센트 계산
+    const percent = Math.min((currentDisplayedTotal / GOAL_AMOUNT) * 100, 100);
+    progressBar.style.width = `${percent}%`;
+    progressBar.textContent = `₩${currentDisplayedTotal.toLocaleString()} / ₩${GOAL_AMOUNT.toLocaleString()}`;
+  }, 30); // 30ms마다 업데이트
+
+// ✅ 후원자 수 + 10% 기부금 표시
+function updateDonorInfo(count, total) {
+  const donorCount = document.getElementById("donorCount");
+  const supportAmount = document.getElementById("supportAmount");
+
+  if (donorCount) donorCount.textContent = count.toLocaleString();
+  if (supportAmount) {
+    const donation10Percent = total * 0.1;
+    supportAmount.textContent = `₩${donation10Percent.toLocaleString()}`;
+  }
 }
 
 // ✅ 중복 금액 시 최신 후원자 우선 순위
