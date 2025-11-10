@@ -555,6 +555,22 @@
 #popupTitle:hover {
   color: #ffd633; /* 마우스 올릴 때 색상 강조 */
 }
+.progress-container {
+  width: 100%;
+  background-color: #333;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 24px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0;
+  background-color: #4caf50;
+  color: white;
+  text-align: center;
+  transition: width 0.3s ease; /* 부드러운 기본 애니메이션 */
+}
 
 </style>
 
@@ -937,6 +953,6 @@ window.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <!-- 외부 JS 파일 -->
-<script src="script.js"></script>
+<script type="module" src="script.js"></script>
 </body>
 </html>
