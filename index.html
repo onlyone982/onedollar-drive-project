@@ -147,42 +147,72 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
 #popupTitle { color:#ffcc00; font-weight:700; font-size:1.6rem; text-align:center; margin-bottom:15px; text-shadow:0 2px 6px rgba(0,0,0,0.2); transition: color .3s; }
 #popupTitle:hover { color:#ffd633; }
 
-
+/* 모바일 전용 */
 @media (max-width: 900px) {
-  /* 기본 레이아웃: 위→아래 직렬, 폭 92% */
-  .container, .video-section { display: flex; flex-direction: column; align-items: center; }
-  .video-container, .donation-ranking-container, .live-chat-container,
-  .donate-button, .goal-label, .donor-count, .green-support-container,
-  .progress-container { width: 92%; max-width: 520px; margin: 0.9rem auto; }
 
-  /* 위치/겹침 해제 (PC 절대위치 무효화) */
-  .donation-ranking-container,
-  .live-chat-container {
-    position: static !important;
-    top: auto !important; left: auto !important; right: auto !important;
-    transform: none !important;
+  html, body {
+    overflow-x: hidden;
   }
 
-  /* 순서: 캡션(1) → 스펙(2) → 랭킹(3) → 후원버튼(4) → 목표/후원/10%(5) → 채팅(6) */
-  .video-caption { order: 1; }       /* 🚗 Porsche 911 GT3 RS */
-  #videoSpecs { order: 2; }          /* 스펙 요약 */
-  .donation-ranking-container { order: 3; }
-  .donate-button { order: 4; }
-  .goal-label, .progress-container, .donor-count, .green-support-container { order: 5; }
-  .live-chat-container { order: 6; }
+  /* 제목 크기 및 줄바꿈 */
+  h1#title {
+    font-size: 5.2vw;
+    text-align: center;
+    line-height: 1.25;
+    padding: 0 10px;
+    white-space: normal;
+  }
 
-  /* 랭킹은 3위까지만 표시 */
-  #rankingList li:nth-child(n+4) { display: none !important; }
+  /* 영상은 전체 너비 */
+  .video-container iframe {
+    width: 100%;
+    height: auto;
+  }
 
-  /* 채팅창은 5줄 정도 보이도록 고정 높이 */
-  .live-chat-container { height: 280px; }
-  .chat-header { padding: 10px 12px; white-space: nowrap; }
-  .chat-messages { flex: 1; overflow-y: auto; font-size: 0.9rem; }
+  /* ✅ 순서 재배치 */
+  .video-caption { order: 1; margin-top: 12px; text-align: center; }
+  .video-specs { order: 2; text-align: center; margin: 12px 0 20px; }
+
+  .donation-ranking-container { 
+    order: 3;
+    width: 90%;
+    max-width: 500px;
+    margin: 0 auto 20px;
+  }
+
+  .donate-button {
+    order: 4;
+    display: block;
+    width: 90%;
+    max-width: 500px;
+    margin: 0 auto 20px;
+  }
+
+  .goal-label,
+  .progress-container,
+  .donor-count,
+  .green-support-container {
+    order: 5;
+    width: 90%;
+    max-width: 500px;
+    margin: 8px auto;
+    text-align: center;
+  }
+
+  .live-chat-container {
+    order: 6;
+    width: 90%;
+    max-width: 500px;
+    margin: 20px auto;
+    height: 280px; /* ≈ 5줄 */
+  }
+
+  .chat-messages {
+    overflow-y: auto;
+    font-size: 0.9rem;
+  }
 }
 
-/* 공통: 상단 배지/점 스타일 유지 */
-.online-badge{display:inline-flex;align-items:center;gap:6px;margin-left:10px;font-size:.85rem;color:#ffd952;font-weight:600;}
-.chat-header .online-badge .online-dot{width:8px;height:8px;border-radius:50%;background:#30e060;box-shadow:0 0 6px #30e060;}
 
 </style>
 
