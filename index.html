@@ -190,7 +190,21 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
 
   /* ✅ 순서 재배치 */
   .video-caption { order: 1; margin-top: 12px; text-align: center; }
-  .video-specs { order: 2; text-align: center; margin: 12px 0 20px; }
+  /* ✅ video spec 중앙 위치 정밀 보정 */
+.video-specs {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  text-align: center !important;
+  width: 100% !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ✅ video caption 글자와 spec 간격 균형 */
+.video-caption {
+  margin-bottom: 8px !important;
+}
 
   /* 랭킹 박스 크기 축소 */
   .donation-ranking-container {
@@ -250,6 +264,42 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
     overflow-y: auto;
     font-size: 0.9rem;
   }
+  /* ✅ POPUP 모바일 최적화 */
+.popup-content {
+  width: 92vw !important;
+  max-width: 420px !important;
+  border-radius: 14px !important;
+  padding: 20px 16px !important;
+  box-sizing: border-box !important;
+}
+
+/* 팝업 안 결제 옵션 세로 정렬 */
+.donate-options {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 14px !important;
+}
+
+/* 각 금액 선택 카드 */
+.donate-card {
+  width: 100% !important;
+  padding: 14px !important;
+  min-height: auto !important;
+}
+
+/* GIF / 이미지 크기 자동 비율 유지 */
+.donate-gif {
+  width: 100% !important;
+  height: auto !important;
+  border-radius: 10px;
+}
+
+/* CART 버튼 위치 고정 */
+.cart-btn {
+  bottom: 12px !important;
+}
+
 }
 
 
@@ -332,14 +382,14 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
 
 <!-- ✅ 실시간 채팅 박스 (마지막) -->
 <div class="live-chat-container">
-  <div class="chat-header">
-    💬 실시간 채팅
-    <span class="online-badge">
-      <span id="onlineLabel">현재 접속자수:</span>
-      <span class="online-dot"></span>
-      <span id="onlineCount">0</span>
-    </span>
-  </div>
+<div class="chat-header" id="chatHeader">
+  <span class="chat-header-text">💬 실시간 채팅</span>
+  <span class="online-badge">
+    <span id="onlineLabel">현재 접속자수:</span>
+    <span class="online-dot"></span>
+    <span id="onlineCount">0</span>
+  </span>
+</div>
   
   <div class="chat-messages" id="chatMessages"></div>
 
@@ -541,6 +591,10 @@ function applyLang(lang) {
 // ✅ 보내기 버튼 번역
 const sendBtn = document.getElementById("sendMessageBtn");
 if (sendBtn) sendBtn.innerText = t.sendMessage;
+
+//실시간 채팅(chatHeader) 번역//
+const chatHeaderText = document.querySelector(".chat-header-text");
+if (chatHeaderText) chatHeaderText.textContent = t.chatHeader;
 
 // ✅ Donation Ranking 헤더 번역
 const rankingHeader = document.querySelector(".ranking-header");
