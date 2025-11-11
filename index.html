@@ -159,10 +159,7 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
     max-width: 100%;
     box-sizing: border-box;
   }
-/* 랭킹 4번째 이후는 숨김 */
-  #rankingList li:nth-child(n+4) {
-    display: none !important;
-  }
+
  /* PC에서 쓰던 absolute 강제 제거 */
   .live-chat-container,
   .donation-ranking-container {
@@ -195,11 +192,31 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
   .video-caption { order: 1; margin-top: 12px; text-align: center; }
   .video-specs { order: 2; text-align: center; margin: 12px 0 20px; }
 
-  .donation-ranking-container { 
+  /* 랭킹 박스 크기 축소 */
+  .donation-ranking-container {
     order: 3;
     width: 90%;
-    max-width: 500px;
-    margin: 0 auto 20px;
+    max-width: 400px;
+    height: auto; /* 자동 높이 */
+    padding: 12px 0;
+    margin: 1rem auto;
+  }
+
+  /* 랭킹 리스트에서 4위부터는 숨김 */
+  #rankingList li:nth-child(n+4) {
+    display: none !important;
+  }
+
+  /* 리스트 내부 여백 & 라인 크기 줄임 */
+  #rankingList li {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  /* 제목 영역 약간 줄임 */
+  .ranking-header {
+    font-size: 1rem;
+    padding: 8px 0;
   }
 
   .donate-button {
