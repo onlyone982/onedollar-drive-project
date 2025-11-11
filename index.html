@@ -159,7 +159,10 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
     max-width: 100%;
     box-sizing: border-box;
   }
-
+/* 랭킹 4번째 이후는 숨김 */
+  #rankingList li:nth-child(n+4) {
+    display: none !important;
+  }
  /* PC에서 쓰던 absolute 강제 제거 */
   .live-chat-container,
   .donation-ranking-container {
@@ -183,8 +186,9 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
 
   /* 영상은 전체 너비 */
   .video-container iframe {
-    width: 100%;
-    height: auto;
+    width: 100% !important;
+    height: 65vw !important; /* 기존 56vw → 60~65vw 정도가 더 크게 보임 */
+    border-radius: 10px;
   }
 
   /* ✅ 순서 재배치 */
