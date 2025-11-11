@@ -215,6 +215,15 @@ if (chatHeader) {
     <span id="onlineCount">0</span>
   `;
 }
+donateBtn.addEventListener('click', () => {
+  donatePopup.style.display = 'flex';
+  document.body.style.overflow = "hidden"; // ✅ 스크롤 잠금
+});
+
+closePopup.addEventListener('click', () => {
+  donatePopup.style.display = 'none';
+  document.body.style.overflow = ""; // ✅ 스크롤 해제
+});
 
 
 // XSS 방지용

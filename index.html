@@ -274,26 +274,41 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
     overflow-y: auto;
     font-size: 0.9rem;
   }
-  
- .popup-content {
-    max-width: 300px;   /* 기존 대비 약 50% 축소 */
-    padding: 15px 18px; /* 내부 여백 축소 */
-    border-radius: 12px;
+
+ .popup {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.65);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
   }
 
+  
+  .popup-content {
+    max-width: 260px;       /* 기존 대비 약 3.5배 축소 */
+    max-height: 80vh;       /* 화면 높이 제한 */
+    width: 90%;
+    padding: 15px 18px;
+    border-radius: 12px;
+    overflow-y: auto;       /* 스크롤은 팝업 내부에서만 */
+    text-align: center;
+    background: #ffB6C1;
+  }
+
+  /* 기부 카드 세로 정렬 (좁은 화면 대응) */
   .donate-options {
-    flex-direction: column; /* 카드 세로 정렬 */
-    gap: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
 
   .donate-card {
     width: 100%;
     min-height: auto;
-    padding: 12px;
-  }
-
-  .price-tag {
-    font-size: 1rem;
+    padding: 8px;
   }
 
   .donate-gif {
@@ -301,8 +316,15 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
   }
 
   .cart-btn {
-    font-size: 1.2rem;
-    bottom: 6px;
+    font-size: 1.3rem;
+    bottom: 4px;
+  }
+
+  /* ✅ 닫기 버튼 항상 보이도록 */
+  #closePopup {
+    margin-top: 14px;
+    display: block;
+    width: 100%;
   }
 }
 
