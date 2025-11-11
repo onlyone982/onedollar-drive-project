@@ -154,6 +154,24 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
     overflow-x: hidden;
   }
 
+  /* 모든 요소의 width 강제 정렬 */
+  * {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+ /* PC에서 쓰던 absolute 강제 제거 */
+  .live-chat-container,
+  .donation-ranking-container {
+    position: static !important;
+    transform: none !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   /* 제목 크기 및 줄바꿈 */
   h1#title {
     font-size: 5.2vw;
@@ -198,6 +216,7 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
     margin: 8px auto;
     text-align: center;
   }
+
   .live-chat-container {
     order: 6;
     width: 90%;
@@ -210,7 +229,6 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
     overflow-y: auto;
     font-size: 0.9rem;
   }
- 
 }
 
 
@@ -274,11 +292,6 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
   </div>
 </div>
 
-
-<!-- ✅ 후원하기 버튼 -->
-<button class="donate-button" id="donateBtn">🔥 지금 후원하기 | Donate Now</button>
-
-
 <!-- ✅ 목표 금액 & 후원 정보 -->
 <div class="goal-label" id="goalLabel">목표금액: ₩400,000,000</div>
 
@@ -292,6 +305,9 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
   <div class="green-support-amount" id="supportAmount">₩0</div>
   <div class="green-support-text">전체 기부금의 10%는 불우이웃 및 어린이 단체에 기부됩니다.</div>
 </div>
+
+<!-- ✅ 후원하기 버튼 -->
+<button class="donate-button" id="donateBtn">🔥 지금 후원하기 | Donate Now</button>
 
 <!-- ✅ 실시간 채팅 박스 (마지막) -->
 <div class="live-chat-container">
