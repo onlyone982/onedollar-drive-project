@@ -343,7 +343,7 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
 }
 /* ====== Legal / Policy Footer ====== */
 .legal-footer {
-  border-top: 1px solid #444;      /* 상단 구분선 */
+  border-top: 1px solid #888;   /* 회색 경계선 */
   margin-top: 40px;
 }
 
@@ -351,71 +351,61 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
   max-width: 1200px;
   margin: 0 auto;
   padding: 18px 16px 36px;
-  font-size: 13px;                 /* ≈ 10pt */
+  font-size: 13px;              
   line-height: 1.6;
-  color: #e8e8e8;                  /* 다크 테마용 텍스트 색 */
-  /* 밝은 배경이라면 아래 한 줄로 바꾸세요 */
-  /* color: #222; */
+  color: #ffffff;               
 }
 
-.legal-divider {
-  border: 0;
-  height: 1px;
-  background: #444;
-  margin: 0 0 16px;
-}
-
-.biz-block .sep { margin: 0 6px; opacity: .6; }
-
-.policy-links { margin-top: 4px; }
-
-.policy-list a {
-  color: #ffffff !important;      /* ← 원하는 색으로 강제 적용 */
+/* 링크 색상을 완전히 강제로 리셋 */
+.legal-wrap a,
+.legal-wrap a:visited,
+.legal-wrap a:hover,
+.legal-wrap a:active,
+footer a,
+footer a:visited,
+footer a:hover,
+footer a:active {
+  color: #ffffff !important;     /* 항상 흰색으로 고정 */
   text-decoration: none !important;
   border-bottom: none !important;
 }
 
-.policy-list li {
-  position: relative;
-  padding-right: 12px;              /* 구분자 여백 */
+/* 리스트 스타일 */
+.policy-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
 }
 
-/* | 구분자 자동 표시 (마지막 항목은 제외) */
+.policy-list li {
+  position: relative;
+  padding-right: 12px;
+}
+
+/* | 구분자 */
 .policy-list li:not(:last-child)::after {
   content: "|";
   position: absolute;
   right: 2px;
   top: 0;
-  color: inherit;
-  opacity: .6;
+  color: #ffffff;
+  opacity: 0.6;
 }
 
-.policy-list a {
-  color: #ffd54a;                   /* 다크 테마에서 잘 보이는 링크 색 */
-  text-decoration: none;
-  border-bottom: 1px dotted rgba(255, 213, 74, .5);
-  padding-bottom: 1px;
-}
-
-/* 밝은 배경일 때 링크 색 추천 */
-/*
-.policy-list a { color: #0a58ca; border-bottom-color: rgba(10,88,202,.35); }
-*/
-
-.policy-list a:hover,
-.policy-list a:focus {
-  text-decoration: underline;
-}
-footer a,
-.footer-links a {
-  color: #ffffff !important;      /* ← footer 내부 링크 강제 리셋 */
-  text-decoration: none !important;
-}
-
-/* 모바일 가독성 */
+/* 모바일 */
 @media (max-width: 560px) {
   .legal-wrap { font-size: 13px; }
   .policy-list { gap: 4px 8px; }
+}
+
+/* ===== Footer 링크 색상 강제 처리 ===== */
+footer a,
+footer a:visited {
+  color: #ffffff !important;
+  text-decoration: none !important;
 }
 
 </style>
@@ -798,29 +788,29 @@ const db = getFirestore(app);
 
 </script>
 
-<!-- 외부 JS 파일 -->
-<script type="module" src="./script.js"></script>
-
-
 <!-- ====== Legal / Policy Footer ====== -->
-<hr style="margin-top: 40px; border: 0; border-top: 1px solid #ccc;">
+<hr style="margin-top: 40px; border: 0; border-top: 1px solid #555;">
 
 <div style="font-size: 12pt; line-height: 1.6; text-align: left;">
+
   전화: <span id="footerPhone">010-4829-3911</span><br>
   이메일: <span id="footerEmail">onedolladrive@gmail.com</span><br>
   사업자 번호: <span id="footerBusiness">598-43-01196</span><br>
   통신판매업 신고번호: <span id="footerLicense">제2023-강원원주-01485호</span><br>
   대표: <span id="footerCEO">이명준</span><br>
-  주소: <span id="footerAddress">강원특별자치도 원주시  123, 2층</span><br><br>
+  주소: <span id="footerAddress">강원특별자치도 원주시 123, 2층</span><br><br>
 
-  <a href="#https://sites.google.com/view/ondollardrive-privacy/%ED%99%88" id="privacyLink">개인정보처리 약관</a> |
-  <a href="#https://sites.google.com/view/onedollardrive-policy/%ED%99%88" id="termsLink">이용 약관</a> |
-  <a href="#https://sites.google.com/view/onedollardrive-privacy-en/%ED%99%88" id="policyLink">Privacy Policy</a> |
-  <a href="#https://policies.google.com/privacy?hl=en" id="googleprivacyLink">Google 개인정보처리방침</a> |
-  <a href="#https://www.youtube.com/static?gl=KR&template=terms" id="youtubetermsLink">YouTube 서비스 이용약관</a><br><br>
+  <a href="https://sites.google.com/view/ondollardrive-privacy/홈" target="_blank">개인정보처리 약관</a> |
+  <a href="https://sites.google.com/view/onedollardrive-policy/홈" target="_blank">이용 약관</a> |
+  <a href="https://sites.google.com/view/onedollardrive-privacy-en/홈" target="_blank">Privacy Policy</a> |
+  <a href="https://policies.google.com/privacy?hl=en" target="_blank">Google 개인정보처리방침</a> |
+  <a href="https://www.youtube.com/static?gl=KR&template=terms" target="_blank">YouTube 서비스 이용약관</a><br><br>
 
-  <span>ⓒ 2023.Yellowhorizen Co. All rights reserved..</span>
+  <span>ⓒ 2023. Yellowhorizen Co. All rights reserved.</span>
 </div>
+
+<!-- 외부 JS 파일 -->
+<script type="module" src="./script.js"></script>
 
 </body>
 </html>
