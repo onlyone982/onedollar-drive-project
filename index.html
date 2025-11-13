@@ -341,6 +341,82 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
     width: 100%;
   }
 }
+/* ====== Legal / Policy Footer ====== */
+.legal-footer {
+  border-top: 1px solid #444;      /* 상단 구분선 */
+  margin-top: 40px;
+}
+
+.legal-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 16px 36px;
+  font-size: 13px;                 /* ≈ 10pt */
+  line-height: 1.6;
+  color: #e8e8e8;                  /* 다크 테마용 텍스트 색 */
+  /* 밝은 배경이라면 아래 한 줄로 바꾸세요 */
+  /* color: #222; */
+}
+
+.legal-divider {
+  border: 0;
+  height: 1px;
+  background: #444;
+  margin: 0 0 16px;
+}
+
+.biz-block .sep { margin: 0 6px; opacity: .6; }
+
+.policy-links { margin-top: 4px; }
+
+.policy-list a {
+  color: #ffffff !important;      /* ← 원하는 색으로 강제 적용 */
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+.policy-list li {
+  position: relative;
+  padding-right: 12px;              /* 구분자 여백 */
+}
+
+/* | 구분자 자동 표시 (마지막 항목은 제외) */
+.policy-list li:not(:last-child)::after {
+  content: "|";
+  position: absolute;
+  right: 2px;
+  top: 0;
+  color: inherit;
+  opacity: .6;
+}
+
+.policy-list a {
+  color: #ffd54a;                   /* 다크 테마에서 잘 보이는 링크 색 */
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(255, 213, 74, .5);
+  padding-bottom: 1px;
+}
+
+/* 밝은 배경일 때 링크 색 추천 */
+/*
+.policy-list a { color: #0a58ca; border-bottom-color: rgba(10,88,202,.35); }
+*/
+
+.policy-list a:hover,
+.policy-list a:focus {
+  text-decoration: underline;
+}
+footer a,
+.footer-links a {
+  color: #ffffff !important;      /* ← footer 내부 링크 강제 리셋 */
+  text-decoration: none !important;
+}
+
+/* 모바일 가독성 */
+@media (max-width: 560px) {
+  .legal-wrap { font-size: 13px; }
+  .policy-list { gap: 4px 8px; }
+}
 
 </style>
 
@@ -494,12 +570,12 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
         <p>
           <strong>Q: 후원은 실제로 어디에 사용되나요?</strong
           ><br />
-          모든 후원금은 드림카 구매 및 후원자분들께 즐거운 경험을 공유하고자 추첨을 통해 투명하게 사용될 예정입니다. (만약 후원금이 진짜 모이면요 🥲).
+          여러분의 소중한 후원금의 10%는 자선단체(사랑의 열매등)에 사용되며 이후 자동차 구매 및 추첨을 통해 후원자분들과 운전경험을 공유하여 투명하게 사용될 예정입니다. (만약 후원금이 진짜 모이면요😲).
         </p>
         <p>
           <strong>Q: 후원은 환불 가능한가요?</strong
           ><br />
-         네 가능합니다. 특별한 사유가 있을 경우 이메일로 문의하실 수 있습니다. "하지만 명확한 사실 여부를 위해 꼭 로그인을 하시고 후원해주시길 부탁드립니다"
+         특별한 사유가 있을 경우 이메일로 문의하실 수 있습니다. 가급적 로그인 후 후원해주실 것을 양해드리며 "자세한 사항은 이용약관 참고 부탁드립니다"
         </p>
       </div>
       <div class="founder-message">
@@ -534,9 +610,9 @@ const translations = {
     accountText: "💳 Account: paypal will be updated soon thank you for your patience.",
     faqTitle: "Frequently Asked Questions (FAQ)",
     faqQ1: "Q: How will the donations be used?",
-    faqA1: "All donations will be used transparently for the dream car project and giveaways for supporters.",
+    faqA1: "10% of your valuable donations will be contributed to charitable organizations such as the Community Chest of Korea. The remaining funds will be used transparently for vehicle purchases and shared driving experiences with donors through a draw — if the donations truly come together, that is😲.",
     faqQ2: "Q: Can I get a refund?",
-    faqA2: "Yes, it's possible. If you have a special reason, you can contact us by e-mail. However, please log in and support us for clear facts.",
+    faqA2: "If you have a special reason, you may contact us via email. We kindly ask that you log in before making a donation whenever possible. For more details, please refer to our Terms of Service.",
     founderTitle: "Message from the Founder",
     founderMessage: "I've loved cars since childhood. This project is about making our collective dream come true, not just crowdfunding. Thank you for being part of it!",
     googleLoginBtn: "Google Login / Sign Up",
@@ -572,9 +648,9 @@ const translations = {
     accountText: "💳 계좌번호:국민은행:908901-00-042802 (옐로우 호라이즌)",
     faqTitle: "자주 묻는 질문 (FAQ)",
     faqQ1: "Q: 후원은 실제로 어디에 사용되나요?",
-    faqA1: "모든 후원금은 드림카 구매 및 후원자분들께 즐거운 경험을 공유하기 위한 용도로 투명하게 사용됩니다.",
+    faqA1: "여러분의 소중한 후원금의 10%는 자선단체(사랑의 열매등)에 사용되며 이후 자동차 구매 및 추첨을 통해 후원자분들과 운전경험을 공유하여 투명하게 사용될 예정입니다. (만약 후원금이 진짜 모이면요😲)",
     faqQ2: "Q: 후원은 환불 가능한가요?",
-    faqA2: "네 가능합니다. 특별한 사유가 있을 경우 이메일로 문의하실 수 있습니다. 하지만 명확한 사실 여부를 위해 꼭 로그인을 하시고 후원해주시길 부탁드립니다.",
+    faqA2: "특별한 사유가 있을 경우 이메일로 문의하실 수 있습니다. 가급적 로그인 후 후원해주실 것을 양해드리며 자세한 사항은 이용약관 참고 부탁드립니다.",
     founderTitle: "창립자의 메시지",
     founderMessage: "저는 어릴때나 지금이나 차를 좋아합니다. 이 사이트는 단순한 크라우드 펀딩이 아니라, 모두의 꿈을 현실로 만들고 싶다는 믿음으로 시작했습니다. 여러분의 소중한 후원 감사드립니다!",
     googleLoginBtn: "구글 로그인 / 회원가입",
@@ -724,6 +800,27 @@ const db = getFirestore(app);
 
 <!-- 외부 JS 파일 -->
 <script type="module" src="./script.js"></script>
+
+
+<!-- ====== Legal / Policy Footer ====== -->
+<hr style="margin-top: 40px; border: 0; border-top: 1px solid #ccc;">
+
+<div style="font-size: 12pt; line-height: 1.6; text-align: left;">
+  전화: <span id="footerPhone">010-4829-3911</span><br>
+  이메일: <span id="footerEmail">onedolladrive@gmail.com</span><br>
+  사업자 번호: <span id="footerBusiness">598-43-01196</span><br>
+  통신판매업 신고번호: <span id="footerLicense">제2023-강원원주-01485호</span><br>
+  대표: <span id="footerCEO">이명준</span><br>
+  주소: <span id="footerAddress">강원특별자치도 원주시  123, 2층</span><br><br>
+
+  <a href="#" id="https://sites.google.com/view/ondollardrive-privacy/%ED%99%88">개인정보처리 약관</a> |
+  <a href="#" id="https://sites.google.com/view/onedollardrive-policy/%ED%99%88">이용 약관</a> |
+  <a href="#" id="https://sites.google.com/view/onedollardrive-privacy-en/%ED%99%88">Privacy Policy</a> |
+  <a href="#" id="https://policies.google.com/privacy?hl=en">Google 개인정보처리방침</a> |
+  <a href="#" id="https://www.youtube.com/static?gl=KR&template=terms">YouTube 서비스 이용약관</a><br><br>
+
+  <span>ⓒ 2023.Yellowhorizen Co. All rights reserved..</span>
+</div>
 
 </body>
 </html>
