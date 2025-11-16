@@ -381,7 +381,18 @@ function escapeHtml(str) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 }
+document.getElementById("copyLinkBtn")?.addEventListener("click", async () => {
+  const url = window.location.href;
+
+  try {
+    await navigator.clipboard.writeText(url);
+    alert("링크가 복사되었습니다.");
+  } catch {
+    alert("복사 실패. 주소창에서 직접 복사해주세요.");
+  }
+});
 
 /* ----------------- 전역 노출 (HTML onclick용) ----------------- */
 window.toggleLang = toggleLang;
 window.applyLang = applyLang;
+

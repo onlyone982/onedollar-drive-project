@@ -435,6 +435,37 @@ footer a:visited {
   color: #ffffff !important;
   text-decoration: none !important;
 }
+/* COPY LINK 정확 위치 잡기 */
+.copy-link-text {
+  position: absolute;
+  bottom: -22px;  /* 영상 아래 여백 */
+  left: 0;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fd143c;
+  user-select: none;
+  z-index: 50;
+}
+
+/* hover */
+.copy-link-text:hover {
+  opacity: 1;
+}
+
+/* 모바일은 정렬 위치 변경 */
+@media (max-width: 900px) {
+  .copy-link-text {
+    position: relative;
+    top: 0;
+    left: 0;
+    margin-top: 6px;
+    padding-left: 6px;
+  }
+}
+.video-section {
+  position: relative;   /* ✅ COPYLINK가 붙을 기준 박스 */
+}
 
 </style>
 
@@ -469,9 +500,8 @@ footer a:visited {
       allowfullscreen
     ></iframe>
   </div>
-
+  <div class="copy-link-text" id="copyLinkBtn">🔗COPY LINK</div>
 </div> <!-- video-section END -->
-
 
 <!-- ✅ 영상 아래 캡션 -->
 <div class="video-caption">
