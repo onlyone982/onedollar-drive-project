@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+<meta charset="UTF-8">
+
+  <!-- 🔥 반드시 있어야 함 (모바일 → 모바일 화면 크기로 렌더링) -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+
 <!-- ===== SEO (English Version) ===== -->
 <title>One Dollar Drive – Dreamcar Donation Project</title>
 
@@ -36,9 +41,7 @@
 <meta name="twitter:description" content="Support the dreamcar journey — Porsche 911 GT3 RS — starting from just 1 USD.">
 <meta name="twitter:image" content="https://onedollardrive.com/og-image.jpg">
 
- </head>
- <body>
- <style>
+<style>
 /* =========================
    PC 기본 스타일 (>=901px)
    ========================= */
@@ -363,6 +366,7 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
     width: 100%;
   }
 }
+
 /* ====== Legal / Policy Footer ====== */
 .legal-footer {
   border-top: 1px solid #888;   /* 회색 경계선 */
@@ -370,12 +374,14 @@ footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color:
 }
 
 .legal-wrap {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 18px 16px 36px;
-  font-size: 13px;              
-  line-height: 1.6;
-  color: #ffffff;               
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+hr[style] {
+  width: 100vw !important;
+  margin-left: 50% !important;
+  transform: translateX(-50%);
 }
 
 /* 링크 색상을 완전히 강제로 리셋 */
@@ -432,6 +438,9 @@ footer a:visited {
 
 </style>
 
+</head>
+ <body>
+
 <!-- ✅ Firebase / Google Analytics 추적 코드 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-LWQCX5XZ9D"></script>
 <script>
@@ -442,8 +451,6 @@ footer a:visited {
     send_page_view: true
   });
  </script>
-</head>
-<body>
 
 <div class="top-right-buttons">
   <button class="login-button" onclick="signInWithGoogle()">구글 로그인 / 회원가입</button>
@@ -564,7 +571,6 @@ footer a:visited {
   </div>
 </div>
 
-
     <div id="messageSlide"></div>
     <p id="description">
       차를 좋아하고 드라이브를 즐기는 사람들이라면 한번쯤은 생각하셨을 나만의 드림카... 생각만 해도 가슴이 두근거립니다.<br /><br />
@@ -620,10 +626,11 @@ const db = getFirestore(app);
 
 </script>
 
+<div class="footer-legal-wrap"></div>
 <!-- ====== Legal / Policy Footer ====== -->
 <hr style="margin-top: 40px; border: 0; border-top: 1px solid #555;">
 
-<div style="font-size: 12pt; line-height: 1.6; text-align: left;">
+<div style="font-size: 10pt; line-height: 1.6; text-align: left;">
 
   전화: <span id="footerPhone">010-4829-3911</span><br>
   이메일: <span id="footerEmail">onedolladrive@gmail.com</span><br>
