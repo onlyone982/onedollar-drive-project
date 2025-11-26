@@ -224,42 +224,78 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ----------------- 후원 랭킹 & 게이지 ----------------- */
-const qDonations = query(
-  collection(db, "donations"),
-  orderBy("amount", "desc"),
-  orderBy("timestamp", "desc")
-);
+onSnapshot(collection(db, "donations"), (snapshot) => {
+  const donations = snapshot.docs.map(doc => ({
+    id: doc.id,
+    name: doc.data().name,
+    amount: doc.data().amount
+  }));
 
-onSnapshot(qDonations, (snapshot) => {
-  const donations = [];
-  let total = 0;
-  let count = 0;
+  // 순위 계산
+  const sorted = donations
+    .sort((a, b) => b.amount - a.amount)
+    .map((d, i) => ({ ...d, rank: i + 1 }));
 
-  snapshot.forEach((doc) => {
-    const d = doc.data();
-    const amount = Number(d.amount) || 0;
-    donations.push({ name: d.name || "Anonymous", amount });
-    total += amount;
-    count += 1;
+  // 애니메이션 적용된 업데이트 함수 실행
+  animateRankingUpdate(sorted);
+
+  // 기존 기능 유지 (progress bar, count 등)
+  renderDonorInfo(sorted.length, donations.reduce((a,b)=>a+b.amount,0));
+});
+function animateRankingUpdate(newRankings) {
+  const list = document.getElementById("rankingList");
+  const items = Array.from(list.children);
+
+  // 1️⃣ 기존 요소 위치 저장
+  const oldPositions = {};
+  items.forEach(item => {
+    oldPositions[item.dataset.id] = item.getBoundingClientRect().top;
   });
 
-  updateRanking(donations);
-  animateGauge(total);
-  renderDonorInfo(count, total);
-  applyLang(localStorage.getItem("lang") || "ko");
-});
+  // 2️⃣ 새 순서대로 DOM 재정렬
+  newRankings.forEach((donor, index) => {
+    let li = list.querySelector(`[data-id="${donor.id}"]`);
+    
+    // 새 요소가 없다면 생성
+    if (!li) {
+      li = document.createElement("li");
+      li.classList.add("ranking-item");
+      li.dataset.id = donor.id;
+      list.appendChild(li);
+    }
 
-function updateRanking(donations) {
-  rankingListEl.innerHTML = "";
-  donations.forEach((donor, idx) => {
-    const li = document.createElement("li");
+    // 내용 업데이트
     li.innerHTML = `
-      <span class="rank">${idx + 1}</span>
+      <span class="rank">${donor.rank}</span>
       <span class="name">${escapeHtml(donor.name)}</span>
-      <span class="amount">₩${(donor.amount || 0).toLocaleString()}</span>`;
-    rankingListEl.appendChild(li);
+      <span class="amount">₩${donor.amount.toLocaleString()}</span>
+    `;
+
+    // 실제 DOM 위치 이동
+    list.insertBefore(li, list.children[index]);
+  });
+
+  // 3️⃣ 새 위치 계산 → 애니메이션 적용
+  Array.from(list.children).forEach(item => {
+    const id = item.dataset.id;
+    const oldPos = oldPositions[id];
+    const newPos = item.getBoundingClientRect().top;
+
+    if (oldPos !== undefined) {
+      const delta = oldPos - newPos;
+
+      item.style.transition = "none";
+      item.style.transform = `translateY(${delta}px)`;
+
+      requestAnimationFrame(() => {
+        item.style.transition = "transform 0.35s ease";
+        item.style.transform = "";
+      });
+    }
   });
 }
+
+
 
 function animateGauge(targetTotal) {
   if (animTimer) clearInterval(animTimer);
