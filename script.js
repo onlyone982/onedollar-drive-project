@@ -32,7 +32,7 @@ const translations = {
     onlineLabel: "Users Online: ",
     placeholderBeforeLogin: "Log in first to send a message...",
     placeholderAfterLogin: "Leave your message!",
-    accountText: "💳 Account: paypal will be updated soon thank you for your patience.",
+    accountText: "💳 Account: https://www.paypal.com/ncp/payment/8A53863TW23CA",
     faqTitle: "Frequently Asked Questions (FAQ)",
     faqQ1: "Q: How will the donations be used?",
     faqA1: "10% of your valuable donations will be contributed to charitable organizations such as the Community Chest of Korea. The remaining funds will be used transparently for vehicle purchases and shared driving experiences with donors through a draw — if the donations truly come together, that is😲.",
@@ -228,8 +228,14 @@ onSnapshot(collection(db, "donations"), (snapshot) => {
   const donations = snapshot.docs.map(doc => ({
     id: doc.id,
     name: doc.data().name,
-    amount: doc.data().amount
+    amount: Number(doc.data().amount) || 0
   }));
+
+  // ⭐ 후원 총액 계산
+  const totalAmount = donations.reduce((a, b) => a + b.amount, 0);
+
+  // ⭐ 게이지 업데이트 (핵심 1)
+  animateGauge(totalAmount);
 
   // 순위 계산
   const sorted = donations
@@ -240,7 +246,7 @@ onSnapshot(collection(db, "donations"), (snapshot) => {
   animateRankingUpdate(sorted);
 
   // 기존 기능 유지 (progress bar, count 등)
-  renderDonorInfo(sorted.length, donations.reduce((a,b)=>a+b.amount,0));
+  renderDonorInfo(sorted.length, totalAmount);
 });
 function animateRankingUpdate(newRankings) {
   const list = document.getElementById("rankingList");
