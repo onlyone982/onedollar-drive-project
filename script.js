@@ -211,16 +211,30 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  document.querySelectorAll(".cart-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const parent = btn.closest(".donate-card");
-      const text = parent.querySelector(".account-text");
-      const show = text.style.display === "block";
-      text.style.display = show ? "none" : "block";
-      if (!show) text.textContent = btn.dataset.account || "";
-      btn.classList.toggle("active", !show);
-    });
+
+document.querySelectorAll(".cart-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const parent = btn.closest(".donate-card");
+    const text = parent.querySelector(".account-text");
+    const show = text.style.display === "block";
+
+    text.style.display = show ? "none" : "block";
+
+    if (!show) {
+      const raw = btn.dataset.account || "";
+
+      // URL 자동 링크 변환
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      const html = raw.replace(urlRegex, (url) => {
+        return `<a href="${url}" target="_blank" style="color:#0066ff; text-decoration: underline;">${url}</a>`;
+      });
+
+      text.innerHTML = html;   // 링크 활성화
+    }
+
+    btn.classList.toggle("active", !show);
   });
+ });
 });
 
 /* ----------------- 후원 랭킹 & 게이지 ----------------- */
@@ -300,7 +314,6 @@ function animateRankingUpdate(newRankings) {
     }
   });
 }
-
 
 
 function animateGauge(targetTotal) {
