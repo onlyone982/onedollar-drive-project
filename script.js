@@ -15,7 +15,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
 
 /* ----------------- 번역 상태 ----------------- */
-let currentLang = localStorage.getItem("lang") || "ko";
+let currentLang = localStorage.getItem("lang") || "en";
 
 const translations = {
   en: {
