@@ -415,6 +415,33 @@ function applyLang(lang) {
   updateDonorCountUI();
 }
 
+const languageBtn = document.getElementById("languageBtn");
+const languageModal = document.getElementById("languageModal");
+
+// 모달 열기
+languageBtn?.addEventListener("click", () => {
+  languageModal.style.display = "flex";
+});
+
+// 바깥 클릭 시 닫기
+languageModal?.addEventListener("click", (e) => {
+  if (e.target === languageModal) {
+    languageModal.style.display = "none";
+  }
+});
+
+// 언어 선택
+document.querySelectorAll(".lang-option").forEach(option => {
+  option.addEventListener("click", () => {
+    const lang = option.dataset.lang;
+
+    localStorage.setItem("lang", lang);
+
+    // 새로고침으로 전체 UI 반영
+    location.reload();
+  });
+});
+
 /* ----------------- 언어 토글 ----------------- */
 function toggleLang() {
   currentLang = currentLang === "ko" ? "en" : "ko";

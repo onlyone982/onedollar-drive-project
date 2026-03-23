@@ -481,6 +481,45 @@ footer a:visited {
   cursor: pointer;
 }
 
+/* language box */
+.lang-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.lang-box {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  min-width: 220px;
+}
+
+.lang-option {
+  padding: 12px;
+  margin: 10px 0;
+  cursor: pointer;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: 0.2s;
+
+    /* ✅ 추가 */
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+.lang-option:hover {
+  background: rgba(255,255,255,0.2);
+}
+
 </style>
 
 </head>
@@ -500,7 +539,14 @@ footer a:visited {
 <div class="top-right-buttons">
   <button class="login-button" onclick="signInWithGoogle()">구글 로그인 / 회원가입</button>
   <button class="logout-button" onclick="signOutFromGoogle()" style="display:none;">로그아웃</button>
-  <button class="lang-toggle" id="langToggle" onclick="toggleLang()">Language</button>
+  <button class="lang-toggle" id="languageBtn">🌐 Language</button>
+</div>
+
+<div id="languageModal" class="lang-modal">
+  <div class="lang-box">
+    <div class="lang-option" data-lang="ko"> &#x1F1F0;&#x1F1F7; Korean</div>
+    <div class="lang-option" data-lang="en"> &#x1F1FA;&#x1F1F8; English</div>
+  </div>
 </div>
 
   <div class="container">
@@ -510,7 +556,7 @@ footer a:visited {
   <!-- ✅ 영상 -->
   <div class="video-container">
     <iframe
-      src="https://youtu.be/DZAdVY9kKbc?si=pmJ3sJFoASEW-lC6"
+      src="https://www.youtube.com/embed/DZAdVY9kKbc?si=54uDb1SrxgJb3EBZ"
       allowfullscreen
     ></iframe>
   </div>
