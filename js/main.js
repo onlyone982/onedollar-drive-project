@@ -1,4 +1,6 @@
 import { CARS, THEMES, IMAGE_SIZE } from "./cars.js";
+import { t, getLang, onLangChange } from "./common.js";
+import "./header.js";
 
 // JS가 켜져 있다는 표시 (스크롤 등장 애니메이션 등에 사용)
 document.documentElement.classList.add("js");
@@ -29,13 +31,15 @@ function bbox(pts) {
   return { minX, maxX, minY, maxY, cx: (minX + maxX) / 2, cy: (minY + maxY) / 2, w: maxX - minX, h: maxY - minY };
 }
 
-// 테마의 adjust 값으로 윤곽선을 살짝 옮기거나 늘림 (기준점: 차 바닥 가운데)
+// 테마 전용 윤곽선(outlines)이 있으면 그것을, 없으면 공통 윤곽선을 씀.
+// 그다음 adjust 값으로 살짝 옮기거나 늘림 (기준점: 차 바닥 가운데)
 function adjustedOutline(car, theme) {
+  const base = theme.outlines?.[car.id] || car.outline;
   const a = theme.adjust?.[car.id];
-  if (!a) return car.outline;
-  const b = bbox(car.outline);
+  if (!a) return base;
+  const b = bbox(base);
   const { dx = 0, dy = 0, sx = 1, sy = 1 } = a;
-  return car.outline.map(([x, y]) => [
+  return base.map(([x, y]) => [
     +(b.cx + (x - b.cx) * sx + dx).toFixed(1),
     +(b.maxY + (y - b.maxY) * sy + dy).toFixed(1),
   ]);
@@ -45,15 +49,27 @@ const pctX = (x) => `${(x / IMAGE_SIZE.width) * 100}%`;
 const pctY = (y) => `${(y / IMAGE_SIZE.height) * 100}%`;
 
 /* ============================================================
-   블랙 스티커 만들기
+   블랙 스티커 만들기 (언어가 바뀌면 fillSticker 로 다시 채움)
    ============================================================ */
+const carName = (car) => `${car.brand} ${car.model}`;
+// 제원 값: 그냥 글자이거나 { en: "...", ko: "..." } 처럼 언어별로 적을 수 있음
+const pick = (v) => (typeof v === "string" ? v : v?.[getLang()] ?? v?.en ?? "");
+// 제원 이름: cars.js 의 "power" 같은 키 → 번역 (번역이 없으면 그대로 표시)
+const specLabel = (k) => t(`spec.${k}`).replace(/^spec\./, "");
+
 function buildSticker(car) {
   const sticker = document.createElement("div");
   sticker.className = "sticker";
   sticker.id = `sticker-${car.id}`;
   sticker.setAttribute("role", "dialog");
-  sticker.setAttribute("aria-label", `${car.brand} ${car.model} 제원`);
   sticker.hidden = true;
+  sticker.addEventListener("click", (e) => e.stopPropagation()); // 스티커 안을 눌러도 닫히지 않게
+  fillSticker(car, sticker);
+  return sticker;
+}
+
+function fillSticker(car, sticker) {
+  sticker.setAttribute("aria-label", t("g.specsOf", { car: carName(car) }));
 
   const head = document.createElement("div");
   head.className = "sticker-head";
@@ -63,7 +79,7 @@ function buildSticker(car) {
   const close = document.createElement("button");
   close.type = "button";
   close.className = "sticker-close";
-  close.setAttribute("aria-label", "닫기");
+  close.setAttribute("aria-label", t("common.close"));
   close.textContent = "×";
   close.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -82,7 +98,7 @@ function buildSticker(car) {
     const dt = document.createElement("dt");
     const dd = document.createElement("dd");
     const sm = document.createElement("small");
-    dt.textContent = label;
+    dt.textContent = specLabel(label);
     sm.textContent = unit;
     dd.append(value, sm);
     box.append(dt, dd);
@@ -94,18 +110,16 @@ function buildSticker(car) {
   car.specs.forEach(([k, v]) => {
     const dt = document.createElement("dt");
     const dd = document.createElement("dd");
-    dt.textContent = k;
-    dd.textContent = v;
+    dt.textContent = specLabel(k);
+    dd.textContent = pick(v);
     rows.append(dt, dd);
   });
 
   const hint = document.createElement("p");
   hint.className = "sticker-hint";
-  hint.textContent = "← → 로 다른 차량 보기";
+  hint.textContent = t("g.arrowHint");
 
-  sticker.append(head, title, stats, rows, hint);
-  sticker.addEventListener("click", (e) => e.stopPropagation()); // 스티커 안을 눌러도 닫히지 않게
-  return sticker;
+  sticker.replaceChildren(head, title, stats, rows, hint);
 }
 
 /* ============================================================
@@ -135,7 +149,7 @@ CARS.forEach((car, i) => {
     class: "car-shape",
     tabindex: "0",
     role: "button",
-    "aria-label": `${car.brand} ${car.model} 제원 보기`,
+    "aria-label": t("g.viewSpecs", { car: carName(car) }),
     "aria-expanded": "false",
     "aria-controls": `sticker-${car.id}`,
   });
@@ -273,7 +287,7 @@ function preload(theme) {
 }
 
 function themeAlt(theme) {
-  return `${theme.name} 테마의 드림 개러지에 세워진 슈퍼카 세 대`;
+  return t("g.photoAlt", { theme: theme.name });
 }
 
 function setTheme(id, { animate = true } = {}) {
@@ -381,15 +395,16 @@ if (finePointer && !reduceMotion) {
 }
 
 /* ============================================================
-   상단 메뉴: 차고 위에서는 투명, 아래로 내려가면 어두운 배경
+   언어가 바뀌면 스티커·윤곽선 이름·사진 설명을 다시 씀
+   (상단 메뉴·모바일 메뉴는 js/header.js 에서 처리)
    ============================================================ */
-const header = document.getElementById("siteHeader");
-const onScroll = () => {
-  const passed = window.scrollY > garage.offsetHeight - header.offsetHeight;
-  header.classList.toggle("is-solid", passed);
-};
-window.addEventListener("scroll", onScroll, { passive: true });
-onScroll();
+onLangChange(() => {
+  CARS.forEach((car) => {
+    fillSticker(car, car._sticker);
+    car._g.setAttribute("aria-label", t("g.viewSpecs", { car: carName(car) }));
+  });
+  photosEl.querySelectorAll(".garage-photo").forEach((img) => { img.alt = themeAlt(currentTheme); });
+});
 
 /* ============================================================
    스크롤하면 아래 섹션이 부드럽게 나타남
@@ -411,20 +426,3 @@ if ("IntersectionObserver" in window) {
 } else {
   revealEls.forEach((el) => el.classList.add("is-visible"));
 }
-
-/* ============================================================
-   모바일 메뉴
-   ============================================================ */
-const menuToggle = document.getElementById("menuToggle");
-const mainNav = document.getElementById("mainNav");
-menuToggle.addEventListener("click", (e) => {
-  e.stopPropagation();
-  const open = menuToggle.getAttribute("aria-expanded") !== "true";
-  menuToggle.setAttribute("aria-expanded", String(open));
-  menuToggle.setAttribute("aria-label", open ? "메뉴 닫기" : "메뉴 열기");
-  mainNav.classList.toggle("is-open", open);
-  header.classList.toggle("menu-open", open);
-});
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && mainNav.classList.contains("is-open")) menuToggle.click();
-});

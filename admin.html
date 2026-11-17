@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin – One Dollar Drive</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="./css/style.css">
+<link rel="stylesheet" href="./css/community.css">
+<style>
+  .admin { padding: 2rem 0 4rem; display: grid; gap: 1.5rem; }
+  .admin h2 { margin: 0 0 1rem; font-size: 1.15rem; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 1rem; }
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+  th, td { text-align: left; padding: .45rem .5rem; border-bottom: 1px solid var(--line); }
+  th { color: var(--text-dim); font-weight: 600; }
+  .row { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+  .winner { font-size: 1.3rem; font-weight: 800; color: var(--accent); }
+  .admin-tabs { display: flex; gap: .4rem; flex-wrap: wrap; }
+  .admin-tabs button { background: var(--surface); border: 1px solid var(--line); color: var(--text-dim); border-radius: 999px; padding: .5rem 1rem; cursor: pointer; font: 600 .9rem var(--font); transition: border-color .3s, box-shadow .3s; }
+  .admin-tabs button:hover { border-color: rgba(255,255,255,.6); box-shadow: var(--glow); color: #fff; }
+  .admin-tabs button.is-on { background: #fff; color: #000; border-color: #fff; }
+  .badge { background: var(--red); color: #fff; border-radius: 999px; font-size: .7rem; padding: 0 .45rem; margin-left: .3rem; }
+  .sub-card { display: grid; grid-template-columns: 220px 1fr; gap: 1rem; border: 1px solid var(--line); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
+  .sub-imgs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
+  .sub-imgs img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; cursor: zoom-in; }
+  .list-row { display: flex; gap: .8rem; align-items: center; padding: .6rem 0; border-bottom: 1px solid var(--line); }
+  .list-row img { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; }
+  .list-row .grow { flex: 1; min-width: 0; }
+  .is-hidden-post { opacity: .45; }
+  @media (max-width: 760px) { .sub-card { grid-template-columns: 1fr; } }
+  @media (max-width: 760px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body data-no-onboarding>
+
+<a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
+
+<!-- ================= Header (모든 페이지 동일) ================= -->
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a class="logo" href="index.html" aria-label="One Dollar Drive home" data-i18n-aria="aria.home">
+      <span class="logo-mark">$1</span>
+      <span class="logo-text">ONE DOLLAR DRIVE</span>
+    </a>
+
+    <nav class="main-nav" id="mainNav" aria-label="Main menu" data-i18n-aria="aria.mainNav">
+      <ul>
+        <li><a href="index.html">Garage</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="draw.html">Draw <span class="nav-badge">EVENT</span></a></li>
+        <li><a href="community.html">Community</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="support.html">Support</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <div class="lang-wrap">
+        <button class="icon-btn glow" type="button" id="langBtn" aria-label="Language" data-i18n-aria="lang.label">EN</button>
+      </div>
+      <!-- 로그인 / 내 계정 (js/account.js 가 채움) -->
+      <div id="accountArea"></div>
+      <a class="icon-btn glow cart-btn" href="cart.html" aria-label="Cart" data-i18n-aria="aria.cart">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11h11.2L21 7H6.2"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/></svg>
+        <span class="cart-count" id="cartCount">0</span>
+      </a>
+      <button class="menu-toggle glow" type="button" id="menuToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="container admin page-main">
+  <p class="eyebrow">ADMIN</p>
+  <div id="gate" class="form-card">로그인 상태를 확인하는 중…</div>
+
+  <div id="panel" hidden>
+    <div class="admin-tabs" id="adminTabs">
+      <button data-sec="secRound" class="is-on">회차·주문·추첨</button>
+      <button data-sec="secSubs">차고 제출 <span class="badge" id="subBadge" hidden></span></button>
+      <button data-sec="secPost">새 게시물</button>
+      <button data-sec="secPosts">게시물 관리</button>
+      <button data-sec="secReports">신고 <span class="badge" id="repBadge" hidden></span></button>
+      <button data-sec="secBuyers">댓글 권한</button>
+    </div>
+
+    <div class="admin-sec" id="secRound">
+    <!-- 회차 설정 -->
+    <section class="form-card">
+      <h2>회차 설정 <span class="muted small" id="roundIdLabel"></span></h2>
+      <form id="roundForm">
+        <div class="grid3">
+          <div class="field"><label>회차 번호</label><input id="r_number" type="number" min="1"></div>
+          <div class="field"><label>상태</label>
+            <select id="r_status">
+              <option value="upcoming">upcoming (곧 시작)</option>
+              <option value="open">open (응모 중)</option>
+              <option value="closed">closed (마감)</option>
+              <option value="drawn">drawn (추첨 완료)</option>
+            </select>
+          </div>
+          <div class="field"><label>차량명</label><input id="r_carName"></div>
+        </div>
+        <div class="field"><label>상품 설명(영문, 메인에 크게 표시)</label><input id="r_prizeTitle"></div>
+        <div class="grid2">
+          <div class="field"><label>상품 예상가치 ARV (USD) — $5,000 이하 권장</label><input id="r_prizeArvUsd" type="number" min="0"></div>
+          <div class="field"><label>커뮤니티 마일스톤 (USD)</label><input id="r_milestoneUsd" type="number" min="0"></div>
+        </div>
+        <div class="grid3">
+          <div class="field"><label>시작 (내 PC 시간대)</label><input id="r_startsAt" type="datetime-local"></div>
+          <div class="field"><label>마감</label><input id="r_endsAt" type="datetime-local"></div>
+          <div class="field"><label>추첨일</label><input id="r_drawAt" type="datetime-local"></div>
+        </div>
+        <div class="row">
+          <button class="btn" type="submit">저장</button>
+          <span class="muted small" id="roundStats"></span>
+        </div>
+        <div id="roundMsg" style="margin-top:.8rem"></div>
+      </form>
+    </section>
+
+    <!-- 주문 기록 -->
+    <section class="form-card">
+      <h2>PayPal 주문 기록 → 응모권 적립</h2>
+      <p class="muted small">PayPal 대시보드에서 결제를 확인한 뒤 입력하세요. 같은 거래 ID는 두 번 저장되지 않습니다.</p>
+      <form id="orderForm">
+        <div class="grid2">
+          <div class="field"><label>구매자 이메일 (PayPal)</label><input id="o_email" type="email" required></div>
+          <div class="field"><label>구매자 이름 (비공개)</label><input id="o_name" required></div>
+        </div>
+        <div class="grid3">
+          <div class="field"><label>상품</label><select id="o_product"></select></div>
+          <div class="field"><label>수량</label><input id="o_qty" type="number" min="1" value="1"></div>
+          <div class="field"><label>PayPal 거래 ID</label><input id="o_txn" required></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>결제 금액 (USD)</label><input id="o_amount" type="number" step="0.01" min="0"></div>
+          <div class="field"><label>응모권 수</label><input id="o_entries" type="number" min="0"></div>
+        </div>
+        <label class="check"><input type="checkbox" id="o_wall"> <span>서포터 월에 공개 (구매자가 동의한 경우만)</span></label>
+        <div class="field"><label>공개 이름 (예: Mike R.)</label><input id="o_display" maxlength="40"></div>
+        <button class="btn" type="submit">기록하기</button>
+        <div id="orderMsg" style="margin-top:.8rem"></div>
+      </form>
+    </section>
+
+    <!-- 응모 현황 / 추첨 -->
+    <section class="form-card">
+      <h2>응모 현황 · 추첨</h2>
+      <div class="row">
+        <button class="btn btn-ghost" id="loadEntries">응모 내역 불러오기</button>
+        <button class="btn btn-ghost" id="csvBtn" disabled>CSV 다운로드</button>
+        <button class="btn" id="drawBtn" disabled>무작위 추첨</button>
+      </div>
+      <p class="muted small" id="entrySummary"></p>
+      <div id="drawResult"></div>
+      <div style="max-height:360px; overflow:auto; margin-top:1rem">
+        <table id="entryTable"></table>
+      </div>
+    </section>
+    </div><!-- /secRound -->
+
+    <!-- 차고 제출 승인 -->
+    <section class="form-card admin-sec" id="secSubs" hidden>
+      <h2>차고 제출 (검토 대기)</h2>
+      <p class="muted small">사진에 얼굴, 번호판, 집 번지, 부적절한 내용이 없는지 확인하세요. 승인하면 사진이 공개 게시물로 복사됩니다.</p>
+      <div id="subList"></div>
+    </section>
+
+    <!-- 새 게시물 -->
+    <section class="form-card admin-sec" id="secPost" hidden>
+      <h2>새 게시물 (운영자)</h2>
+      <form id="postForm">
+        <div class="grid2">
+          <div class="field"><label>차량명 (번호판 배지로 표시)</label><input id="p_car" maxlength="60"></div>
+          <div class="field"><label>태그 (쉼표로 구분, 예: porsche, gt3, track)</label><input id="p_tags"></div>
+        </div>
+        <div class="field"><label>본문</label><textarea id="p_caption" rows="4" maxlength="2000"></textarea></div>
+        <div class="field"><label>사진 (최대 10장)</label><input id="p_files" type="file" accept="image/*" multiple required></div>
+        <label class="check"><input type="checkbox" id="p_pinned"> <span>추천 피드 상단 고정(가중치 ↑)</span></label>
+        <button class="btn" type="submit" id="p_send">게시하기</button>
+        <div id="postMsg" style="margin-top:.8rem"></div>
+      </form>
+    </section>
+
+    <!-- 게시물 관리 -->
+    <section class="form-card admin-sec" id="secPosts" hidden>
+      <h2>게시물 관리</h2>
+      <div id="postList"></div>
+    </section>
+
+    <!-- 신고 -->
+    <section class="form-card admin-sec" id="secReports" hidden>
+      <h2>신고된 댓글</h2>
+      <div id="reportList"></div>
+    </section>
+
+    <!-- 댓글 권한 -->
+    <section class="form-card admin-sec" id="secBuyers" hidden>
+      <h2>댓글 권한 (구매자 인증)</h2>
+      <p class="muted small">주문을 기록하면 PayPal 이메일에 자동으로 권한이 생깁니다. 사이트 로그인 이메일이 PayPal 이메일과 다르면 여기서 로그인 이메일을 추가하세요.</p>
+      <form id="buyerForm" class="row">
+        <input id="b_email" type="email" required placeholder="login@email.com" style="flex:1; min-width:220px; background:var(--bg); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:.6rem .8rem">
+        <button class="btn" type="submit">권한 부여</button>
+        <button class="btn btn-ghost" type="button" id="b_revoke">권한 회수</button>
+      </form>
+      <div id="buyerMsg" style="margin-top:.8rem"></div>
+    </section>
+  </div>
+</main>
+
+<!-- ================= Footer (모든 페이지 동일) ================= -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-mark">$1</span>
+      <span>ONE DOLLAR DRIVE</span>
+    </div>
+    <nav class="footer-links" aria-label="Policies" data-i18n-aria="aria.policies">
+      <a href="https://sites.google.com/view/onedollardrive-policy/홈" target="_blank" rel="noopener" data-i18n="footer.terms">Terms of Service</a>
+      <a href="https://sites.google.com/view/ondollardrive-privacy/홈" target="_blank" rel="noopener" data-i18n="footer.privacy">Privacy Policy</a>
+      <a href="support.html" data-i18n="footer.support">Support</a>
+    </nav>
+    <address class="biz-info">
+      <span data-i18n="footer.company">Company</span>: Yellowhorizen Co. · <span data-i18n="footer.ceo">CEO</span>: <span data-i18n="footer.ceoName">Myeongjun Lee</span> · <span data-i18n="footer.biz">Business reg. no.</span>: 598-43-01196<br>
+      <span data-i18n="footer.ecom">E-commerce reg. no.</span>: 2023-강원원주-01485호 · <span data-i18n="footer.address">Address</span>: <span data-i18n="footer.addressValue">1815-1 Haenggu-dong, Wonju-si, Gangwon-do, Republic of Korea</span><br>
+      <span data-i18n="footer.phone">Phone</span>: 010-4829-3911 · <span data-i18n="footer.email">Email</span>: onedolladrive@gmail.com
+    </address>
+    <p class="copyright">© 2023–2026 Yellowhorizen Co. All rights reserved.</p>
+  </div>
+</footer>
+
+<script type="module" src="./js/header.js"></script>
+<script type="module" src="./js/account.js"></script>
+<script type="module" src="./js/admin.js"></script>
+</body>
+</html>

@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>One Dollar Drive — My Dream Garage</title>
-<meta name="description" content="나만의 드림 개러지를 꾸미고, 굿즈를 모으고, 슈퍼카 1일 드라이브에 응모하세요. One Dollar Drive.">
+<meta name="description" content="Build your dream garage, collect merch, and enter the draw for a one-day supercar drive. One Dollar Drive.">
 <meta name="theme-color" content="#000000">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="One Dollar Drive">
 <meta property="og:title" content="One Dollar Drive — My Dream Garage">
-<meta property="og:description" content="굿즈를 모으고, 응모권을 받고, 슈퍼카 1일 드라이브의 주인공이 되어보세요.">
+<meta property="og:description" content="Collect merch, earn entries, and win a day behind the wheel of a supercar.">
 <meta property="og:url" content="https://onedollardrive.com/">
 <meta property="og:image" content="https://onedollardrive.com/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -19,46 +19,49 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="css/style.css">
 <script type="module" src="js/main.js"></script>
+<script type="module" src="./js/account.js"></script>
+<script type="module" src="js/home-community.js"></script>
 </head>
 <body>
-<a class="skip-link" href="#garage">본문으로 건너뛰기</a>
+<a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
 
-<!-- ================= Header ================= -->
+<!-- ================= Header (모든 페이지 동일) ================= -->
 <header class="site-header" id="siteHeader">
   <div class="header-inner">
-    <a class="logo" href="index.html" aria-label="One Dollar Drive 홈">
+    <a class="logo" href="index.html" aria-label="One Dollar Drive home" data-i18n-aria="aria.home">
       <span class="logo-mark">$1</span>
       <span class="logo-text">ONE DOLLAR DRIVE</span>
     </a>
 
-    <nav class="main-nav" id="mainNav" aria-label="주 메뉴">
+    <nav class="main-nav" id="mainNav" aria-label="Main menu" data-i18n-aria="aria.mainNav">
       <ul>
         <li><a href="index.html" aria-current="page">Garage</a></li>
         <li><a href="shop.html">Shop</a></li>
         <li><a href="draw.html">Draw <span class="nav-badge">EVENT</span></a></li>
-        <li><a href="community.html" class="is-soon">Community <span class="nav-tbd">TBD</span></a></li>
+        <li><a href="community.html">Community</a></li>
         <li><a href="about.html">About Us</a></li>
         <li><a href="support.html">Support</a></li>
       </ul>
     </nav>
 
     <div class="header-actions">
-      <button class="icon-btn glow" type="button" id="langBtn" aria-label="언어 변경">KO</button>
-      <a class="icon-btn glow" href="account.html" aria-label="로그인">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
-      </a>
-      <a class="icon-btn glow cart-btn" href="cart.html" aria-label="장바구니, 0개">
+      <div class="lang-wrap">
+        <button class="icon-btn glow" type="button" id="langBtn" aria-label="Language" data-i18n-aria="lang.label">EN</button>
+      </div>
+      <!-- 로그인 / 내 계정 (js/account.js 가 채움) -->
+      <div id="accountArea"></div>
+      <a class="icon-btn glow cart-btn" href="cart.html" aria-label="Cart" data-i18n-aria="aria.cart">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11h11.2L21 7H6.2"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/></svg>
         <span class="cart-count" id="cartCount">0</span>
       </a>
-      <button class="menu-toggle glow" type="button" id="menuToggle" aria-expanded="false" aria-controls="mainNav" aria-label="메뉴 열기">
+      <button class="menu-toggle glow" type="button" id="menuToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Open menu">
         <span></span><span></span><span></span>
       </button>
     </div>
   </div>
 </header>
 
-<main>
+<main id="main">
   <!-- ================= Garage (Hero) ================= -->
   <section class="garage" id="garage" aria-labelledby="garageTitle">
     <!-- 모바일에서는 좌우로 밀어서 차고를 둘러볼 수 있습니다 -->
@@ -69,7 +72,7 @@
           <!-- 배경 사진 (테마를 바꾸면 js가 부드럽게 교체) -->
           <div class="photos" id="photos">
             <img class="garage-photo is-current" src="assets/themes/forest.webp" width="1672" height="941"
-                 alt="숲이 보이는 드림 개러지에 세워진 슈퍼카 세 대" fetchpriority="high" decoding="async">
+                 alt="Three supercars parked in a dream garage" fetchpriority="high" decoding="async">
           </div>
           <div class="photo-fade" aria-hidden="true"></div>
           <!-- 차량 윤곽선 (js/cars.js 의 outline 으로 생성) -->
@@ -84,14 +87,14 @@
       <div class="garage-left">
         <div class="garage-caption">
           <p class="eyebrow">MY DREAM GARAGE</p>
-          <h1 id="garageTitle">언젠가 나의 차고에 세워질 세 대</h1>
-          <p class="hint"><span class="hint-dot" aria-hidden="true"></span>차량을 눌러 제원을 확인하세요</p>
+          <h1 id="garageTitle" data-i18n="g.title">Three cars that will one day park in my garage</h1>
+          <p class="hint"><span class="hint-dot" aria-hidden="true"></span><span data-i18n="g.hint">Tap a car to see its specs</span><span class="hint-swipe" data-i18n="g.swipe">· swipe to look around</span></p>
         </div>
         <!-- 배경 테마 선택 (js에서 생성) -->
-        <div class="theme-picker" id="themePicker" role="radiogroup" aria-label="배경 테마"></div>
+        <div class="theme-picker" id="themePicker" role="radiogroup" aria-label="Background theme" data-i18n-aria="g.themes"></div>
       </div>
       <!-- 차량 선택 버튼 (js에서 생성) -->
-      <div class="car-switch" id="carSwitch" role="group" aria-label="차량 선택"></div>
+      <div class="car-switch" id="carSwitch" role="group" aria-label="Choose a car" data-i18n-aria="g.cars"></div>
     </div>
 
     <div class="vignette" aria-hidden="true"></div>
@@ -107,49 +110,64 @@
           <span class="step-no">01</span>
           <svg class="step-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
         </div>
-        <h3>굿즈 구매</h3>
-        <p>One Dollar Drive 굿즈와 상품을 구매하세요.</p>
+        <h3 data-i18n="g.step1t">Shop merch</h3>
+        <p data-i18n="g.step1b">Pick up One Dollar Drive merch and goods.</p>
       </li>
       <li class="reveal">
         <div class="step-top">
           <span class="step-no">02</span>
           <svg class="step-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8a2 2 0 0 0 0 4v0a2 2 0 0 1 0 4v2h18v-2a2 2 0 0 1 0-4 2 2 0 0 1 0-4V6H3v2z"/><path d="M14 6v12" stroke-dasharray="2 2"/></svg>
         </div>
-        <h3>응모권 적립</h3>
-        <p>구매 금액에 따라 슈퍼카 드라이브 응모권이 적립됩니다.</p>
+        <h3 data-i18n="g.step2t">Collect entries</h3>
+        <p data-i18n="g.step2b">Every purchase adds entries for the supercar drive draw.</p>
       </li>
       <li class="reveal">
         <div class="step-top">
           <span class="step-no">03</span>
           <svg class="step-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/><path d="M3.5 10.5 10 12M20.5 10.5 14 12M12 14v7"/></svg>
         </div>
-        <h3>슈퍼카 1일 드라이브</h3>
-        <p>이벤트 추첨을 통해 드림카를 하루 동안 직접 운전해보세요.</p>
+        <h3 data-i18n="g.step3t">Drive for a day</h3>
+        <p data-i18n="g.step3b">Win the event draw and drive your dream car for a full day.</p>
       </li>
     </ol>
     <div class="how-cta reveal">
-      <a class="btn btn-primary glow" href="shop.html">Shop 둘러보기</a>
-      <a class="btn btn-ghost glow" href="draw.html">이벤트 안내</a>
+      <a class="btn btn-primary glow" href="shop.html" data-i18n="g.ctaShop">Browse the shop</a>
+      <a class="btn btn-ghost glow" href="draw.html" data-i18n="g.ctaDraw">Event details</a>
+    </div>
+  </section>
+
+  <!-- ================= Community 최근 게시물 (js/home-community.js) ================= -->
+  <section class="cm-preview" aria-labelledby="cmPreviewTitle">
+    <div class="cm-preview-head">
+      <div>
+        <p class="eyebrow reveal">FROM THE COMMUNITY</p>
+        <h2 id="cmPreviewTitle" class="section-title reveal" data-i18n="home.garageTitle">From the garage</h2>
+      </div>
+      <a class="btn btn-ghost glow reveal" href="community.html" data-i18n="home.garageMore">Open community →</a>
+    </div>
+    <div class="cmp-grid" id="cmPreviewGrid" aria-busy="true">
+      <span class="cmp-skel"></span><span class="cmp-skel"></span><span class="cmp-skel"></span>
+      <span class="cmp-skel"></span><span class="cmp-skel"></span><span class="cmp-skel"></span>
     </div>
   </section>
 </main>
 
-<!-- ================= Footer ================= -->
+<!-- ================= Footer (모든 페이지 동일) ================= -->
 <footer class="site-footer">
   <div class="footer-inner">
     <div class="footer-brand">
       <span class="logo-mark">$1</span>
       <span>ONE DOLLAR DRIVE</span>
     </div>
-    <nav class="footer-links" aria-label="정책">
-      <a href="https://sites.google.com/view/onedollardrive-policy/홈" target="_blank" rel="noopener">이용약관</a>
-      <a href="https://sites.google.com/view/ondollardrive-privacy/홈" target="_blank" rel="noopener">개인정보처리방침</a>
-      <a href="support.html">고객센터</a>
+    <nav class="footer-links" aria-label="Policies" data-i18n-aria="aria.policies">
+      <a href="https://sites.google.com/view/onedollardrive-policy/홈" target="_blank" rel="noopener" data-i18n="footer.terms">Terms of Service</a>
+      <a href="https://sites.google.com/view/ondollardrive-privacy/홈" target="_blank" rel="noopener" data-i18n="footer.privacy">Privacy Policy</a>
+      <a href="support.html" data-i18n="footer.support">Support</a>
     </nav>
     <address class="biz-info">
-      상호: Yellowhorizen Co. · 대표자: 이명준 · 사업자등록번호: 598-43-01196<br>
-      통신판매업신고: 2023-강원원주-01485호 · 주소: 강원도 원주시 행구동 1815-1<br>
-      전화: 010-4829-3911 · 이메일: onedolladrive@gmail.com
+      <span data-i18n="footer.company">Company</span>: Yellowhorizen Co. · <span data-i18n="footer.ceo">CEO</span>: <span data-i18n="footer.ceoName">Myeongjun Lee</span> · <span data-i18n="footer.biz">Business reg. no.</span>: 598-43-01196<br>
+      <span data-i18n="footer.ecom">E-commerce reg. no.</span>: 2023-강원원주-01485호 · <span data-i18n="footer.address">Address</span>: <span data-i18n="footer.addressValue">1815-1 Haenggu-dong, Wonju-si, Gangwon-do, Republic of Korea</span><br>
+      <span data-i18n="footer.phone">Phone</span>: 010-4829-3911 · <span data-i18n="footer.email">Email</span>: onedolladrive@gmail.com
     </address>
     <p class="copyright">© 2023–2026 Yellowhorizen Co. All rights reserved.</p>
   </div>
