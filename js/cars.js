@@ -16,6 +16,11 @@
 export const IMAGE_SIZE = { width: 1672, height: 941 };
 
 export const THEMES = [
+  { id: "airportw", 
+    name: "Snow", 
+    src: "assets/themes/airport.webp", 
+    swatch: "linear-gradient(135deg, #ffffff, #8fb4d9)" 
+  },
   {
     id: "forest",
     name: "Forest",
