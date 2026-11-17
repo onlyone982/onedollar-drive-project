@@ -3,7 +3,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 import { db } from "./firebase.js";
 import { ROUND_ID, FREE_ENTRIES_PER_DAY } from "./config.js";
-import { onUser, isRealUser, signIn } from "./common.js";
+import { onAccount, requireProfile } from "./account.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -16,7 +16,7 @@ const sel = $("state");
 sel.innerHTML = `<option value="">Select…</option>` +
   US_STATES.filter((s) => !EXCLUDED_STATES.includes(s)).map((s) => `<option>${s}</option>`).join("");
 
-$("loginInline").addEventListener("click", signIn);
+$("loginInline").addEventListener("click", () => requireProfile());
 
 function show(kind, text) {
   $("msg").innerHTML = "";
@@ -34,13 +34,20 @@ function utcDayNumber(d = new Date()) {
 
 let user = null;
 
-onUser(async (u) => {
-  user = isRealUser(u) ? u : null;
+onAccount(async (acct) => {
+  user = acct.user && acct.profile ? acct.user : null;
   $("needLogin").hidden = !!user;
   $("entryForm").hidden = !user;
   $("myEntries").textContent = "";
   show();
   if (!user) return;
+
+  // 경품 응모는 18세 이상만
+  if (acct.profile.ageBand !== "adult") {
+    $("entryForm").hidden = true;
+    show("info", "Sweepstakes entry is for people 18 and older. You can still enjoy the community!");
+    return;
+  }
 
   $("email").value = user.email || "";
   if (!$("fullName").value) $("fullName").value = user.displayName || "";

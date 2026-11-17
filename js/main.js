@@ -1,14 +1,10 @@
 import {
-  doc, collection, addDoc, onSnapshot, query, orderBy, limit, limitToLast, serverTimestamp,
+  doc, collection, onSnapshot, query, orderBy, limit,
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
-import { signInAnonymously } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-import {
-  ref, set, remove, onValue, onDisconnect, serverTimestamp as rtdbTs,
-} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
 
-import { db, auth, rtdb } from "./firebase.js";
+import { db } from "./firebase.js";
 import { SITE, ROUND_ID, ROUND_DEFAULTS, PRODUCTS, MIN_VISIBLE_COUNT, FREE_ENTRIES_PER_DAY } from "./config.js";
-import { t, getLang, onLangChange, onUser, isRealUser, usd, toast, toDate, esc } from "./common.js";
+import { t, getLang, onLangChange, usd, toast, toDate, esc } from "./common.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -176,120 +172,40 @@ function renderWall() {
 }
 
 /* =========================================================
-   Chat (messages)
+   Community preview (최근 게시물 6개)
    ========================================================= */
-const chatBox = $("chatMessages");
-const chatForm = $("chatForm");
-const chatInput = $("chatInput");
-const chatSend = $("chatSend");
-
-function colorFor(uid = "") {
-  let h = 0;
-  for (const c of uid) h = (h * 31 + c.charCodeAt(0)) % 360;
-  return `hsl(${h}, 80%, 60%)`;
-}
-
+let previewPosts = [];
 onSnapshot(
-  query(collection(db, "messages"), orderBy("timestamp", "asc"), limitToLast(50)),
-  (snap) => {
-    const nearBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 60;
-    chatBox.innerHTML = "";
-    snap.forEach((d) => {
-      const m = d.data();
-      const row = document.createElement("div");
-      row.className = "msg";
-
-      const avatar = document.createElement("img");
-      avatar.className = "avatar";
-      avatar.alt = "";
-      avatar.referrerPolicy = "no-referrer";
-      avatar.style.borderColor = colorFor(m.uid);
-      // 구글 프로필 이미지(https)만 허용
-      if (typeof m.photoURL === "string" && /^https:\/\/[a-z0-9.-]+\.googleusercontent\.com\//i.test(m.photoURL)) {
-        avatar.src = m.photoURL;
-      } else {
-        avatar.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3Crect width='1' height='1' fill='%23333'/%3E%3C/svg%3E";
-      }
-
-      const body = document.createElement("div");
-      const name = document.createElement("div");
-      name.className = "msg-name";
-      name.style.color = colorFor(m.uid);
-      name.textContent = m.name || "Anonymous";
-      const text = document.createElement("div");
-      text.className = "msg-text";
-      text.textContent = m.text ?? "";
-      body.append(name, text);
-
-      row.append(avatar, body);
-      chatBox.appendChild(row);
-    });
-    if (nearBottom) chatBox.scrollTop = chatBox.scrollHeight;
-  },
-  (err) => console.warn("chat load failed:", err.code),
+  query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(6)),
+  (snap) => { previewPosts = snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((p) => !p.hidden); renderPreview(); },
+  (err) => { console.warn("posts load failed:", err.code); renderPreview(); },
 );
 
-chatForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const user = auth.currentUser;
-  const text = chatInput.value.trim();
-  if (!isRealUser(user) || !text) return;
-  chatSend.disabled = true;
-  try {
-    await addDoc(collection(db, "messages"), {
-      text: text.slice(0, 300),
-      uid: user.uid,
-      name: (user.displayName || "Anonymous").slice(0, 40),
-      photoURL: user.photoURL || "",
-      timestamp: serverTimestamp(),
-    });
-    chatInput.value = "";
-  } catch (err) {
-    console.error("send failed:", err);
-  } finally {
-    chatSend.disabled = false;
-    chatInput.focus();
-  }
-});
-
-function updateChatInput(user) {
-  const real = isRealUser(user);
-  chatInput.disabled = !real;
-  chatSend.disabled = !real;
-  chatInput.placeholder = t(real ? "chat.placeholderIn" : "chat.placeholderOut");
-}
-
-/* =========================================================
-   Presence (Realtime Database) — 게스트는 익명 로그인으로 집계
-   ========================================================= */
-let presenceRef = null;
-
-window.addEventListener("odd:before-auth-change", () => {
-  if (presenceRef) { remove(presenceRef).catch(() => {}); presenceRef = null; }
-});
-
-onUser((user) => {
-  updateChatInput(user);
-  if (user === null && auth.currentUser === null) {
-    // 게스트 → 익명 로그인 (Firebase 콘솔에서 Anonymous 공급자를 켜야 합니다)
-    signInAnonymously(auth).catch(() => {});
+function renderPreview() {
+  const box = $("garagePreview");
+  box.innerHTML = "";
+  if (!previewPosts.length) {
+    const p = document.createElement("p");
+    p.className = "muted";
+    p.textContent = t("home.garageEmpty");
+    box.appendChild(p);
     return;
   }
-  if (!user) return;
-  try {
-    presenceRef = ref(rtdb(), `presence/${user.uid}`);
-    onDisconnect(presenceRef).remove();
-    set(presenceRef, { ts: rtdbTs() }).catch(() => {});
-  } catch (e) { console.warn("presence unavailable", e); }
-});
-
-try {
-  onValue(ref(rtdb(), "presence"), (snap) => {
-    const n = snap.exists() ? Object.keys(snap.val()).length : 0;
-    $("onlineCount").textContent = n;
-    $("onlineBadge").hidden = n < MIN_VISIBLE_COUNT;
-  }, () => {});
-} catch {}
+  for (const p of previewPosts) {
+    const a = document.createElement("a");
+    a.className = "gp-tile";
+    a.href = `./community.html?p=${encodeURIComponent(p.id)}`;
+    const img = document.createElement("img");
+    img.loading = "lazy";
+    img.alt = p.carName || "";
+    img.src = p.images?.[0]?.url || "";
+    const cap = document.createElement("span");
+    cap.className = "gp-cap";
+    cap.textContent = p.carName || "";
+    a.append(img, cap);
+    box.appendChild(a);
+  }
+}
 
 /* =========================================================
    Language re-render
@@ -298,7 +214,7 @@ function rerender() {
   renderProducts();
   renderRound();
   renderWall();
-  updateChatInput(auth.currentUser);
+  renderPreview();
   const free = $("freeBody");
   free.textContent = t("free.body", { n: FREE_ENTRIES_PER_DAY });
   $("faqA5").textContent = t("faq.a5", { email: SITE.contactEmail });

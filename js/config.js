@@ -86,3 +86,20 @@ export const PRODUCTS = [
     paypalLink: "",
   },
 ];
+
+// ------------------------------------------------------------
+//  Community
+// ------------------------------------------------------------
+export const COMMUNITY = {
+  maxCommentLength: 300,
+  maxSubmissionPhotos: 5,
+  // 1차 금칙어 필터(클라이언트). 최종 판단은 운영자의 신고 처리입니다. 필요에 따라 추가하세요.
+  blockedWords: [
+    "fuck", "shit", "bitch", "cunt", "nigger", "faggot", "porn", "nude", "sex",
+    "kill yourself", "kys", "terror", "isis", "trump", "biden", "democrat", "republican",
+    "씨발", "시발", "병신", "좆", "섹스", "야동",
+  ],
+};
+
+// 아바타 개수 (js/avatars.js, firestore.rules 와 맞춤)
+export const AVATAR_COUNT = 8;

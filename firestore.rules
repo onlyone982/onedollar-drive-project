@@ -5,48 +5,168 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    /* ---------------- helpers ---------------- */
     function signedIn() { return request.auth != null; }
-    function isGoogle() {
-      return signedIn() && request.auth.token.firebase.sign_in_provider == 'google.com';
-    }
     function isAdmin() {
       return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
-    // UTC 기준 오늘 날짜 숫자 (예: 20261117)
+    function myEmail() { return request.auth.token.email.lower(); }
+    function emailVerified() { return signedIn() && request.auth.token.email_verified == true; }
+    function userPath(uid) { return /databases/$(database)/documents/users/$(uid); }
+    function hasProfile() { return signedIn() && exists(userPath(request.auth.uid)); }
+    function profile() { return get(userPath(request.auth.uid)).data; }
+    function isAdult() { return hasProfile() && profile().ageBand == 'adult'; }
+    // 구매 이력(관리자가 기록) = 댓글 권한
+    function isBuyer() {
+      return emailVerified() && exists(/databases/$(database)/documents/buyers/$(myEmail()));
+    }
     function todayNum() {
       return request.time.year() * 10000 + request.time.month() * 100 + request.time.day();
     }
-    function myEmail() { return request.auth.token.email.lower(); }
+    function str(v, minLen, maxLen) { return v is string && v.size() >= minLen && v.size() <= maxLen; }
 
-    // 관리자 목록: 콘솔에서 직접 admins/{uid} 문서를 만듭니다. 웹에서는 쓰기 불가.
+    /* ---------------- admins ---------------- */
     match /admins/{uid} {
       allow read: if signedIn() && request.auth.uid == uid;
-      allow write: if false;
+      allow write: if false;   // 콘솔에서만 생성
     }
 
+    /* ---------------- users / usernames ---------------- */
+    // 프로필: 닉네임, 아바타, 연령대(teen/adult). 생년월일은 저장하지 않음.
+    match /users/{uid} {
+      allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['nickname', 'nicknameLower', 'avatarId', 'ageBand', 'createdAt'])
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.matches('^[A-Za-z0-9_.]{3,20}$')
+        && request.resource.data.nicknameLower == request.resource.data.nickname.lower()
+        && request.resource.data.avatarId is int
+        && request.resource.data.avatarId >= 0 && request.resource.data.avatarId <= 7
+        && request.resource.data.ageBand in ['teen', 'adult']
+        && request.resource.data.createdAt == request.time
+        && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.nicknameLower)).data.uid == uid;
+      allow update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['avatarId'])
+        && request.resource.data.avatarId is int
+        && request.resource.data.avatarId >= 0 && request.resource.data.avatarId <= 7;
+      allow delete: if isAdmin();
+    }
+
+    // 닉네임 중복 방지용 예약 문서
+    match /usernames/{name} {
+      allow read: if true;
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['uid'])
+        && request.resource.data.uid == request.auth.uid
+        && getAfter(userPath(request.auth.uid)).data.nicknameLower == name;
+      allow update, delete: if isAdmin();
+    }
+
+    /* ---------------- buyers (댓글 권한) ---------------- */
+    match /buyers/{email} {
+      allow read: if isAdmin() || (emailVerified() && email == myEmail());
+      allow write: if isAdmin();
+    }
+
+    /* ---------------- community posts ---------------- */
+    match /posts/{postId} {
+      allow read: if true;
+      allow create, delete: if isAdmin();
+      // 관리자는 모든 필드 수정, 일반 사용자는 레브(좋아요) 수만 ±1 (좋아요 문서와 함께)
+      allow update: if isAdmin() || (
+        hasProfile()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likeCount'])
+        && (
+          (request.resource.data.likeCount == resource.data.likeCount + 1
+            && existsAfter(/databases/$(database)/documents/posts/$(postId)/likes/$(request.auth.uid))
+            && !exists(/databases/$(database)/documents/posts/$(postId)/likes/$(request.auth.uid)))
+          ||
+          (request.resource.data.likeCount == resource.data.likeCount - 1
+            && !existsAfter(/databases/$(database)/documents/posts/$(postId)/likes/$(request.auth.uid))
+            && exists(/databases/$(database)/documents/posts/$(postId)/likes/$(request.auth.uid)))
+        )
+      );
+
+      function postNow() { return get(/databases/$(database)/documents/posts/$(postId)).data; }
+      function postAfter() { return getAfter(/databases/$(database)/documents/posts/$(postId)).data; }
+
+      match /likes/{uid} {
+        allow read: if true;
+        allow create: if hasProfile() && request.auth.uid == uid
+          && request.resource.data.keys().hasOnly(['uid', 'createdAt'])
+          && request.resource.data.uid == uid
+          && postAfter().likeCount == postNow().likeCount + 1;
+        allow delete: if (signedIn() && request.auth.uid == uid
+          && postAfter().likeCount == postNow().likeCount - 1) || isAdmin();
+        allow update: if false;
+      }
+
+      // 댓글: 프로필이 있고 구매 이력이 있는 사용자만
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if hasProfile() && isBuyer()
+          && request.resource.data.keys().hasOnly(['uid', 'nickname', 'avatarId', 'text', 'createdAt'])
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.nickname == profile().nickname
+          && request.resource.data.avatarId == profile().avatarId
+          && str(request.resource.data.text, 1, 300)
+          && request.resource.data.createdAt == request.time;
+        allow update: if false;
+        allow delete: if (signedIn() && resource.data.uid == request.auth.uid) || isAdmin();
+      }
+    }
+
+    /* ---------------- reports ---------------- */
+    match /reports/{reportId} {
+      allow create: if hasProfile()
+        && request.resource.data.keys().hasOnly(['type', 'postId', 'commentId', 'commentUid', 'commentText', 'reporterUid', 'createdAt'])
+        && request.resource.data.type == 'comment'
+        && request.resource.data.reporterUid == request.auth.uid
+        && reportId == request.resource.data.postId + '_' + request.resource.data.commentId + '_' + request.auth.uid
+        && str(request.resource.data.commentText, 0, 300)
+        && request.resource.data.createdAt == request.time;
+      allow read, delete: if isAdmin();
+      allow update: if false;
+    }
+
+    /* ---------------- garage submissions ---------------- */
+    match /garageSubmissions/{subId} {
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow create: if hasProfile()
+        && request.resource.data.keys().hasOnly(['uid', 'nickname', 'avatarId', 'carName', 'caption', 'images', 'status', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.nickname == profile().nickname
+        && request.resource.data.avatarId == profile().avatarId
+        && request.resource.data.status == 'pending'
+        && str(request.resource.data.carName, 1, 60)
+        && str(request.resource.data.caption, 0, 600)
+        && request.resource.data.images is list
+        && request.resource.data.images.size() >= 1 && request.resource.data.images.size() <= 5
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if isAdmin();
+    }
+
+    /* ---------------- sweepstakes ---------------- */
     match /rounds/{roundId} {
       allow read: if true;
       allow write: if isAdmin();
 
-      // 서포터 월(공개 이름만)
       match /supporters/{id} {
         allow read: if true;
         allow write: if isAdmin();
       }
 
-      // 구매 응모권: 관리자만 기록. 본인 이메일 것만 조회 가능.
       match /entries/{id} {
-        allow read: if isAdmin()
-          || (isGoogle() && request.auth.token.email_verified == true && resource.data.email == myEmail());
+        allow read: if isAdmin() || (emailVerified() && resource.data.email == myEmail());
         allow create: if isAdmin();          // 같은 거래 ID(paypal_xxx) 재기록은 update라서 차단됨
         allow update: if false;
         allow delete: if isAdmin();
       }
 
-      // 무료 응모: 구글 로그인 사용자, 회차 open 상태, 하루 1건
+      // 무료 응모: 18세 이상 프로필, 회차 open, 하루 1건
       match /freeEntries/{id} {
-        allow read: if isAdmin() || (isGoogle() && resource.data.uid == request.auth.uid);
-        allow create: if isGoogle()
+        allow read: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+        allow create: if isAdult() && emailVerified()
           && get(/databases/$(database)/documents/rounds/$(roundId)).data.status == 'open'
           && id == request.auth.uid + '_' + string(todayNum())
           && request.resource.data.keys().hasOnly(['uid', 'name', 'email', 'state', 'day', 'entries', 'createdAt'])
@@ -54,39 +174,22 @@ service cloud.firestore {
           && request.resource.data.day == todayNum()
           && request.resource.data.entries == 1   // js/config.js 의 FREE_ENTRIES_PER_DAY 와 같게 유지
           && request.resource.data.email == myEmail()
-          && request.resource.data.name is string
-          && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 80
-          && request.resource.data.state is string && request.resource.data.state.size() == 2
+          && str(request.resource.data.name, 2, 80)
+          && str(request.resource.data.state, 2, 2)
           && request.resource.data.createdAt == request.time;
         allow update: if false;
         allow delete: if isAdmin();
       }
 
-      // 추첨 기록: 수정·삭제 불가 (투명성)
       match /draws/{id} {
         allow read, create: if isAdmin();
         allow update, delete: if false;
       }
     }
 
-    // 실시간 채팅
-    match /messages/{id} {
-      allow read: if true;
-      allow create: if isGoogle()
-        && request.resource.data.keys().hasOnly(['text', 'uid', 'name', 'photoURL', 'timestamp'])
-        && request.resource.data.uid == request.auth.uid
-        && request.resource.data.text is string
-        && request.resource.data.text.size() > 0 && request.resource.data.text.size() <= 300
-        && request.resource.data.name is string && request.resource.data.name.size() <= 40
-        && request.resource.data.photoURL is string && request.resource.data.photoURL.size() <= 500
-        && request.resource.data.timestamp == request.time;
-      allow update: if false;
-      allow delete: if isAdmin();
-    }
-
-    // 예전 원화 후원 기록(legacy) — 관리자만
-    match /donations/{id} {
-      allow read, write: if isAdmin();
-    }
+    /* ---------------- legacy ---------------- */
+    // 예전 채팅/원화 후원 데이터 — 관리자만
+    match /messages/{id} { allow read, delete: if isAdmin(); allow create, update: if false; }
+    match /donations/{id} { allow read, write: if isAdmin(); }
   }
 }

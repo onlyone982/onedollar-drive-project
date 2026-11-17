@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./css/style.css">
+<link rel="stylesheet" href="./css/community.css">
 <style>
   .admin { padding: 2rem 0 4rem; display: grid; gap: 1.5rem; }
   .admin h2 { margin: 0 0 1rem; font-size: 1.15rem; }
@@ -19,16 +20,27 @@
   th { color: var(--muted); font-weight: 600; }
   .row { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
   .winner { font-size: 1.3rem; font-weight: 800; color: var(--accent); }
+  .admin-tabs { display: flex; gap: .4rem; flex-wrap: wrap; }
+  .admin-tabs button { background: var(--surface); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; padding: .5rem 1rem; cursor: pointer; font: 600 .9rem var(--body); }
+  .admin-tabs button.is-on { background: var(--accent); color: #111; border-color: var(--accent); }
+  .badge { background: var(--red); color: #fff; border-radius: 999px; font-size: .7rem; padding: 0 .45rem; margin-left: .3rem; }
+  .sub-card { display: grid; grid-template-columns: 220px 1fr; gap: 1rem; border: 1px solid var(--line); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
+  .sub-imgs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
+  .sub-imgs img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; cursor: zoom-in; }
+  .list-row { display: flex; gap: .8rem; align-items: center; padding: .6rem 0; border-bottom: 1px solid var(--line); }
+  .list-row img { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; }
+  .list-row .grow { flex: 1; min-width: 0; }
+  .is-hidden-post { opacity: .45; }
+  @media (max-width: 760px) { .sub-card { grid-template-columns: 1fr; } }
   @media (max-width: 760px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
 </style>
 </head>
-<body>
+<body data-no-onboarding>
 
 <header class="site-header">
   <a class="brand" href="./">ONE<span class="accent">$</span>DRIVE <span class="muted small">admin</span></a>
   <div class="header-actions" style="margin-left:auto">
-    <button class="btn btn-sm" id="loginBtn" hidden>구글 로그인</button>
-    <button class="btn btn-ghost btn-sm" id="logoutBtn" hidden>로그아웃</button>
+    <div id="accountArea"></div>
   </div>
 </header>
 
@@ -36,6 +48,16 @@
   <div id="gate" class="form-card">로그인 상태를 확인하는 중…</div>
 
   <div id="panel" hidden>
+    <div class="admin-tabs" id="adminTabs">
+      <button data-sec="secRound" class="is-on">회차·주문·추첨</button>
+      <button data-sec="secSubs">차고 제출 <span class="badge" id="subBadge" hidden></span></button>
+      <button data-sec="secPost">새 게시물</button>
+      <button data-sec="secPosts">게시물 관리</button>
+      <button data-sec="secReports">신고 <span class="badge" id="repBadge" hidden></span></button>
+      <button data-sec="secBuyers">댓글 권한</button>
+    </div>
+
+    <div class="admin-sec" id="secRound">
     <!-- 회차 설정 -->
     <section class="form-card">
       <h2>회차 설정 <span class="muted small" id="roundIdLabel"></span></h2>
@@ -109,9 +131,58 @@
         <table id="entryTable"></table>
       </div>
     </section>
+    </div><!-- /secRound -->
+
+    <!-- 차고 제출 승인 -->
+    <section class="form-card admin-sec" id="secSubs" hidden>
+      <h2>차고 제출 (검토 대기)</h2>
+      <p class="muted small">사진에 얼굴, 번호판, 집 번지, 부적절한 내용이 없는지 확인하세요. 승인하면 사진이 공개 게시물로 복사됩니다.</p>
+      <div id="subList"></div>
+    </section>
+
+    <!-- 새 게시물 -->
+    <section class="form-card admin-sec" id="secPost" hidden>
+      <h2>새 게시물 (운영자)</h2>
+      <form id="postForm">
+        <div class="grid2">
+          <div class="field"><label>차량명 (번호판 배지로 표시)</label><input id="p_car" maxlength="60"></div>
+          <div class="field"><label>태그 (쉼표로 구분, 예: porsche, gt3, track)</label><input id="p_tags"></div>
+        </div>
+        <div class="field"><label>본문</label><textarea id="p_caption" rows="4" maxlength="2000"></textarea></div>
+        <div class="field"><label>사진 (최대 10장)</label><input id="p_files" type="file" accept="image/*" multiple required></div>
+        <label class="check"><input type="checkbox" id="p_pinned"> <span>추천 피드 상단 고정(가중치 ↑)</span></label>
+        <button class="btn" type="submit" id="p_send">게시하기</button>
+        <div id="postMsg" style="margin-top:.8rem"></div>
+      </form>
+    </section>
+
+    <!-- 게시물 관리 -->
+    <section class="form-card admin-sec" id="secPosts" hidden>
+      <h2>게시물 관리</h2>
+      <div id="postList"></div>
+    </section>
+
+    <!-- 신고 -->
+    <section class="form-card admin-sec" id="secReports" hidden>
+      <h2>신고된 댓글</h2>
+      <div id="reportList"></div>
+    </section>
+
+    <!-- 댓글 권한 -->
+    <section class="form-card admin-sec" id="secBuyers" hidden>
+      <h2>댓글 권한 (구매자 인증)</h2>
+      <p class="muted small">주문을 기록하면 PayPal 이메일에 자동으로 권한이 생깁니다. 사이트 로그인 이메일이 PayPal 이메일과 다르면 여기서 로그인 이메일을 추가하세요.</p>
+      <form id="buyerForm" class="row">
+        <input id="b_email" type="email" required placeholder="login@email.com" style="flex:1; min-width:220px; background:var(--bg); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:.6rem .8rem">
+        <button class="btn" type="submit">권한 부여</button>
+        <button class="btn btn-ghost" type="button" id="b_revoke">권한 회수</button>
+      </form>
+      <div id="buyerMsg" style="margin-top:.8rem"></div>
+    </section>
   </div>
 </main>
 
+<script type="module" src="./js/account.js"></script>
 <script type="module" src="./js/admin.js"></script>
 </body>
 </html>

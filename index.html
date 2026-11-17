@@ -44,14 +44,14 @@
   <nav class="main-nav">
     <a href="#how" data-i18n="nav.how"></a>
     <a href="#shop" data-i18n="nav.shop"></a>
+    <a href="./community.html" data-i18n="nav.community"></a>
     <a href="./free-entry.html" data-i18n="nav.free"></a>
     <a href="./official-rules.html" data-i18n="nav.rules"></a>
     <a href="#faq" data-i18n="nav.faq"></a>
   </nav>
   <div class="header-actions">
     <button class="btn btn-ghost btn-sm" id="langBtn" data-i18n="lang.toggle"></button>
-    <button class="btn btn-sm" id="loginBtn" data-i18n="auth.login" hidden></button>
-    <button class="btn btn-ghost btn-sm" id="logoutBtn" data-i18n="auth.logout" hidden></button>
+    <div id="accountArea"></div>
   </div>
 </header>
 
@@ -145,23 +145,19 @@
     </div>
   </section>
 
-  <!-- ===== Community ===== -->
-  <section class="container section community">
-    <div class="panel">
+  <!-- ===== Community preview ===== -->
+  <section class="container section">
+    <div class="section-head">
+      <h2 class="section-title" data-i18n="home.garageTitle"></h2>
+      <a class="link-more" href="./community.html" data-i18n="home.garageMore"></a>
+    </div>
+    <div class="garage-preview" id="garagePreview"></div>
+  </section>
+
+  <section class="container section">
+    <div class="panel wall-panel">
       <div class="panel-head"><span data-i18n="wall.title"></span></div>
       <ul class="wall" id="supporterWall"></ul>
-    </div>
-
-    <div class="panel chat">
-      <div class="panel-head">
-        <span data-i18n="chat.title"></span>
-        <span class="online" id="onlineBadge" hidden><span class="dot"></span><span id="onlineCount">0</span> <span data-i18n="chat.online"></span></span>
-      </div>
-      <div class="chat-messages" id="chatMessages" aria-live="polite"></div>
-      <form class="chat-input" id="chatForm">
-        <input type="text" id="chatInput" maxlength="300" autocomplete="off" disabled>
-        <button class="btn btn-sm" id="chatSend" type="submit" data-i18n="chat.send" disabled></button>
-      </form>
     </div>
   </section>
 
@@ -187,7 +183,7 @@
 
 <footer class="site-footer container" id="siteFooter"></footer>
 
-<script type="module" src="./js/common.js"></script>
+<script type="module" src="./js/account.js"></script>
 <script type="module" src="./js/main.js"></script>
 </body>
 </html>

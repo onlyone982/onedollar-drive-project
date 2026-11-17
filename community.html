@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Garage – One Dollar Drive Community</title>
+<meta name="description" content="Dream cars and real garages from the One Dollar Drive community.">
+<link rel="canonical" href="https://onedollardrive.com/community.html">
+<meta name="theme-color" content="#ffcc00">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Garage – One Dollar Drive">
+<meta property="og:description" content="Dream cars and real garages from the One Dollar Drive community.">
+<meta property="og:image" content="https://onedollardrive.com/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./css/style.css">
+<link rel="stylesheet" href="./css/community.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LWQCX5XZ9D"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-LWQCX5XZ9D');
+</script>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="./">ONE<span class="accent">$</span>DRIVE</a>
+  <nav class="main-nav">
+    <a href="./#shop" data-i18n="nav.shop"></a>
+    <a href="./community.html" class="is-active" data-i18n="nav.community"></a>
+    <a href="./free-entry.html" data-i18n="nav.free"></a>
+  </nav>
+  <div class="header-actions">
+    <button class="btn btn-ghost btn-sm" id="langBtn" data-i18n="lang.toggle"></button>
+    <div id="accountArea"></div>
+  </div>
+</header>
+
+<main class="cm-layout container">
+  <div class="cm-main">
+    <div class="cm-hero">
+      <div>
+        <h1 class="cm-title" data-i18n="cm.title"></h1>
+        <p class="muted small" data-i18n="cm.sub"></p>
+      </div>
+      <button class="btn btn-sm cm-submit-mobile" id="submitBtnTop" data-i18n="cm.submit"></button>
+    </div>
+
+    <!-- 스토리처럼 보이는 피처드 차고 -->
+    <div class="reel" id="featuredReel" aria-label="Featured garages"></div>
+
+    <!-- 기어 시프터 탭 -->
+    <div class="shifter" role="tablist">
+      <button role="tab" data-tab="foryou" class="is-on"><span class="gear">D</span><span data-i18n="cm.forYou"></span></button>
+      <button role="tab" data-tab="latest"><span class="gear">1</span><span data-i18n="cm.latest"></span></button>
+      <button role="tab" data-tab="explore"><span class="gear">N</span><span data-i18n="cm.explore"></span></button>
+    </div>
+
+    <div id="feed" class="feed"></div>
+    <div id="grid" class="explore-grid" hidden></div>
+    <div class="feed-more"><button class="btn btn-ghost" id="moreBtn" data-i18n="cm.more" hidden></button></div>
+  </div>
+
+  <aside class="cm-side">
+    <div class="side-card submit-card">
+      <div class="submit-art" aria-hidden="true">
+        <svg viewBox="0 0 120 70"><path d="M8 62V30L60 8l52 22v32" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M24 62V36h72v26" fill="none" stroke="currentColor" stroke-width="3"/><path d="M24 44h72M24 52h72" stroke="currentColor" stroke-width="2" opacity=".5"/></svg>
+      </div>
+      <h3 data-i18n="cm.submit"></h3>
+      <p class="muted small" data-i18n="sub.sub"></p>
+      <button class="btn btn-block" id="submitBtnSide" data-i18n="cm.submit"></button>
+      <div id="mySubs" class="my-subs"></div>
+    </div>
+    <div class="side-card" id="commentRuleCard">
+      <h3 data-i18n="cm.commentsTitle"></h3>
+      <p class="muted small" data-i18n="cm.buyersOnly"></p>
+      <a class="small" href="./#shop" data-i18n="cm.shopLink"></a>
+    </div>
+  </aside>
+</main>
+
+<footer class="site-footer container" id="siteFooter"></footer>
+
+<script type="module" src="./js/account.js"></script>
+<script type="module" src="./js/community.js"></script>
+</body>
+</html>

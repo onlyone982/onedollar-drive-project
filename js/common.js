@@ -1,6 +1,4 @@
-// 모든 페이지 공통: 언어, 로그인 버튼, 푸터, 유틸
-import { signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-import { auth, provider } from "./firebase.js";
+// 모든 페이지 공통: 언어, 푸터, 유틸 (로그인/계정은 account.js)
 import { STRINGS } from "./i18n.js";
 import { SITE } from "./config.js";
 
@@ -34,7 +32,7 @@ export function applyI18n(root = document) {
   root.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
     el.placeholder = t(el.dataset.i18nPlaceholder);
   });
-  langListeners.forEach((fn) => fn(getLang()));
+  if (root === document) langListeners.forEach((fn) => fn(getLang()));
 }
 
 function readVars(el) {
@@ -45,55 +43,9 @@ function readVars(el) {
   return vars;
 }
 
-function setLang(lang) {
+export function setLang(lang) {
   try { localStorage.setItem("lang", lang); } catch {}
   applyI18n();
-}
-
-/* ---------- auth ---------- */
-export let currentUser = null;
-let authReady = false;
-const authListeners = [];
-// 로그인 상태가 확정된 뒤에만 호출됩니다(새로고침 직후 잘못된 null 방지).
-export function onUser(fn) { authListeners.push(fn); if (authReady) fn(currentUser); }
-
-export function isRealUser(user) {
-  return !!user && !user.isAnonymous;
-}
-
-// 계정이 바뀌기 직전에 알림(접속자 표시 정리용)
-function beforeAuthChange() {
-  window.dispatchEvent(new Event("odd:before-auth-change"));
-}
-
-export async function signIn() {
-  beforeAuthChange();
-  try { await signInWithPopup(auth, provider); }
-  catch (e) { console.error("Sign-in failed:", e); }
-}
-
-export async function logOut() {
-  beforeAuthChange();
-  await signOut(auth);
-}
-
-function wireHeader() {
-  const loginBtn = document.getElementById("loginBtn");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const langBtn = document.getElementById("langBtn");
-
-  loginBtn?.addEventListener("click", signIn);
-  logoutBtn?.addEventListener("click", logOut);
-  langBtn?.addEventListener("click", () => setLang(getLang() === "en" ? "ko" : "en"));
-
-  onAuthStateChanged(auth, (user) => {
-    currentUser = user;
-    authReady = true;
-    const real = isRealUser(user);
-    if (loginBtn) loginBtn.hidden = real;
-    if (logoutBtn) logoutBtn.hidden = !real;
-    authListeners.forEach((fn) => fn(user));
-  });
 }
 
 /* ---------- footer ---------- */
@@ -114,6 +66,7 @@ function renderFooter() {
         <div><span data-i18n="footer.biz"></span>: ${esc(SITE.businessLicense)} · <span data-i18n="footer.ecom"></span>: ${esc(SITE.onlineBusinessLicense)}</div>
       </div>
       <nav class="footer-links small">
+        <a href="./community.html" data-i18n="nav.community"></a>
         <a href="./official-rules.html" data-i18n="footer.rules"></a>
         <a href="${esc(SITE.privacyUrl)}" target="_blank" rel="noopener" data-i18n="footer.privacy"></a>
         <a href="${esc(SITE.termsUrl)}" target="_blank" rel="noopener" data-i18n="footer.terms"></a>
@@ -147,7 +100,7 @@ export function toast(msg) {
   el.textContent = msg;
   el.classList.add("show");
   clearTimeout(el._t);
-  el._t = setTimeout(() => el.classList.remove("show"), 2200);
+  el._t = setTimeout(() => el.classList.remove("show"), 2400);
 }
 
 export function toDate(v) {
@@ -157,7 +110,37 @@ export function toDate(v) {
   return isNaN(d) ? null : d;
 }
 
+export function timeAgo(d) {
+  if (!d) return "";
+  const s = Math.max(1, Math.floor((Date.now() - d.getTime()) / 1000));
+  const ko = getLang() === "ko";
+  const units = ko
+    ? [[31536000, "년"], [2592000, "개월"], [604800, "주"], [86400, "일"], [3600, "시간"], [60, "분"]]
+    : [[31536000, "y"], [2592000, "mo"], [604800, "w"], [86400, "d"], [3600, "h"], [60, "m"]];
+  for (const [sec, label] of units) {
+    if (s >= sec) return ko ? `${Math.floor(s / sec)}${label} 전` : `${Math.floor(s / sec)}${label}`;
+  }
+  return ko ? "방금" : "now";
+}
+
+/* ---------- modal helper ---------- */
+export function openModal(html, { onClose, className = "" } = {}) {
+  const wrap = document.createElement("div");
+  wrap.className = "modal-backdrop";
+  wrap.innerHTML = `<div class="modal ${className}" role="dialog" aria-modal="true">
+    <button class="modal-x" aria-label="Close">×</button>${html}</div>`;
+  const close = () => { wrap.remove(); document.body.classList.remove("no-scroll"); onClose?.(); };
+  wrap.addEventListener("click", (e) => { if (e.target === wrap) close(); });
+  wrap.querySelector(".modal-x").addEventListener("click", close);
+  document.addEventListener("keydown", function k(e) {
+    if (e.key === "Escape") { close(); document.removeEventListener("keydown", k); }
+  });
+  document.body.appendChild(wrap);
+  document.body.classList.add("no-scroll");
+  applyI18n(wrap);
+  return { el: wrap.querySelector(".modal"), close };
+}
+
 /* ---------- boot ---------- */
 renderFooter();
-wireHeader();
 applyI18n();
