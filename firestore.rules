@@ -1,0 +1,92 @@
+rules_version = '2';
+
+// One Dollar Drive — Firestore 보안 규칙
+// 배포: Firebase 콘솔 → Firestore → 규칙 탭에 붙여넣기, 또는 `firebase deploy --only firestore:rules`
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isGoogle() {
+      return signedIn() && request.auth.token.firebase.sign_in_provider == 'google.com';
+    }
+    function isAdmin() {
+      return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    // UTC 기준 오늘 날짜 숫자 (예: 20261117)
+    function todayNum() {
+      return request.time.year() * 10000 + request.time.month() * 100 + request.time.day();
+    }
+    function myEmail() { return request.auth.token.email.lower(); }
+
+    // 관리자 목록: 콘솔에서 직접 admins/{uid} 문서를 만듭니다. 웹에서는 쓰기 불가.
+    match /admins/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    match /rounds/{roundId} {
+      allow read: if true;
+      allow write: if isAdmin();
+
+      // 서포터 월(공개 이름만)
+      match /supporters/{id} {
+        allow read: if true;
+        allow write: if isAdmin();
+      }
+
+      // 구매 응모권: 관리자만 기록. 본인 이메일 것만 조회 가능.
+      match /entries/{id} {
+        allow read: if isAdmin()
+          || (isGoogle() && request.auth.token.email_verified == true && resource.data.email == myEmail());
+        allow create: if isAdmin();          // 같은 거래 ID(paypal_xxx) 재기록은 update라서 차단됨
+        allow update: if false;
+        allow delete: if isAdmin();
+      }
+
+      // 무료 응모: 구글 로그인 사용자, 회차 open 상태, 하루 1건
+      match /freeEntries/{id} {
+        allow read: if isAdmin() || (isGoogle() && resource.data.uid == request.auth.uid);
+        allow create: if isGoogle()
+          && get(/databases/$(database)/documents/rounds/$(roundId)).data.status == 'open'
+          && id == request.auth.uid + '_' + string(todayNum())
+          && request.resource.data.keys().hasOnly(['uid', 'name', 'email', 'state', 'day', 'entries', 'createdAt'])
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.day == todayNum()
+          && request.resource.data.entries == 1   // js/config.js 의 FREE_ENTRIES_PER_DAY 와 같게 유지
+          && request.resource.data.email == myEmail()
+          && request.resource.data.name is string
+          && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 80
+          && request.resource.data.state is string && request.resource.data.state.size() == 2
+          && request.resource.data.createdAt == request.time;
+        allow update: if false;
+        allow delete: if isAdmin();
+      }
+
+      // 추첨 기록: 수정·삭제 불가 (투명성)
+      match /draws/{id} {
+        allow read, create: if isAdmin();
+        allow update, delete: if false;
+      }
+    }
+
+    // 실시간 채팅
+    match /messages/{id} {
+      allow read: if true;
+      allow create: if isGoogle()
+        && request.resource.data.keys().hasOnly(['text', 'uid', 'name', 'photoURL', 'timestamp'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0 && request.resource.data.text.size() <= 300
+        && request.resource.data.name is string && request.resource.data.name.size() <= 40
+        && request.resource.data.photoURL is string && request.resource.data.photoURL.size() <= 500
+        && request.resource.data.timestamp == request.time;
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
+
+    // 예전 원화 후원 기록(legacy) — 관리자만
+    match /donations/{id} {
+      allow read, write: if isAdmin();
+    }
+  }
+}

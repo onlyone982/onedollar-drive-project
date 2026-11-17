@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin – One Dollar Drive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./css/style.css">
+<style>
+  .admin { padding: 2rem 0 4rem; display: grid; gap: 1.5rem; }
+  .admin h2 { margin: 0 0 1rem; font-size: 1.15rem; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 1rem; }
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+  th, td { text-align: left; padding: .45rem .5rem; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; }
+  .row { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+  .winner { font-size: 1.3rem; font-weight: 800; color: var(--accent); }
+  @media (max-width: 760px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="./">ONE<span class="accent">$</span>DRIVE <span class="muted small">admin</span></a>
+  <div class="header-actions" style="margin-left:auto">
+    <button class="btn btn-sm" id="loginBtn" hidden>구글 로그인</button>
+    <button class="btn btn-ghost btn-sm" id="logoutBtn" hidden>로그아웃</button>
+  </div>
+</header>
+
+<main class="container admin">
+  <div id="gate" class="form-card">로그인 상태를 확인하는 중…</div>
+
+  <div id="panel" hidden>
+    <!-- 회차 설정 -->
+    <section class="form-card">
+      <h2>회차 설정 <span class="muted small" id="roundIdLabel"></span></h2>
+      <form id="roundForm">
+        <div class="grid3">
+          <div class="field"><label>회차 번호</label><input id="r_number" type="number" min="1"></div>
+          <div class="field"><label>상태</label>
+            <select id="r_status">
+              <option value="upcoming">upcoming (곧 시작)</option>
+              <option value="open">open (응모 중)</option>
+              <option value="closed">closed (마감)</option>
+              <option value="drawn">drawn (추첨 완료)</option>
+            </select>
+          </div>
+          <div class="field"><label>차량명</label><input id="r_carName"></div>
+        </div>
+        <div class="field"><label>상품 설명(영문, 메인에 크게 표시)</label><input id="r_prizeTitle"></div>
+        <div class="grid2">
+          <div class="field"><label>상품 예상가치 ARV (USD) — $5,000 이하 권장</label><input id="r_prizeArvUsd" type="number" min="0"></div>
+          <div class="field"><label>커뮤니티 마일스톤 (USD)</label><input id="r_milestoneUsd" type="number" min="0"></div>
+        </div>
+        <div class="grid3">
+          <div class="field"><label>시작 (내 PC 시간대)</label><input id="r_startsAt" type="datetime-local"></div>
+          <div class="field"><label>마감</label><input id="r_endsAt" type="datetime-local"></div>
+          <div class="field"><label>추첨일</label><input id="r_drawAt" type="datetime-local"></div>
+        </div>
+        <div class="row">
+          <button class="btn" type="submit">저장</button>
+          <span class="muted small" id="roundStats"></span>
+        </div>
+        <div id="roundMsg" style="margin-top:.8rem"></div>
+      </form>
+    </section>
+
+    <!-- 주문 기록 -->
+    <section class="form-card">
+      <h2>PayPal 주문 기록 → 응모권 적립</h2>
+      <p class="muted small">PayPal 대시보드에서 결제를 확인한 뒤 입력하세요. 같은 거래 ID는 두 번 저장되지 않습니다.</p>
+      <form id="orderForm">
+        <div class="grid2">
+          <div class="field"><label>구매자 이메일 (PayPal)</label><input id="o_email" type="email" required></div>
+          <div class="field"><label>구매자 이름 (비공개)</label><input id="o_name" required></div>
+        </div>
+        <div class="grid3">
+          <div class="field"><label>상품</label><select id="o_product"></select></div>
+          <div class="field"><label>수량</label><input id="o_qty" type="number" min="1" value="1"></div>
+          <div class="field"><label>PayPal 거래 ID</label><input id="o_txn" required></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>결제 금액 (USD)</label><input id="o_amount" type="number" step="0.01" min="0"></div>
+          <div class="field"><label>응모권 수</label><input id="o_entries" type="number" min="0"></div>
+        </div>
+        <label class="check"><input type="checkbox" id="o_wall"> <span>서포터 월에 공개 (구매자가 동의한 경우만)</span></label>
+        <div class="field"><label>공개 이름 (예: Mike R.)</label><input id="o_display" maxlength="40"></div>
+        <button class="btn" type="submit">기록하기</button>
+        <div id="orderMsg" style="margin-top:.8rem"></div>
+      </form>
+    </section>
+
+    <!-- 응모 현황 / 추첨 -->
+    <section class="form-card">
+      <h2>응모 현황 · 추첨</h2>
+      <div class="row">
+        <button class="btn btn-ghost" id="loadEntries">응모 내역 불러오기</button>
+        <button class="btn btn-ghost" id="csvBtn" disabled>CSV 다운로드</button>
+        <button class="btn" id="drawBtn" disabled>무작위 추첨</button>
+      </div>
+      <p class="muted small" id="entrySummary"></p>
+      <div id="drawResult"></div>
+      <div style="max-height:360px; overflow:auto; margin-top:1rem">
+        <table id="entryTable"></table>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script type="module" src="./js/admin.js"></script>
+</body>
+</html>
