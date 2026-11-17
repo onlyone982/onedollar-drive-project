@@ -2,744 +2,157 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>One Dollar Drive — My Dream Garage</title>
+<meta name="description" content="나만의 드림 개러지를 꾸미고, 굿즈를 모으고, 슈퍼카 1일 드라이브에 응모하세요. One Dollar Drive.">
+<meta name="theme-color" content="#000000">
 
-  <!-- 🔥 반드시 있어야 함 (모바일 → 모바일 화면 크기로 렌더링) -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">  
-
-<!-- ===== SEO (English Version) ===== -->
-<title>One Dollar Drive – Dreamcar Donation Project</title>
-
-<meta name="description" content="Join the One Dollar Drive project — a global dreamcar donation campaign aimed at funding a Porsche 911 GT3 RS. 10% goes to charity, and the rest supports the journey shared with donors.">
-
-<meta name="keywords" content="dreamcar donation, One Dollar Drive, Porsche 992 GT3 RS, car funding project, crowdfunding for cars, 1 dollar donation">
-<meta name="robots" content="index, follow">
-
-<!-- ===== Open Graph (Instagram, Discord, Facebook, Slack, Naver etc.) ===== -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="One Dollar Drive">
-<meta property="og:title" content="One Dollar Drive – Dreamcar Donation Project">
-<meta property="og:description" content="Join the global dreamcar donation movement and help complete the Porsche 992 GT3 RS journey.">
+<meta property="og:title" content="One Dollar Drive — My Dream Garage">
+<meta property="og:description" content="굿즈를 모으고, 응모권을 받고, 슈퍼카 1일 드라이브의 주인공이 되어보세요.">
 <meta property="og:url" content="https://onedollardrive.com/">
 <meta property="og:image" content="https://onedollardrive.com/og-image.jpg">
-<meta property="og:locale" content="en_US">
-<!-- ===== Discord Embed Color ===== -->
-<meta name="theme-color" content="#ffcc00">
-
-<!-- ===== KakaoTalk ONLY (Korean version) ===== -->
-<meta property="og:locale:alternate" content="ko_KR">
-<meta property="kakao:title" content="원달러드라이브 – 천 원 후원으로 드림카 사기 프로젝트">
-<meta property="kakao:description" content="천 원부터 참여하는 드림카 후원 프로젝트. Porsche 992 GT3 RS의 여정을 함께 완성해보세요.">
-<meta property="kakao:image" content="https://onedollardrive.com/og-image.jpg">
-
-
-<!-- ===== Discord Embed Color ===== -->
-<meta name="theme-color" content="#ffcc00">
-
-<!-- ===== X(Twitter) Card ===== -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="One Dollar Drive – Dreamcar Donation Project">
-<meta name="twitter:description" content="Support the dreamcar journey — Porsche 911 GT3 RS — starting from just 1 USD.">
-<meta name="twitter:image" content="https://onedollardrive.com/og-image.jpg">
 
-<style>
-/* =========================
-   PC 기본 스타일 (>=901px)
-   ========================= */
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #000;
-  color: #fff;
-  font-family: 'Orbitron', sans-serif;
-  text-align: center;
-}
-.container { max-width: 1200px; padding: 2rem; margin: 0 auto; }
-h1 { font-size: 2.2rem; margin-top: 2rem; white-space: nowrap; }
-p { font-size: 1.1rem; margin-bottom: 2rem; line-height: 1.6; }
-
-.goal-label { font-size: 1rem; margin-top: 1rem; color: #aaa; text-align: center; }
-.progress-container {
-  background: #333; border-radius: 20px; overflow: hidden;
-  margin: 0.5rem auto 2rem; height: 30px; width: 80%;
-}
-.progress-bar { height: 100%; width: 0%; background-color: #ffcc00; text-align: center; line-height: 30px; color: #000; font-weight: bold; transition: width 0.6s ease; }
-.donor-count { margin-top: 0.5rem; font-size: 1rem; color: #ccc; text-align: center; }
-
-.sns-share { margin-top: 1rem; display: flex; justify-content: flex-end; gap: 15px; }
-.sns-share a, .sns-share button { text-decoration: none; color: #ffcc00; font-size: 1.5rem; background: none; border: none; cursor: pointer; }
-
-#messageSlide { margin-top: 2rem; font-style: italic; color: #ffcc00; font-size: 1rem; height: 1.5rem; overflow: hidden; }
-.emotion-text { font-size: 0.75rem; color: #777; margin-top: 0.3rem; }
-footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #444; color: #ccc; font-size: 0.9rem; text-align: left; }
-.faq, .founder-message { margin-bottom: 2rem; }
-
-/* 동영상 섹션 */
-.video-section { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; width: 100%; max-width: 1000px; margin: 0 auto; }
-.video-container { width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; position: relative; }
-.video-container iframe { width: 100%; height: 100%; border: 0; display: block; border-radius: 10px; }
-.video-caption { text-align: center; font-size: 1.2rem; font-weight: 700; color: #dc143c; margin-top: 0.5rem; }
-.video-specs, #videoSpecs { align-self: center; font-size: 0.95rem; color: #ccc; background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 6px; line-height: 1.5; margin-left: 1rem; }
-
-/* 우측 상단 버튼 */
-.top-right-buttons { position: fixed; top: 1rem; right: 1rem; display: flex; gap: 0.6rem; z-index: 1000; }
-.top-right-buttons button {
-  padding: 0.5rem 1rem; font-size: 1rem; border-radius: 50px; font-weight: bold; cursor: pointer;
-  background-color: #ffcc00; color: #000; border: none; transition: transform 0.2s ease, box-shadow 0.3s ease; white-space: nowrap;
-}
-.top-right-buttons button:hover { transform: scale(1.05); box-shadow: 0 0 15px #ffcc00aa; }
-
-/* 후원 버튼 */
-.donate-button {
-  background-color: #ffcc00; border: none; color: #000; font-size: 1.2rem; font-weight: bold;
-  padding: 1rem 2rem; border-radius: 50px; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.3s ease; margin-top: 1rem;
-}
-.donate-button:hover { transform: scale(1.05); box-shadow: 0 0 15px #ffcc00aa; }
-
-/* 기부 10% 박스 */
-.green-support-container {
-  background-color: #28a745; color: #fff; border-radius: 15px; padding: 12px 20px;
-  margin: 1rem auto 2rem; width: 80%; font-weight: bold; font-size: 1rem; text-align: center; box-shadow: 0 0 8px #28a745aa;
-}
-.green-support-amount { font-size: 1.3rem; margin-bottom: 0.3rem; }
-.green-support-text { font-size: 0.95rem; opacity: 0.9; }
-
-/* 랭킹 박스(PC는 왼쪽) */
-.donation-ranking-container {
-  position: absolute; top: 50%; right: calc(50% + 520px); transform: translateY(-50%);
-  width: 300px; height: 630px; background-color: #111; border: 1px solid #333; border-radius: 10px;
-  box-shadow: 0 0 15px rgba(255, 204, 0, 0.1); display: flex; flex-direction: column; z-index: 100; overflow: hidden;
-}
-.ranking-header { text-align: center; font-size: 1.2rem; padding: 0.8rem; background-color: #222; color: gold; font-weight: bold; border-bottom: 1px solid #333; }
-.ranking-list { flex: 1; overflow-y: auto; padding: 0.8rem; }
-#rankingList { list-style: none; margin: 0; padding: 0; }
-#rankingList li {
-  display: flex; justify-content: space-between; align-items: center;
-  border-radius: 8px; margin-bottom: 0.6rem; padding: 0.6rem 0.8rem; font-size: 0.95rem; font-weight: 600;
-  position: relative; overflow: visible; z-index: 1; background: #1a1a1a;
-}
-/* 1~3위 네온 테두리 */
-#rankingList li:nth-child(-n + 3)::before {
-  content: ""; position: absolute; inset: -2px; border-radius: 10px;
-  background: linear-gradient(90deg,#ffd700,#ffe680,#d1a300,#ffd700);
-  background-size: 300% 100%; animation: glowFlow 4s linear infinite; z-index: -1;
-}
-#rankingList li:nth-child(-n + 3)::after { content: ""; position: absolute; inset: 2px; border-radius: 8px; z-index: 0; }
-#rankingList li:nth-child(1)::after { background: linear-gradient(135deg, #b7921b, #d6c057); }
-#rankingList li:nth-child(2)::after { background: #2a2a1f; }
-#rankingList li:nth-child(3)::after { background: #262418; }
-@keyframes glowFlow { 0%{background-position:0% 50%} 100%{background-position:300% 50%} }
-#rankingList .rank, #rankingList .name, #rankingList .amount { position: relative; z-index: 2; }
-#rankingList .rank { width: 35px; text-align: center; color: #f3d34a; font-weight: 700; }
-#rankingList .name { flex: 1; padding-left: 8px; color: #ffffff; }
-#rankingList .amount { min-width: 90px; text-align: right; color: #46ff9d; font-weight: 700; }
-
-.ranking-item {
-  transition: transform 0.45s ease-in-out; /* chat motion */
-}
-
-/* 실시간 채팅(PC는 오른쪽) */
-.live-chat-container {
-  position: absolute; top: 50%; left: calc(50% + 520px); transform: translateY(-50%);
-  width: 350px; height: 630px; background-color: #111; border: 1px solid #333; border-radius: 10px;
-  box-shadow: 0 0 15px rgba(255, 204, 0, 0.1); display: flex; flex-direction: column; justify-content: space-between; z-index: 100;
-}
-.chat-header { background:#222; padding:10px; font-weight:bold; color:#ffcc00; border-bottom:1px solid #333; text-align:left; display:flex; align-items:center; justify-content:space-between; overflow: visible; }
-.online-badge { display:inline-flex; align-items:center; gap:6px; margin-left:10px; font-size:0.85rem; color:#ffd952; font-weight:600; }
-.online-dot { width:7px; height:7px; background:#4cff6a; border-radius:50%; box-shadow:0 0 6px #4cff6a; }
-.chat-header .online-badge .online-dot { width:8px; height:8px; background:#30e060; box-shadow:0 0 6px #30e060; }
-
-.chat-messages { flex-grow: 1; padding: 10px; overflow-y: auto; font-size: 0.9rem; text-align: left; display: flex; flex-direction: column; gap: 10px; }
-.chat-message { display: flex; align-items: flex-start; gap: 8px; word-break: break-word; }
-.chat-message img { width: 30px; height: 30px; border-radius: 50%; }
-.chat-username { font-weight: bold; color: #ffcc00; margin-right: 5px; }
-.chat-input-area { display: flex; border-top: 1px solid #333; padding: 10px; background: #222; }
-#chatInput { flex: 1; background: #000; color: #fff; border: 1px solid #444; border-radius: 5px; padding: 8px; }
-#chatInput:disabled { opacity: 0.5; cursor: not-allowed; }
-#sendMessageBtn { background-color: #ffcc00; border: none; color: #000; font-weight: bold; padding: 8px 14px; border-radius: 6px; margin-left: 8px; cursor: pointer; transition: background-color 0.3s; }
-#sendMessageBtn:hover { background-color: #ffdb4d; }
-
-.chat-profile { border: 2px solid #7cfc00; border-radius: 50%; width: 40px; height: 40px; object-fit: cover; }
-
-/* 팝업 */
-.popup { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:999; }
-.popup-content { background:#ffB6C1; border-radius:15px; padding:30px; max-width:700px; width:90%; text-align:center; box-shadow:0 5px 20px rgba(0,0,0,0.3); }
-.donate-options { display:flex; justify-content:center; gap:30px; margin:20px 0; }
-.donate-card { position:relative; display:flex; flex-direction:column; align-items:center; width:150px; min-height:260px; background:#E6E6FA; border-radius:10px; padding:15px 10px 40px; transition: transform .2s; box-sizing:border-box; }
-.donate-card:hover { transform: translateY(-5px); }
-.price-tag { font-size:1.1rem; font-weight:bold; margin-bottom:8px; color:#222; }
-.donate-gif { width:100%; height:auto; border-radius:8px; margin-bottom:8px; object-fit:contain; }
-.cart-btn { position:absolute; bottom:10px; left:50%; transform:translateX(-50%); font-size:1.4rem; background:none; border:none; cursor:pointer; transition: transform .2s; z-index:2; }
-.cart-btn:hover { transform: translateX(-50%) scale(1.2); }
-.account-text { display:none; font-size:0.9rem; color:#333; background:#fff7d1; border-radius:8px; padding:4px 8px; margin-top:5px; transition:all .3s; text-align:center; }
-.close-btn { background:#ff5252; color:#fff; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; }
-.close-btn:hover { background:#d32f2f; }
-#popupTitle { color:#ffcc00; font-weight:700; font-size:1.6rem; text-align:center; margin-bottom:15px; text-shadow:0 2px 6px rgba(0,0,0,0.2); transition: color .3s; }
-#popupTitle:hover { color:#ffd633; }
-
-@media (min-width: 901px) {
-  #videoSpecs {
-    margin-bottom: 2.5rem; /* 기존보다 더 아래로 간격 */
-  }
-
-  .goal-label {
-    margin-top: 2.5rem; /* 목표금액과의 공간 확보 */
-  }
-}
-
-/* 모바일 전용 */
-@media (max-width: 900px) {
-
-  html, body {
-    overflow-x: hidden;
-  }
-
-  /* 모든 요소의 width 강제 정렬 */
-  * {
-    max-width: 100%;
-    box-sizing: border-box;
-  }
-
- /* PC에서 쓰던 absolute 강제 제거 */
-  .live-chat-container,
-  .donation-ranking-container {
-    position: static !important;
-    transform: none !important;
-    left: auto !important;
-    right: auto !important;
-    top: auto !important;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  /* 제목 크기 및 줄바꿈 */
-  h1#title {
-    font-size: 5.2vw;
-    text-align: center;
-    line-height: 1.25;
-    padding: 0 10px;
-    white-space: normal;
-  }
-
-  /* 영상은 전체 너비 */
-  .video-container iframe {
-    width: 100% !important;
-    height: 65vw !important; /* 기존 56vw → 60~65vw 정도가 더 크게 보임 */
-    border-radius: 10px;
-  }
-
-  /* ✅ 순서 재배치 */
-  .video-caption { order: 1; margin-top: 12px; text-align: center; }
-  /* ✅ video spec 중앙 위치 정밀 보정 */
-.video-specs {
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  text-align: center !important;
-  width: 100% !important;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* ✅ video caption 글자와 spec 간격 균형 */
-.video-caption {
-  margin-bottom: 8px !important;
-}
-
-  /* 랭킹 박스 크기 축소 */
-  .donation-ranking-container {
-    order: 3;
-    width: 90%;
-    max-width: 400px;
-    height: auto; /* 자동 높이 */
-    padding: 12px 0;
-    margin: 1rem auto;
-  }
-
-  /* 랭킹 리스트에서 4위부터는 숨김 */
-  #rankingList li:nth-child(n+4) {
-    display: none !important;
-  }
-
-  /* 리스트 내부 여백 & 라인 크기 줄임 */
-  #rankingList li {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.9rem;
-  }
-
-  /* 제목 영역 약간 줄임 */
-  .ranking-header {
-    font-size: 1rem;
-    padding: 8px 0;
-  }
-
-  .donate-button {
-    order: 4;
-    display: block;
-    width: 90%;
-    max-width: 500px;
-    margin: 0 auto 20px;
-  }
-
-  .goal-label,
-  .progress-container,
-  .donor-count,
-  .green-support-container {
-    order: 5;
-    width: 90%;
-    max-width: 500px;
-    margin: 8px auto;
-    text-align: center;
-  }
-
-  .live-chat-container {
-    order: 6;
-    width: 90%;
-    max-width: 500px;
-    margin: 20px auto;
-    height: 280px; /* ≈ 5줄 */
-  }
-
-  .chat-messages {
-    overflow-y: auto;
-    font-size: 0.9rem;
-  }
-
- .popup {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.65);
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-  }
-
-  
-  .popup-content {
-    max-width: 260px;       /* 기존 대비 약 3.5배 축소 */
-    max-height: 80vh;       /* 화면 높이 제한 */
-    width: 90%;
-    padding: 15px 18px;
-    border-radius: 12px;
-    overflow-y: auto;       /* 스크롤은 팝업 내부에서만 */
-    text-align: center;
-    background: #ffB6C1;
-  }
-
-/* 팝업 내부 카드 그룹을 가운데 정렬 */
-.donate-options {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;      /* ✅ 카드 자체를 중앙에 붙임 */
-  justify-content: center;
-  width: 100%;
-}
-
-/* 개별 카드도 중앙 기준 정렬 */
-.donate-card {
-  width: 85%;               /* ✅ 카드가 너무 꽉 차지 않도록 조절 */
-  max-width: 350px;         
-  margin: 0 auto;           /* ✅ 완벽한 수평 중앙 정렬 */
-  text-align: center;       /* ✅ 내부 텍스트도 중앙 */
-  position: relative;
-  padding-bottom: 55px;     /* ✅ 카트 공간 확보 */
-}
-
-/* GIF는 카드 너비 기준으로 자연스럽게 가운데 */
-.donate-gif {
-  width: 75%;
-  display: block;
-  margin: 0 auto;
-}
-
-/* 카트 버튼은 고정 하단 중앙 */
-.cart-btn {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 12px;             /* ✅ GIF와 겹치지 않게 여백 확보 */
-  font-size: 1.4rem;
-}
-
-  /* ✅ 닫기 버튼 항상 보이도록 */
-  #closePopup {
-    margin-top: 14px;
-    display: block;
-    width: 100%;
-  }
-}
-
-/* ====== Legal / Policy Footer ====== */
-.legal-footer {
-  border-top: 1px solid #888;   /* 회색 경계선 */
-  margin-top: 40px;
-}
-
-.legal-wrap {
-  margin-left: 0 !important;
-  margin-right: auto !important;
-}
-
-hr[style] {
-  width: 100vw !important;
-  margin-left: 50% !important;
-  transform: translateX(-50%);
-}
-
-/* 링크 색상을 완전히 강제로 리셋 */
-.legal-wrap a,
-.legal-wrap a:visited,
-.legal-wrap a:hover,
-.legal-wrap a:active,
-footer a,
-footer a:visited,
-footer a:hover,
-footer a:active {
-  color: #ffffff !important;     /* 항상 흰색으로 고정 */
-  text-decoration: none !important;
-  border-bottom: none !important;
-}
-
-/* 리스트 스타일 */
-.policy-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 6px 10px;
-}
-
-.policy-list li {
-  position: relative;
-  padding-right: 12px;
-}
-
-/* | 구분자 */
-.policy-list li:not(:last-child)::after {
-  content: "|";
-  position: absolute;
-  right: 2px;
-  top: 0;
-  color: #ffffff;
-  opacity: 0.6;
-}
-
-/* 모바일 */
-@media (max-width: 560px) {
-  .legal-wrap { font-size: 13px; }
-  .policy-list { gap: 4px 8px; }
-}
-
-/* ===== Footer 링크 색상 강제 처리 ===== */
-footer a,
-footer a:visited {
-  color: #ffffff !important;
-  text-decoration: none !important;
-}
-/* COPY LINK 정확 위치 잡기 */
-.copy-link-text {
-  position: absolute;
-  bottom: -22px;  /* 영상 아래 여백 */
-  left: 0;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  color: #fd143c;
-  user-select: none;
-  z-index: 50;
-}
-
-/* hover */
-.copy-link-text:hover {
-  opacity: 1;
-}
-
-/* 모바일은 정렬 위치 변경 */
-@media (max-width: 900px) {
-  .copy-link-text {
-    position: relative;
-    top: 0;
-    left: 0;
-    margin-top: 6px;
-    padding-left: 6px;
-  }
-}
-.video-section {
-  position: relative;   /* ✅ COPYLINK가 붙을 기준 박스 */
-}
-
-.donate-card * {
-  white-space: normal !important;
-  word-break: break-word !important;
-}
-
-.account-text a {
-  pointer-events: auto;
-  cursor: pointer;
-}
-
-/* language box */
-.lang-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
-
-.lang-box {
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(12px);
-  padding: 20px;
-  border-radius: 12px;
-  text-align: center;
-  min-width: 220px;
-}
-
-.lang-option {
-  padding: 12px;
-  margin: 10px 0;
-  cursor: pointer;
-  border-radius: 8px;
-  font-weight: bold;
-  transition: 0.2s;
-
-    /* ✅ 추가 */
-  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
-}
-
-.lang-option:hover {
-  background: rgba(255,255,255,0.2);
-}
-
-</style>
-
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="css/style.css">
+<script type="module" src="js/main.js"></script>
 </head>
- <body>
+<body>
+<a class="skip-link" href="#garage">본문으로 건너뛰기</a>
 
-<!-- ✅ Firebase / Google Analytics 추적 코드 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-LWQCX5XZ9D"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){ dataLayer.push(arguments); }
-  gtag('js', new Date());
-  gtag('config', 'G-LWQCX5XZ9D', {
-    send_page_view: true
-  });
- </script>
+<!-- ================= Header ================= -->
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a class="logo" href="index.html" aria-label="One Dollar Drive 홈">
+      <span class="logo-mark">$1</span>
+      <span class="logo-text">ONE DOLLAR DRIVE</span>
+    </a>
 
-<div class="top-right-buttons">
-  <button class="login-button" onclick="signInWithGoogle()">구글 로그인 / 회원가입</button>
-  <button class="logout-button" onclick="signOutFromGoogle()" style="display:none;">로그아웃</button>
-  <button class="lang-toggle" id="languageBtn">🌐 Language</button>
-</div>
+    <nav class="main-nav" id="mainNav" aria-label="주 메뉴">
+      <ul>
+        <li><a href="index.html" aria-current="page">Garage</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="draw.html">Draw <span class="nav-badge">EVENT</span></a></li>
+        <li><a href="community.html" class="is-soon">Community <span class="nav-tbd">TBD</span></a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="support.html">Support</a></li>
+      </ul>
+    </nav>
 
-<div id="languageModal" class="lang-modal">
-  <div class="lang-box">
-    <div class="lang-option" data-lang="ko"> &#x1F1F0;&#x1F1F7; Korean</div>
-    <div class="lang-option" data-lang="en"> &#x1F1FA;&#x1F1F8; English</div>
+    <div class="header-actions">
+      <button class="icon-btn glow" type="button" id="langBtn" aria-label="언어 변경">KO</button>
+      <a class="icon-btn glow" href="account.html" aria-label="로그인">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+      </a>
+      <a class="icon-btn glow cart-btn" href="cart.html" aria-label="장바구니, 0개">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11h11.2L21 7H6.2"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/></svg>
+        <span class="cart-count" id="cartCount">0</span>
+      </a>
+      <button class="menu-toggle glow" type="button" id="menuToggle" aria-expanded="false" aria-controls="mainNav" aria-label="메뉴 열기">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </div>
-</div>
+</header>
 
-  <div class="container">
-    <h1 id="title">🔥 천 원만 후원하고 여러분의 드림카를 완성해 주세요! 🔥</h1>
-<div class="video-section">
-
-  <!-- ✅ 영상 -->
-  <div class="video-container">
-    <iframe
-      src="https://www.youtube.com/embed/DZAdVY9kKbc?si=54uDb1SrxgJb3EBZ"
-      allowfullscreen
-    ></iframe>
-  </div>
-  <div class="copy-link-text" id="copyLinkBtn">🔗COPY LINK</div>
-</div> <!-- video-section END -->
-
-<!-- ✅ 영상 아래 캡션 -->
-<div class="video-caption">
-  🚗 Porsche 992 GT3 RS
-</div>
-
-<!-- ✅ 스펙 -->
-<div class="video-specs" id="videoSpecs">
-  <strong>스펙 요약:</strong><br />
-  - 최고출력: 518마력<br />
-  - 0→100km/h: 3.2초<br />
-  - 최고속도: 312km/h<br />
-  - 무게: 약 1,450kg<br />
-  - 가격: 약 3억 원대 (한화 기준)
-</div>
-
-
-<!-- ✅ Donation Ranking -->
-<div class="donation-ranking-container">
-  <div class="ranking-header">👑 미래의 오너분들 👑</div>
-  <div class="ranking-list">
-    <ul id="rankingList"></ul>
-  </div>
-</div>
-
-<!-- ✅ 목표 금액 & 후원 정보 -->
-<div class="goal-label" id="goalLabel">목표금액: ₩400,000,000</div>
-
-<div class="progress-container">
-  <div class="progress-bar" id="progressBar">₩0 / ₩400,000,000</div>
-</div>
-
-<div class="donor-count" id="donorCount">후원자 수: 0</div>
-
-<div class="green-support-container">
-  <div class="green-support-amount" id="supportAmount">₩0</div>
-  <div class="green-support-text">전체 기부금의 10%는 불우이웃 및 어린이 단체에 기부됩니다.</div>
-</div>
-
-<!-- ✅ 후원하기 버튼 -->
-<button class="donate-button" id="donateBtn">🔥 지금 후원하기 | Donate Now</button>
-
-<!-- ✅ 실시간 채팅 박스 (마지막) -->
-<div class="live-chat-container">
-<div class="chat-header" id="chatHeader">
-  <span class="chat-header-text">💬 실시간 채팅</span>
-  <span class="online-badge">
-    <span id="onlineLabel">현재 접속자수:</span>
-    <span class="online-dot"></span>
-    <span id="onlineCount">0</span>
-  </span>
-</div>
-  
-  <div class="chat-messages" id="chatMessages"></div>
-
-  <div class="chat-input-area">
-    <input type="text" id="chatInput" placeholder="로그인 후 메시지를 입력하세요..." disabled>
-    <button id="sendMessageBtn" disabled>보내기</button>
-  </div>
-</div>
-
-
-<!-- 팝업 구조 -->
-<div id="donatePopup" class="popup">
-  <div class="popup-content">
-    <h2 id="popupTitle">천원으로 미래의 주인공이 되어주세요.</h2>
-
-    <div class="donate-options">
-
-      <!-- 1달러 -->
-      <div class="donate-card">
-        <p class="price-tag">1$</p>
-        <img src="https://gifdb.com/images/high/spinning-curve-potato-chip-bbjg3w7u5mgzlrh5.webp" alt="1 dollar gif" class="donate-gif">
-        <button class="cart-btn" data-account="💳 계좌번호:국민은행:908901-00-042802 (옐로우 호라이즌)">🛒</button>
-        <p class="account-text"></p>
+<main>
+  <!-- ================= Garage (Hero) ================= -->
+  <section class="garage" id="garage" aria-labelledby="garageTitle">
+    <!-- 모바일에서는 좌우로 밀어서 차고를 둘러볼 수 있습니다 -->
+    <div class="garage-scroll" id="garageScroll">
+      <div class="stage" id="stage">
+        <!-- stage-inner: 마우스를 따라 아주 살짝 움직이는 층 (사진 + 윤곽선 + 스티커가 함께 움직임) -->
+        <div class="stage-inner" id="stageInner">
+          <!-- 배경 사진 (테마를 바꾸면 js가 부드럽게 교체) -->
+          <div class="photos" id="photos">
+            <img class="garage-photo is-current" src="assets/themes/forest.webp" width="1672" height="941"
+                 alt="숲이 보이는 드림 개러지에 세워진 슈퍼카 세 대" fetchpriority="high" decoding="async">
+          </div>
+          <div class="photo-fade" aria-hidden="true"></div>
+          <!-- 차량 윤곽선 (js/cars.js 의 outline 으로 생성) -->
+          <svg class="outlines" id="outlines" viewBox="0 0 1672 941" preserveAspectRatio="none"></svg>
+          <!-- 반짝이는 점, 이름표, 블랙 스티커 -->
+          <div class="hotspots" id="hotspots"></div>
+        </div>
       </div>
-
-      <!-- 10달러 -->
-      <div class="donate-card">
-        <p class="price-tag">10$</p>
-        <img src="https://media.tenor.com/FE0HbiCmZP4AAAAi/burger-cheese-burger.gif" alt="10 dollar gif" class="donate-gif">
-        <button class="cart-btn" data-account="💳 계좌번호:국민은행:908901-00-042802 (옐로우 호라이즌)">🛒</button>
-        <p class="account-text"></p>
-      </div>
-
-      <!-- 100달러 -->
-      <div class="donate-card">
-        <p class="price-tag">100$</p>
-        <img src="https://media1.tenor.com/m/cJTEd9pETkEAAAAC/goat-the-goat.gif" alt="100 dollar gif" class="donate-gif">
-        <button class="cart-btn" data-account="💳 계좌번호:국민은행:908901-00-042802 (옐로우 호라이즌)">🛒</button>
-        <p class="account-text"></p>
-      </div>
-
     </div>
 
-    <button id="closePopup" class="close-btn">닫기</button>
+    <div class="garage-ui">
+      <div class="garage-left">
+        <div class="garage-caption">
+          <p class="eyebrow">MY DREAM GARAGE</p>
+          <h1 id="garageTitle">언젠가 나의 차고에 세워질 세 대</h1>
+          <p class="hint"><span class="hint-dot" aria-hidden="true"></span>차량을 눌러 제원을 확인하세요</p>
+        </div>
+        <!-- 배경 테마 선택 (js에서 생성) -->
+        <div class="theme-picker" id="themePicker" role="radiogroup" aria-label="배경 테마"></div>
+      </div>
+      <!-- 차량 선택 버튼 (js에서 생성) -->
+      <div class="car-switch" id="carSwitch" role="group" aria-label="차량 선택"></div>
+    </div>
+
+    <div class="vignette" aria-hidden="true"></div>
+  </section>
+
+  <!-- ================= How it works ================= -->
+  <section class="how" aria-labelledby="howTitle">
+    <p class="eyebrow reveal">HOW IT WORKS</p>
+    <h2 id="howTitle" class="section-title reveal">Collect. Enter. <em>Drive.</em></h2>
+    <ol class="how-steps">
+      <li class="reveal">
+        <div class="step-top">
+          <span class="step-no">01</span>
+          <svg class="step-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        </div>
+        <h3>굿즈 구매</h3>
+        <p>One Dollar Drive 굿즈와 상품을 구매하세요.</p>
+      </li>
+      <li class="reveal">
+        <div class="step-top">
+          <span class="step-no">02</span>
+          <svg class="step-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8a2 2 0 0 0 0 4v0a2 2 0 0 1 0 4v2h18v-2a2 2 0 0 1 0-4 2 2 0 0 1 0-4V6H3v2z"/><path d="M14 6v12" stroke-dasharray="2 2"/></svg>
+        </div>
+        <h3>응모권 적립</h3>
+        <p>구매 금액에 따라 슈퍼카 드라이브 응모권이 적립됩니다.</p>
+      </li>
+      <li class="reveal">
+        <div class="step-top">
+          <span class="step-no">03</span>
+          <svg class="step-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/><path d="M3.5 10.5 10 12M20.5 10.5 14 12M12 14v7"/></svg>
+        </div>
+        <h3>슈퍼카 1일 드라이브</h3>
+        <p>이벤트 추첨을 통해 드림카를 하루 동안 직접 운전해보세요.</p>
+      </li>
+    </ol>
+    <div class="how-cta reveal">
+      <a class="btn btn-primary glow" href="shop.html">Shop 둘러보기</a>
+      <a class="btn btn-ghost glow" href="draw.html">이벤트 안내</a>
+    </div>
+  </section>
+</main>
+
+<!-- ================= Footer ================= -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-mark">$1</span>
+      <span>ONE DOLLAR DRIVE</span>
+    </div>
+    <nav class="footer-links" aria-label="정책">
+      <a href="https://sites.google.com/view/onedollardrive-policy/홈" target="_blank" rel="noopener">이용약관</a>
+      <a href="https://sites.google.com/view/ondollardrive-privacy/홈" target="_blank" rel="noopener">개인정보처리방침</a>
+      <a href="support.html">고객센터</a>
+    </nav>
+    <address class="biz-info">
+      상호: Yellowhorizen Co. · 대표자: 이명준 · 사업자등록번호: 598-43-01196<br>
+      통신판매업신고: 2023-강원원주-01485호 · 주소: 강원도 원주시 행구동 1815-1<br>
+      전화: 010-4829-3911 · 이메일: onedolladrive@gmail.com
+    </address>
+    <p class="copyright">© 2023–2026 Yellowhorizen Co. All rights reserved.</p>
   </div>
-</div>
-
-    <div id="messageSlide"></div>
-    <p id="description">
-      차를 좋아하고 드라이브를 즐기는 사람들이라면 한번쯤은 생각하셨을 나만의 드림카... 생각만 해도 가슴이 두근거립니다.<br /><br />
-      면허를 따고 난 후 처음 자동차를 접했을 때, 저는 왠지 모를 해방감과 자유를 느꼈습니다. 그때부터 저는 마음속에 나만의 드림카를 품기 시작했습니다.<br /><br />
-      하지만 제가 하고 있는 아르바이트와 직장으로는 평생 벌어도 사기 힘듭니다.
-      그러나 젊음의 피와 열정이 끓는 지금이 아니면,<br /><br />죽기 전에 타더라도 그때의 두근거림과 짜릿함을 느낄 수 있을까요?<br /><br />
-      그래서 저는 단순히 생각했습니다. 모두가 똑같이 열망하고 갖고 싶어하는 드림카가 있다면, 
-      조금이라도 후원을 받아서 언젠가 우리 모두가 꿈꿔왔던<br /><br />
-      드림카를 타볼 수 있는 그런 날들을 만들어보자고 말이죠.
-    </p>
-
-    <footer>
-      <div class="faq">
-        <h3>자주 묻는 질문 (FAQ)</h3>
-        <p>
-          <strong>Q: 후원은 실제로 어디에 사용되나요?</strong
-          ><br />
-          여러분의 소중한 후원금의 10%는 자선단체(사랑의 열매등)에 사용되며 이후 자동차 구매 및 추첨을 통해 후원자분들과 운전경험을 공유하여 투명하게 사용될 예정입니다. (만약 후원금이 진짜 모이면요😲).
-        </p>
-        <p>
-          <strong>Q: 후원은 환불 가능한가요?</strong
-          ><br />
-         특별한 사유가 있을 경우 이메일로 문의하실 수 있습니다. 가급적 로그인 후 후원해주실 것을 양해드리며 "자세한 사항은 이용약관 참고 부탁드립니다"
-        </p>
-      </div>
-      <div class="founder-message">
-        <h3>창립자의 메시지</h3>
-        <p>
-          저는 어릴떄나 지금이나 차를 좋아합니다. 이 사이트는 단순한 크라우드 펀딩이 아니라, 모두의 꿈을 현실로 만들고 싶다는 믿음으로 시작했습니다.<br />
-          여러분의 후원이 저뿐 아니라 많은 이들의 마음속 드림카를 향한 동기부여를 자극시켜줄 수 있다고 생각합니다.<br />
-          여러분의 소중한 후원 다시 한번 감사드립니다!
-        </p>
-      </div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-analytics.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyDTJFT5aBr2km6_Z-Q8gXdBvkKGxLVmOyo",
-  authDomain: "onedollardrive-3bbee.firebaseapp.com",
-  projectId: "onedollardrive-3bbee",
-  storageBucket: "onedollardrive-3bbee.firebasestorage.app",
-  messagingSenderId: "37980557245",
-  appId: "1:37980557245:web:9c752ecf11cdb6ff270cd4",
-  measurementId: "G-LWQCX5XZ9D",
- // ✅ 이 줄 추가 (정확히 그대로 복사)
-  databaseURL: "https://onedollardrive-3bbee-default-rtdb.asia-southeast1.firebasedatabase.app"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-</script>
-
-<div class="footer-legal-wrap"></div>
-<!-- ====== Legal / Policy Footer ====== -->
-<hr style="margin-top: 40px; border: 0; border-top: 1px solid #555;">
-
-<div style="font-size: 10pt; line-height: 1.6; text-align: left;">
-
-  Call: <span id="footerPhone">(KR)010-4829-3911</span><br>
-  Email: <span id="footerEmail">onedolladrive@gmail.com</span><br>
-  Business License: <span id="footerBusiness">598-43-01196</span><br>
-  Online Business License: <span id="footerLicense">2023-강원원주-01485호</span><br>
-  Name of Representative: <span id="footerCEO">이명준</span><br>
-  Business Location: <span id="footerAddress">1815-1 Haenggu-dong, Wonju-si, Gangwon-do</span><br><br>
-
-  <a href="https://sites.google.com/view/ondollardrive-privacy/홈" target="_blank">개인정보처리 약관</a> |
-  <a href="https://sites.google.com/view/onedollardrive-policy/홈" target="_blank">이용 약관</a> |
-  <a href="https://sites.google.com/view/onedollardrive-privacy-en/홈" target="_blank">Privacy Policy</a> |
-  <a href="https://policies.google.com/privacy?hl=en" target="_blank">Google Privacy Policy</a> |
-  <a href="https://www.youtube.com/static?gl=KR&template=terms" target="_blank">YouTube Terms of Service</a><br><br>
-
-  <span>ⓒ 2023. Yellowhorizen Co. All rights reserved.</span>
-</div>
-
-<!-- 외부 JS 파일 -->
-<script type="module" src="./script.js"></script>
-
+</footer>
 </body>
 </html>
