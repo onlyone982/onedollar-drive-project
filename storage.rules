@@ -1,0 +1,36 @@
+rules_version = '2';
+
+// One Dollar Drive — Cloud Storage 보안 규칙
+// 배포: Firebase 콘솔 → Storage → 규칙 탭, 또는 `firebase deploy --only storage`
+// ※ Firestore를 기본(default)이 아닌 데이터베이스로 바꾸면 아래 (default)를 그 이름으로 바꾸세요.
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAdmin() {
+      return request.auth != null
+        && firestore.exists(/databases/(default)/documents/admins/$(request.auth.uid));
+    }
+
+    // 공개 게시물 사진: 누구나 보기, 관리자만 업로드/삭제
+    match /posts/{postId}/{file} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // 차고 제출 사진: 본인과 관리자만 보기 (승인 전 비공개)
+    match /submissions/{uid}/{subId}/{file} {
+      allow read: if request.auth != null && (request.auth.uid == uid || isAdmin());
+      allow create: if request.auth != null && request.auth.uid == uid
+        && firestore.exists(/databases/(default)/documents/users/$(uid))
+        && request.resource.size < 3 * 1024 * 1024
+        && request.resource.contentType == 'image/jpeg'
+        && file.matches('^[0-4][.]jpg$');
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

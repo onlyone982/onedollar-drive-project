@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>The Garage – One Dollar Drive Community</title>
+<meta name="description" content="Dream cars and real garages from the One Dollar Drive community.">
+<link rel="canonical" href="https://onedollardrive.com/community.html">
+<meta name="theme-color" content="#000000">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="One Dollar Drive">
+<meta property="og:title" content="The Garage – One Dollar Drive">
+<meta property="og:description" content="Dream cars and real garages from the One Dollar Drive community.">
+<meta property="og:image" content="https://onedollardrive.com/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="./css/style.css">
+<link rel="stylesheet" href="./css/community.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LWQCX5XZ9D"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-LWQCX5XZ9D');
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
+
+<!-- ================= Header (모든 페이지 동일) ================= -->
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a class="logo" href="index.html" aria-label="One Dollar Drive home" data-i18n-aria="aria.home">
+      <span class="logo-mark">$1</span>
+      <span class="logo-text">ONE DOLLAR DRIVE</span>
+    </a>
+
+    <nav class="main-nav" id="mainNav" aria-label="Main menu" data-i18n-aria="aria.mainNav">
+      <ul>
+        <li><a href="index.html">Garage</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="draw.html">Draw <span class="nav-badge">EVENT</span></a></li>
+        <li><a href="community.html" aria-current="page">Community</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="support.html">Support</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <div class="lang-wrap">
+        <button class="icon-btn glow" type="button" id="langBtn" aria-label="Language" data-i18n-aria="lang.label">EN</button>
+      </div>
+      <!-- 로그인 / 내 계정 (js/account.js 가 채움) -->
+      <div id="accountArea"></div>
+      <a class="icon-btn glow cart-btn" href="cart.html" aria-label="Cart" data-i18n-aria="aria.cart">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11h11.2L21 7H6.2"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/></svg>
+        <span class="cart-count" id="cartCount">0</span>
+      </a>
+      <button class="menu-toggle glow" type="button" id="menuToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="cm-layout container page-main">
+  <div class="cm-main">
+    <div class="cm-hero">
+      <div>
+        <p class="eyebrow">COMMUNITY</p>
+        <h1 class="cm-title" data-i18n="cm.title"></h1>
+        <p class="muted small" data-i18n="cm.sub"></p>
+      </div>
+      <button class="btn btn-sm cm-submit-mobile" id="submitBtnTop" data-i18n="cm.submit"></button>
+    </div>
+
+    <!-- 스토리처럼 보이는 피처드 차고 -->
+    <div class="reel" id="featuredReel" aria-label="Featured garages"></div>
+
+    <!-- 기어 시프터 탭 -->
+    <div class="shifter" role="tablist">
+      <button role="tab" data-tab="foryou" class="is-on"><span class="gear">D</span><span data-i18n="cm.forYou"></span></button>
+      <button role="tab" data-tab="latest"><span class="gear">1</span><span data-i18n="cm.latest"></span></button>
+      <button role="tab" data-tab="explore"><span class="gear">N</span><span data-i18n="cm.explore"></span></button>
+    </div>
+
+    <div id="feed" class="feed"></div>
+    <div id="grid" class="explore-grid" hidden></div>
+    <div class="feed-more"><button class="btn btn-ghost glow" id="moreBtn" data-i18n="cm.more" hidden></button></div>
+  </div>
+
+  <aside class="cm-side">
+    <div class="side-card submit-card">
+      <div class="submit-art" aria-hidden="true">
+        <svg viewBox="0 0 120 70"><path d="M8 62V30L60 8l52 22v32" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M24 62V36h72v26" fill="none" stroke="currentColor" stroke-width="3"/><path d="M24 44h72M24 52h72" stroke="currentColor" stroke-width="2" opacity=".5"/></svg>
+      </div>
+      <h3 data-i18n="cm.submit"></h3>
+      <p class="muted small" data-i18n="sub.sub"></p>
+      <button class="btn btn-block" id="submitBtnSide" data-i18n="cm.submit"></button>
+      <div id="mySubs" class="my-subs"></div>
+    </div>
+    <div class="side-card" id="commentRuleCard">
+      <h3 data-i18n="cm.commentsTitle"></h3>
+      <p class="muted small" data-i18n="cm.buyersOnly"></p>
+      <a class="small" href="./shop.html" data-i18n="cm.shopLink"></a>
+    </div>
+  </aside>
+</main>
+
+<!-- ================= Footer (모든 페이지 동일) ================= -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-mark">$1</span>
+      <span>ONE DOLLAR DRIVE</span>
+    </div>
+    <nav class="footer-links" aria-label="Policies" data-i18n-aria="aria.policies">
+      <a href="https://sites.google.com/view/onedollardrive-policy/홈" target="_blank" rel="noopener" data-i18n="footer.terms">Terms of Service</a>
+      <a href="https://sites.google.com/view/ondollardrive-privacy/홈" target="_blank" rel="noopener" data-i18n="footer.privacy">Privacy Policy</a>
+      <a href="support.html" data-i18n="footer.support">Support</a>
+    </nav>
+    <address class="biz-info">
+      <span data-i18n="footer.company">Company</span>: Yellowhorizen Co. · <span data-i18n="footer.ceo">CEO</span>: <span data-i18n="footer.ceoName">Myeongjun Lee</span> · <span data-i18n="footer.biz">Business reg. no.</span>: 598-43-01196<br>
+      <span data-i18n="footer.ecom">E-commerce reg. no.</span>: 2023-강원원주-01485호 · <span data-i18n="footer.address">Address</span>: <span data-i18n="footer.addressValue">1815-1 Haenggu-dong, Wonju-si, Gangwon-do, Republic of Korea</span><br>
+      <span data-i18n="footer.phone">Phone</span>: 010-4829-3911 · <span data-i18n="footer.email">Email</span>: onedolladrive@gmail.com
+    </address>
+    <p class="copyright">© 2023–2026 Yellowhorizen Co. All rights reserved.</p>
+  </div>
+</footer>
+
+<script type="module" src="./js/header.js"></script>
+<script type="module" src="./js/account.js"></script>
+<script type="module" src="./js/community.js"></script>
+</body>
+</html>
