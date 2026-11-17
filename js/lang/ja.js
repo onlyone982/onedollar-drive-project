@@ -32,7 +32,7 @@ export default {
   "g.step3t": "スーパーカーで1日ドライブ",
   "g.step3b": "イベント抽選に当選すると、憧れの車を丸1日運転できます。",
   "g.ctaShop": "ショップを見る",
-  "g.ctaDraw": "イベント案内",
+  "g.ctaPit": "Pit Stop を試す",
 
   "spec.power": "最高出力",
   "spec.zero100": "0→100",

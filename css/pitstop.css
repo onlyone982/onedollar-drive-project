@@ -1,0 +1,145 @@
+/* =========================================================
+   Pit Stop — What if... / Carscope
+   색·폰트·버튼은 css/style.css 의 변수와 .btn / .glow 를 그대로 씁니다. (모바일 우선)
+   ========================================================= */
+.ps { max-width: 680px; }
+
+/* ---------- 머리말 ---------- */
+.ps-hero { text-align: center; margin-bottom: 22px; }
+.ps-hero .eyebrow { color: var(--text-dim); }
+.ps-title { margin: 0 0 6px; font-size: clamp(2rem, 8vw, 3rem); font-weight: 800; letter-spacing: -0.02em; }
+.ps-hero p:last-child { margin: 0; }
+
+/* ---------- 탭 ---------- */
+.ps-tabs {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+  max-width: 420px; margin: 0 auto 18px; padding: 5px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+}
+.ps-tab {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 44px; padding: 0 12px; border-radius: 999px; border-color: transparent;
+  background: transparent; color: var(--text-dim); cursor: pointer;
+  font-size: 0.92rem; font-weight: 700; letter-spacing: .02em;
+}
+.ps-tab:hover { color: #fff; }
+.ps-tab[aria-selected="true"] { background: #fff; color: #000; border-color: #fff; box-shadow: 0 0 18px rgba(255,255,255,.25); }
+.ps-tab-icon {
+  display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
+  border: 1.5px solid currentColor; font-size: .7rem; font-weight: 800;
+}
+.ps-panel:focus-visible { outline: 1px solid rgba(255,255,255,.4); outline-offset: 6px; border-radius: 12px; }
+.ps-lead { margin: 0 0 14px; text-align: center; color: var(--text-dim); word-break: keep-all; }
+
+/* ---------- 카드 ---------- */
+.ps-card {
+  position: relative;
+  padding: 22px 18px;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: calc(var(--radius) + 6px);
+  box-shadow: 0 20px 50px rgba(0,0,0,.45);
+}
+@media (min-width: 600px) { .ps-card { padding: 32px; } }
+.ps-step, .ps-result { animation: psIn .45s var(--ease) both; }
+@keyframes psIn { from { opacity: 0; translate: 0 10px; } }
+
+.ps-step-no { margin: 0 0 8px; font-size: .72rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--text-dim); }
+.ps-progress { height: 3px; margin-bottom: 22px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.ps-progress span { display: block; height: 100%; background: #fff; box-shadow: 0 0 10px #fff; transition: width .5s var(--ease); }
+.ps-q { display: block; margin-bottom: 18px; font-size: clamp(1.15rem, 5vw, 1.45rem); font-weight: 800; line-height: 1.35; word-break: keep-all; }
+
+/* 금액 입력 */
+.ps-amount {
+  display: flex; align-items: center; gap: 6px;
+  padding-bottom: 6px; border-bottom: 2px solid rgba(255,255,255,.22);
+  transition: border-color .3s var(--ease), box-shadow .3s var(--ease);
+}
+.ps-amount:focus-within { border-color: #fff; box-shadow: 0 10px 18px -14px rgba(255,255,255,.8); }
+.ps-cur { font-size: 2rem; font-weight: 800; color: var(--text-dim); }
+.ps-amount input {
+  flex: 1; min-width: 0; padding: 4px 0;
+  background: none; border: 0; outline: none; color: #fff;
+  font: 800 2.4rem/1.1 var(--font); font-variant-numeric: tabular-nums;
+}
+.ps-amount input::placeholder { color: rgba(255,255,255,.2); }
+.ps-hint { display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 10px 0 0; font-size: .85rem; color: var(--text-dim); }
+.ps-krw { color: #fff; }
+.ps-error { min-height: 1.3em; margin: 8px 0 0; font-size: .85rem; color: #ff8a8e; }
+.ps-error:empty { min-height: 0; }
+
+.ps-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.ps-actions .btn { flex: 1 1 0; min-width: 0; padding: 0 14px; }
+.ps-actions-center { justify-content: center; }
+
+/* 드림카 자동완성 */
+.ps-combo input {
+  width: 100%; padding: 14px 16px;
+  background: var(--bg); color: #fff; border: 1px solid var(--line); border-radius: 12px;
+  font: 600 1.05rem var(--font);
+  transition: border-color .3s var(--ease), box-shadow .3s var(--ease);
+}
+.ps-combo input:focus { outline: none; border-color: rgba(255,255,255,.75); box-shadow: 0 0 0 1px rgba(255,255,255,.2), 0 0 14px rgba(255,255,255,.12); }
+.ps-options {
+  list-style: none; margin: 6px 0 0; padding: 6px; max-height: 240px; overflow: auto;
+  background: rgba(8,8,10,.98); border: 1px solid rgba(255,255,255,.14); border-radius: 12px;
+}
+.ps-options li { display: flex; justify-content: space-between; gap: 12px; padding: 11px 12px; border-radius: 8px; cursor: pointer; }
+.ps-options li:hover, .ps-options li[aria-selected="true"] { background: rgba(255,255,255,.09); }
+.ps-options small { color: var(--text-dim); font-variant-numeric: tabular-nums; }
+.ps-note:not(:empty) {
+  display: grid; gap: 10px; justify-items: start; margin-top: 14px; padding: 12px 14px;
+  border: 1px dashed rgba(255,255,255,.2); border-radius: 12px; font-size: .9rem;
+}
+.ps-note p { margin: 0; }
+
+/* ---------- 결과 ---------- */
+.ps-result { text-align: center; }
+.ps-result-pre { margin: 0 0 6px; color: var(--text-dim); word-break: keep-all; }
+.ps-big {
+  margin: 0; outline: none;
+  font-size: clamp(2.2rem, 11vw, 3.6rem); font-weight: 900; line-height: 1.05; letter-spacing: -0.03em;
+  text-shadow: 0 0 30px rgba(255,255,255,.25);
+  animation: psBig .8s var(--ease) both;
+}
+@keyframes psBig { from { opacity: 0; scale: .85; filter: blur(6px); } }
+.ps-joke { margin: 12px auto 0; max-width: 420px; word-break: keep-all; }
+.ps-joke-lg { font-size: 1.2rem; font-weight: 800; line-height: 1.45; outline: none; }
+.ps-equiv { list-style: none; display: grid; gap: 8px; margin: 20px 0 0; padding: 0; }
+.ps-equiv li { padding: 10px 14px; border-radius: 12px; background: rgba(255,255,255,.05); border: 1px solid var(--line); font-size: .9rem; }
+.ps-sum { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 16px; margin: 14px 0 0; font-size: .85rem; color: var(--text-dim); }
+.ps-cta {
+  display: inline-block; margin-top: 18px; color: #fff; font-weight: 700; text-decoration: none;
+  transition: text-shadow .3s var(--ease);
+}
+.ps-cta:hover, .ps-cta:focus-visible { text-shadow: 0 0 12px rgba(255,255,255,.8); text-decoration: underline; text-underline-offset: 4px; outline: none; }
+.ps-fine { margin: 18px 0 0; font-size: .75rem; line-height: 1.6; color: var(--text-dim); }
+
+/* ---------- Carscope ---------- */
+.ps-bday { border: 0; padding: 0; margin: 0 0 1rem; min-width: 0; }
+.ps-bday legend { padding: 0; margin-bottom: .35rem; font-size: .88rem; font-weight: 600; }
+.ps-bday-row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 8px; }
+.ps-bday-row select { width: 100%; min-width: 0; }
+#csForm .field input { width: 100%; }
+#csForm .ps-error { margin: 0 0 10px; }
+
+.cs-card {
+  margin-top: 16px; text-align: center; overflow: hidden;
+  background: radial-gradient(120% 80% at 50% 0%, rgba(255,255,255,.08), transparent 60%), var(--surface);
+  animation: psIn .6s var(--ease) both;
+}
+.ps-visual { width: min(260px, 80%); aspect-ratio: 16 / 7; margin: 4px auto 16px; display: grid; place-items: center; }
+.ps-visual img { width: 100%; height: 100%; object-fit: contain; }
+.ps-silhouette {
+  width: 100%; height: auto; fill: rgba(255,255,255,.04); stroke: #fff; stroke-width: 2;
+  filter: drop-shadow(0 0 8px rgba(255,255,255,.5));
+}
+.cs-car { margin: 0 0 8px; outline: none; font-size: clamp(1.5rem, 7vw, 2.1rem); font-weight: 800; letter-spacing: -0.02em; }
+.cs-personality { max-width: 420px; margin: 0 auto; color: #d9dadd; word-break: keep-all; }
+.cs-gear {
+  display: inline-flex; align-items: center; gap: 10px; margin: 18px 0 0; padding: 6px 14px 6px 6px;
+  border: 1px solid rgba(255,255,255,.2); border-radius: 999px; font-size: .85rem;
+}
+.cs-gear b {
+  display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px;
+  background: #fff; color: #000; font-weight: 900; box-shadow: 0 0 12px rgba(255,255,255,.5);
+}

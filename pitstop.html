@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Pit Stop – One Dollar Drive</title>
+<meta name="description" content="What if... and Carscope: two quick dream-car games from One Dollar Drive.">
+<link rel="canonical" href="https://onedollardrive.com/pitstop.html">
+<meta name="theme-color" content="#000000">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="One Dollar Drive">
+<meta property="og:title" content="Pit Stop – One Dollar Drive">
+<meta property="og:description" content="How soon could your dream car be yours? And which car matches your vibe?">
+<meta property="og:image" content="https://onedollardrive.com/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="./css/style.css">
+<link rel="stylesheet" href="./css/pitstop.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LWQCX5XZ9D"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-LWQCX5XZ9D');
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
+
+<!-- ================= Header (모든 페이지 동일) ================= -->
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a class="logo" href="index.html" aria-label="One Dollar Drive home" data-i18n-aria="aria.home">
+      <span class="logo-mark">$1</span>
+      <span class="logo-text">ONE DOLLAR DRIVE</span>
+    </a>
+
+    <nav class="main-nav" id="mainNav" aria-label="Main menu" data-i18n-aria="aria.mainNav">
+      <ul>
+        <li><a href="index.html">Garage</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="pitstop.html" aria-current="page">Pit Stop <span class="nav-badge">NEW</span></a></li>
+        <li><a href="community.html">Community</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="support.html">Support</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <div class="lang-wrap">
+        <button class="icon-btn glow" type="button" id="langBtn" aria-label="Language" data-i18n-aria="lang.label">EN</button>
+      </div>
+      <!-- 로그인 / 내 계정 (js/account.js 가 채움) -->
+      <div id="accountArea"></div>
+      <a class="icon-btn glow cart-btn" href="cart.html" aria-label="Cart" data-i18n-aria="aria.cart">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11h11.2L21 7H6.2"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/></svg>
+        <span class="cart-count" id="cartCount">0</span>
+      </a>
+      <button class="menu-toggle glow" type="button" id="menuToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="container page-main ps">
+  <header class="ps-hero">
+    <p class="eyebrow">PIT STOP</p>
+    <h1 class="ps-title" data-i18n="pit.title">Pit Stop</h1>
+    <p class="muted" data-i18n="pit.sub">Two quick games while your dream car warms up.</p>
+  </header>
+
+  <!-- 탭 (주소 끝 #whatif / #carscope 로 바로 열림) -->
+  <div class="ps-tabs" role="tablist" aria-label="Pit Stop games" data-i18n-aria="pit.tabs">
+    <button class="ps-tab glow" type="button" role="tab" id="tab-whatif" aria-controls="panel-whatif" aria-selected="true" data-tab="whatif">
+      <span class="ps-tab-icon" aria-hidden="true">?</span>What if...
+    </button>
+    <button class="ps-tab glow" type="button" role="tab" id="tab-carscope" aria-controls="panel-carscope" aria-selected="false" tabindex="-1" data-tab="carscope">
+      <span class="ps-tab-icon" aria-hidden="true">✦</span>Carscope
+    </button>
+  </div>
+
+  <!-- ===== What if... (js/pitstop.js 가 단계별로 그림) ===== -->
+  <section class="ps-panel" id="panel-whatif" role="tabpanel" aria-labelledby="tab-whatif" tabindex="0">
+    <p class="ps-lead" data-i18n="wi.lead">Skip a little something every month… how soon could the dream car be yours?</p>
+    <div class="ps-card" id="wiStage" aria-live="polite"></div>
+  </section>
+
+  <!-- ===== Carscope ===== -->
+  <section class="ps-panel" id="panel-carscope" role="tabpanel" aria-labelledby="tab-carscope" tabindex="0" hidden>
+    <p class="ps-lead" data-i18n="cs.lead">Your name + birthday → the car that matches your vibe.</p>
+    <form class="ps-card" id="csForm" novalidate>
+      <div class="field">
+        <label for="csName" data-i18n="cs.name">Name or nickname</label>
+        <input id="csName" type="text" maxlength="30" autocomplete="off" spellcheck="false" placeholder="e.g. gt3_dreamer" data-i18n-placeholder="cs.namePh">
+      </div>
+      <fieldset class="field ps-bday">
+        <legend data-i18n="cs.birthday">Birthday</legend>
+        <div class="ps-bday-row">
+          <label class="sr-only" for="csMonth" data-i18n="cs.month">Month</label>
+          <select id="csMonth"></select>
+          <label class="sr-only" for="csDay" data-i18n="cs.day">Day</label>
+          <select id="csDay"></select>
+        </div>
+      </fieldset>
+      <p class="ps-error" id="csError" role="alert"></p>
+      <button class="btn btn-block glow" type="submit" data-i18n="cs.go">Read my Carscope</button>
+    </form>
+    <div id="csResult" aria-live="polite"></div>
+  </section>
+</main>
+
+<!-- ================= Footer (모든 페이지 동일) ================= -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-mark">$1</span>
+      <span>ONE DOLLAR DRIVE</span>
+    </div>
+    <nav class="footer-links" aria-label="Policies" data-i18n-aria="aria.policies">
+      <a href="https://sites.google.com/view/onedollardrive-policy/홈" target="_blank" rel="noopener" data-i18n="footer.terms">Terms of Service</a>
+      <a href="https://sites.google.com/view/ondollardrive-privacy/홈" target="_blank" rel="noopener" data-i18n="footer.privacy">Privacy Policy</a>
+      <a href="support.html" data-i18n="footer.support">Support</a>
+    </nav>
+    <address class="biz-info">
+      <span data-i18n="footer.company">Company</span>: Yellowhorizen Co. · <span data-i18n="footer.ceo">CEO</span>: <span data-i18n="footer.ceoName">Myeongjun Lee</span> · <span data-i18n="footer.biz">Business reg. no.</span>: 598-43-01196<br>
+      <span data-i18n="footer.ecom">E-commerce reg. no.</span>: 2023-강원원주-01485호 · <span data-i18n="footer.address">Address</span>: <span data-i18n="footer.addressValue">1815-1 Haenggu-dong, Wonju-si, Gangwon-do, Republic of Korea</span><br>
+      <span data-i18n="footer.phone">Phone</span>: 010-4829-3911 · <span data-i18n="footer.email">Email</span>: onedolladrive@gmail.com
+    </address>
+    <p class="copyright">© 2023–2026 Yellowhorizen Co. All rights reserved.</p>
+  </div>
+</footer>
+
+<script type="module" src="./js/header.js"></script>
+<script type="module" src="./js/account.js"></script>
+<script type="module" src="./js/pitstop.js"></script>
+</body>
+</html>

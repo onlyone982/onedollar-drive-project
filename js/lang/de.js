@@ -32,7 +32,7 @@ export default {
   "g.step3t": "Einen Tag lang fahren",
   "g.step3b": "Gewinne die Verlosung und fahre dein Traumauto einen ganzen Tag lang.",
   "g.ctaShop": "Zum Shop",
-  "g.ctaDraw": "Zur Aktion",
+  "g.ctaPit": "Pit Stop ausprobieren",
 
   "spec.power": "Leistung",
   "spec.zero100": "0→100",
