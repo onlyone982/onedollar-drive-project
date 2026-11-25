@@ -1,381 +1,538 @@
-import { CARS, THEMES, IMAGE_SIZE } from "./cars.js";
-import { t, getLang, onLangChange } from "./common.js";
+// 메인 페이지: 드림 개러지 (빈 차고 + 자리마다 고른 차를 겹쳐 놓기)
+// 데이터(테마·차량·기본 차고)는 js/garage-data.js 에 있습니다.
+import { THEMES, CARS, DEFAULT_GARAGE, IMAGE_SIZE } from "./garage-data.js";
+import { t, getLang, onLangChange, toast } from "./common.js";
 import "./header.js";
 
 // JS가 켜져 있다는 표시 (스크롤 등장 애니메이션 등에 사용)
 document.documentElement.classList.add("js");
 
-const SVG_NS = "http://www.w3.org/2000/svg";
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+const params = new URLSearchParams(location.search);
+const DEBUG = params.get("debug") === "1"; // 자리 위치 맞추기 도구 (?debug=1)
 
-/* ============================================================
-   도우미: 점 목록 → 부드러운 곡선 경로, 테마별 보정, 영역 계산
-   ============================================================ */
-function smoothPath(pts, t = 0.75) {
-  const n = pts.length;
-  const p = (i) => pts[(i + n) % n];
-  let d = `M${p(0)[0]} ${p(0)[1]}`;
-  for (let i = 0; i < n; i++) {
-    const [x0, y0] = p(i - 1), [x1, y1] = p(i), [x2, y2] = p(i + 1), [x3, y3] = p(i + 2);
-    const c1x = x1 + ((x2 - x0) / 6) * t, c1y = y1 + ((y2 - y0) / 6) * t;
-    const c2x = x2 - ((x3 - x1) / 6) * t, c2y = y2 - ((y3 - y1) / 6) * t;
-    d += ` C${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${x2} ${y2}`;
-  }
-  return d + " Z";
-}
+const SLOT_IDS = ["left", "center", "right"];
+const URL_KEYS = { theme: "t", left: "l", center: "c", right: "r" };
+const STORE_KEY = "odd-garage-v2";
+const OLD_THEME_KEY = "odd-garage-theme";
+const STAGE_RATIO = IMAGE_SIZE.width / IMAGE_SIZE.height;
+const EMPTY_RATIO = 2.4; // 빈 자리 상자의 가로:세로
 
-function bbox(pts) {
-  const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]);
-  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
-  return { minX, maxX, minY, maxY, cx: (minX + maxX) / 2, cy: (minY + maxY) / 2, w: maxX - minX, h: maxY - minY };
-}
-
-// 테마 전용 윤곽선(outlines)이 있으면 그것을, 없으면 공통 윤곽선을 씀.
-// 그다음 adjust 값으로 살짝 옮기거나 늘림 (기준점: 차 바닥 가운데)
-function adjustedOutline(car, theme) {
-  const base = theme.outlines?.[car.id] || car.outline;
-  const a = theme.adjust?.[car.id];
-  if (!a) return base;
-  const b = bbox(base);
-  const { dx = 0, dy = 0, sx = 1, sy = 1 } = a;
-  return base.map(([x, y]) => [
-    +(b.cx + (x - b.cx) * sx + dx).toFixed(1),
-    +(b.maxY + (y - b.maxY) * sy + dy).toFixed(1),
-  ]);
-}
-
-const pctX = (x) => `${(x / IMAGE_SIZE.width) * 100}%`;
-const pctY = (y) => `${(y / IMAGE_SIZE.height) * 100}%`;
-
-/* ============================================================
-   블랙 스티커 만들기 (언어가 바뀌면 fillSticker 로 다시 채움)
-   ============================================================ */
+const $ = (id) => document.getElementById(id);
+const L = (v) => (v == null ? "" : typeof v === "string" ? v : v[getLang()] ?? v.en ?? "");
+const carById = (id) => CARS.find((c) => c.id === id) || null;
+const themeById = (id) => THEMES.find((th) => th.id === id) || null;
 const carName = (car) => `${car.brand} ${car.model}`;
-// 제원 값: 그냥 글자이거나 { en: "...", ko: "..." } 처럼 언어별로 적을 수 있음
+const slotName = (slot) => t(`gar.slot.${slot}`);
+const canPark = (car, slot) => !!car?.images?.[slot];
+
+function h(tag, props = {}, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)) {
+    if (v == null || v === false) continue;
+    if (k === "class") el.className = v;
+    else if (k === "text") el.textContent = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v === true ? "" : String(v));
+  }
+  el.append(...kids.flat().filter((x) => x != null && x !== false));
+  return el;
+}
+
+/* ============================================================
+   상태: 테마 + 3자리 (주소 ?t=&l=&c=&r= > 저장값 > 기본 차고)
+   ============================================================ */
+function clean(s) {
+  const out = { theme: themeById(s.theme) ? s.theme : (themeById(DEFAULT_GARAGE.theme) ? DEFAULT_GARAGE.theme : THEMES[0].id) };
+  const used = new Set();
+  for (const slot of SLOT_IDS) {
+    const car = carById(s[slot]);
+    out[slot] = car && canPark(car, slot) && !used.has(car.id) ? car.id : "";
+    if (out[slot]) used.add(out[slot]);
+  }
+  return out;
+}
+
+function loadState() {
+  if (Object.values(URL_KEYS).some((k) => params.has(k))) {
+    const s = {};
+    for (const [field, key] of Object.entries(URL_KEYS)) s[field] = params.get(key) || "";
+    return { state: clean(s), fromUrl: true };
+  }
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORE_KEY));
+    if (saved && typeof saved === "object") return { state: clean(saved), fromUrl: false };
+  } catch {}
+  let theme = DEFAULT_GARAGE.theme;
+  try { theme = localStorage.getItem(OLD_THEME_KEY) || theme; } catch {}
+  return { state: clean({ ...DEFAULT_GARAGE, theme }), fromUrl: false };
+}
+
+const loaded = loadState();
+const state = loaded.state;
+let urlSynced = loaded.fromUrl; // 주소에 차고가 들어 있으면 바꿀 때마다 주소도 갱신
+
+function garageUrl() {
+  const u = new URL(location.href);
+  for (const [field, key] of Object.entries(URL_KEYS)) {
+    if (state[field]) u.searchParams.set(key, state[field]);
+    else u.searchParams.delete(key);
+  }
+  u.hash = "";
+  return u;
+}
+
+function persist() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch {}
+  urlSynced = true;
+  history.replaceState(null, "", garageUrl());
+}
+
+/* ============================================================
+   DOM 참조
+   ============================================================ */
+const garage = $("garage");
+const stageInner = $("stageInner");
+const photosEl = $("photos");
+const slotsEl = $("slots");
+const hotspotsEl = $("hotspots");
+const pickerEl = $("themePicker");
+const switchEl = $("carSwitch");
+const scroller = $("garageScroll");
+
+/* ============================================================
+   블랙 스티커 (제원 + 바꾸기/빼기)
+   ============================================================ */
 const pick = (v) => (typeof v === "string" ? v : v?.[getLang()] ?? v?.en ?? "");
-// 제원 이름: cars.js 의 "power" 같은 키 → 번역 (번역이 없으면 그대로 표시)
 const specLabel = (k) => t(`spec.${k}`).replace(/^spec\./, "");
 
-function buildSticker(car) {
-  const sticker = document.createElement("div");
-  sticker.className = "sticker";
-  sticker.id = `sticker-${car.id}`;
-  sticker.setAttribute("role", "dialog");
-  sticker.hidden = true;
-  sticker.addEventListener("click", (e) => e.stopPropagation()); // 스티커 안을 눌러도 닫히지 않게
-  fillSticker(car, sticker);
-  return sticker;
-}
+function fillSticker(slot) {
+  const s = slots[slot];
+  const car = carById(state[slot]);
+  if (!car) { s.sticker.replaceChildren(); return; }
+  s.sticker.setAttribute("aria-label", t("g.specsOf", { car: carName(car) }));
 
-function fillSticker(car, sticker) {
-  sticker.setAttribute("aria-label", t("g.specsOf", { car: carName(car) }));
-
-  const head = document.createElement("div");
-  head.className = "sticker-head";
-  const brand = document.createElement("p");
-  brand.className = "sticker-brand";
-  brand.textContent = car.brand;
-  const close = document.createElement("button");
-  close.type = "button";
-  close.className = "sticker-close";
-  close.setAttribute("aria-label", t("common.close"));
-  close.textContent = "×";
-  close.addEventListener("click", (e) => {
-    e.stopPropagation();
-    closeSticker(true);
+  const close = h("button", {
+    type: "button", class: "sticker-close", "aria-label": t("common.close"), text: "×",
+    onclick: (e) => { e.stopPropagation(); closeSticker(true); },
   });
-  head.append(brand, close);
+  const stats = h("dl", { class: "sticker-stats" },
+    car.headline.map(({ label, value, unit }) =>
+      h("div", {}, h("dt", { text: specLabel(label) }), h("dd", {}, value, h("small", { text: unit })))));
+  const rows = h("dl", { class: "sticker-rows" },
+    car.specs.flatMap(([k, v]) => [h("dt", { text: specLabel(k) }), h("dd", { text: pick(v) })]));
+  const actions = h("div", { class: "sticker-actions" },
+    h("button", { type: "button", class: "sticker-btn", text: t("gar.change"), onclick: (e) => { e.stopPropagation(); closeSticker(false); openPicker(slot); } }),
+    h("button", { type: "button", class: "sticker-btn is-ghost", text: t("gar.remove"), onclick: (e) => { e.stopPropagation(); removeCar(slot); } }));
 
-  const title = document.createElement("p");
-  title.className = "sticker-model";
-  title.textContent = car.model;
-
-  const stats = document.createElement("dl");
-  stats.className = "sticker-stats";
-  car.headline.forEach(({ label, value, unit }) => {
-    const box = document.createElement("div");
-    const dt = document.createElement("dt");
-    const dd = document.createElement("dd");
-    const sm = document.createElement("small");
-    dt.textContent = specLabel(label);
-    sm.textContent = unit;
-    dd.append(value, sm);
-    box.append(dt, dd);
-    stats.appendChild(box);
-  });
-
-  const rows = document.createElement("dl");
-  rows.className = "sticker-rows";
-  car.specs.forEach(([k, v]) => {
-    const dt = document.createElement("dt");
-    const dd = document.createElement("dd");
-    dt.textContent = specLabel(k);
-    dd.textContent = pick(v);
-    rows.append(dt, dd);
-  });
-
-  const hint = document.createElement("p");
-  hint.className = "sticker-hint";
-  hint.textContent = t("g.arrowHint");
-
-  sticker.replaceChildren(head, title, stats, rows, hint);
+  s.sticker.replaceChildren(
+    h("div", { class: "sticker-head" }, h("p", { class: "sticker-brand", text: car.brand }), close),
+    h("p", { class: "sticker-model", text: car.model }),
+    stats, rows, actions,
+    h("p", { class: "sticker-hint", text: t("g.arrowHint") }));
 }
 
 /* ============================================================
-   차량 윤곽선(SVG) + 점·이름표·스티커 + 아래 선택 버튼
+   자리 3개 만들기: 그림자 → 반사 → 차량(+색 보정) → 누르는 버튼
    ============================================================ */
-const svg = document.getElementById("outlines");
-const hotspotsEl = document.getElementById("hotspots");
-const switchEl = document.getElementById("carSwitch");
-let openIndex = -1;
+const slots = {};
 
-svg.innerHTML = `
-  <defs>
-    <filter id="outlineGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="7"/>
-    </filter>
-  </defs>`;
+SLOT_IDS.forEach((slot, i) => {
+  const img = h("img", { class: "car-img", alt: "", decoding: "async", draggable: "false" });
+  const tint = h("span", { class: "car-tint", "aria-hidden": "true" });
+  const reflectImg = h("img", { alt: "", decoding: "async", draggable: "false" });
+  const add = h("span", { class: "slot-add", "aria-hidden": "true" }, h("b", { text: "+" }), h("span", { class: "slot-add-text" }));
+  const btn = h("button", {
+    type: "button", class: "slot-hit", "aria-expanded": "false", "aria-controls": `sticker-${slot}`,
+    onclick: (e) => { e.stopPropagation(); onSlotPress(slot); },
+  }, add);
+  const el = h("div", { class: "slot is-empty", "data-slot": slot },
+    h("span", { class: "slot-shadow", "aria-hidden": "true" }),
+    h("div", { class: "slot-reflect", "aria-hidden": "true" }, reflectImg),
+    h("div", { class: "slot-car" }, img, tint),
+    h("span", { class: "slot-lines", "aria-hidden": "true" }),
+    btn);
+  slotsEl.appendChild(el);
 
-const svgEl = (tag, attrs) => {
-  const el = document.createElementNS(SVG_NS, tag);
-  Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
-  return el;
-};
-
-CARS.forEach((car, i) => {
-  // 1) 윤곽선 묶음 (누를 수 있는 버튼 역할)
-  const g = svgEl("g", {
-    class: "car-shape",
-    tabindex: "0",
-    role: "button",
-    "aria-label": t("g.viewSpecs", { car: carName(car) }),
-    "aria-expanded": "false",
-    "aria-controls": `sticker-${car.id}`,
-  });
-  const dim = svgEl("path", { class: "shape-dim", "fill-rule": "evenodd" });
-  const glow = svgEl("path", { class: "shape-glow", filter: "url(#outlineGlow)" });
-  const line = svgEl("path", { class: "shape-line" });
-  const flow = svgEl("path", { class: "shape-flow", pathLength: "1000" });
-  const hit = svgEl("path", { class: "shape-hit" });
-  flow.style.animationDelay = `${-i * 0.9}s`;
-  g.append(dim, glow, line, flow, hit);
-  svg.appendChild(g);
-
-  const toggle = () => (openIndex === i ? closeSticker(true) : openSticker(i));
-  g.addEventListener("click", (e) => {
-    e.stopPropagation();
-    toggle();
-  });
-  g.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      e.stopPropagation();
-      toggle();
-    }
-  });
-  const showLabel = (on) => label.classList.toggle("is-show", on);
-  g.addEventListener("pointerenter", () => showLabel(true));
-  g.addEventListener("pointerleave", () => showLabel(false));
-  g.addEventListener("focus", () => showLabel(true));
-  g.addEventListener("blur", () => showLabel(false));
-
-  // 2) 반짝이는 점 + 이름표 + 스티커 (HTML)
-  const pin = document.createElement("span");
-  pin.className = "hotspot-pin";
-  pin.style.animationDelay = `${i * 0.4}s`;
-  const label = document.createElement("span");
-  label.className = "hotspot-label";
-  label.textContent = car.model;
-  const sticker = buildSticker(car);
+  const pin = h("span", { class: "hotspot-pin", style: `animation-delay:${i * 0.4}s` });
+  const label = h("span", { class: "hotspot-label" });
+  const sticker = h("div", { class: "sticker", id: `sticker-${slot}`, role: "dialog", hidden: true, onclick: (e) => e.stopPropagation() });
   hotspotsEl.append(pin, label, sticker);
 
-  // 3) 아래쪽 선택 버튼
-  const pill = document.createElement("button");
-  pill.type = "button";
-  pill.className = "switch-btn glow";
-  pill.setAttribute("aria-pressed", "false");
-  pill.innerHTML = `<span class="switch-no">0${i + 1}</span><span class="switch-name"></span>`;
-  pill.querySelector(".switch-name").textContent = car.model;
-  pill.addEventListener("click", (e) => {
-    e.stopPropagation();
-    openIndex === i ? closeSticker(false) : openSticker(i, { scroll: true });
-  });
+  const showLabel = (on) => label.classList.toggle("is-show", on && !!state[slot]);
+  btn.addEventListener("pointerenter", () => showLabel(true));
+  btn.addEventListener("pointerleave", () => showLabel(false));
+  btn.addEventListener("focus", () => showLabel(true));
+  btn.addEventListener("blur", () => showLabel(false));
+  btn.addEventListener("pointerenter", () => { const c = carById(state[slot]); if (c) preloadImg(c.images[slot]); });
+
+  const pill = h("button", {
+    type: "button", class: "switch-btn glow", "aria-pressed": "false",
+    onclick: (e) => { e.stopPropagation(); onSlotPress(slot, { scroll: true }); },
+  }, h("span", { class: "switch-no", text: `0${i + 1}` }), h("span", { class: "switch-name" }));
   switchEl.appendChild(pill);
 
-  Object.assign(car, { _g: g, _paths: { dim, glow, line, flow, hit }, _pin: pin, _label: label, _sticker: sticker, _pill: pill });
+  slots[slot] = { el, img, tint, reflectImg, btn, add, pin, label, sticker, pill, ratio: EMPTY_RATIO, carId: null, token: 0 };
 });
 
-// 현재 테마 기준으로 윤곽선과 점·스티커 위치를 그림
-function layoutCars(theme) {
-  CARS.forEach((car) => {
-    const pts = adjustedOutline(car, theme);
-    const d = smoothPath(pts);
-    const { dim, glow, line, flow, hit } = car._paths;
-    dim.setAttribute("d", `M0 0H${IMAGE_SIZE.width}V${IMAGE_SIZE.height}H0Z ${d}`);
-    [glow, line, flow, hit].forEach((p) => p.setAttribute("d", d));
+// 내 차고 공유 버튼 (차량 선택 버튼 줄 끝)
+const shareBtn = h("button", {
+  type: "button", class: "switch-btn share-btn glow",
+  onclick: (e) => { e.stopPropagation(); shareGarage(); },
+}, h("svg", {}), h("span", { class: "switch-name" }));
+shareBtn.querySelector("svg").outerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 14v5h14v-5"/></svg>`;
+switchEl.appendChild(shareBtn);
 
-    const b = bbox(pts);
-    car._box = b;
-    car._pin.style.left = pctX(b.cx);
-    car._pin.style.top = pctY(b.minY + b.h * 0.45);
-    car._label.style.left = pctX(b.cx);
-    car._label.style.top = pctY(b.minY);
-    car._sticker.style.left = pctX(b.cx);
-    car._sticker.style.top = pctY(b.cy);
-  });
+/* ----- 위치 계산 (모두 사진 기준 %) ----- */
+function layoutSlot(slot) {
+  const s = slots[slot];
+  const pos = currentTheme().slots[slot];
+  s.el.style.left = `${pos.x}%`;
+  s.el.style.top = `${pos.y}%`;
+  s.el.style.width = `${pos.width}%`;
+  s.el.style.setProperty("--ratio", String(s.ratio));
+  // 차 높이를 사진 세로 % 로: 폭% × (세로/가로 비) × 사진 가로/세로
+  const heightPct = (pos.width / s.ratio) * STAGE_RATIO;
+  const cy = pos.y - heightPct / 2;
+  s.pin.style.left = s.label.style.left = s.sticker.style.left = `${pos.x}%`;
+  s.pin.style.top = `${pos.y - heightPct * 0.55}%`;
+  s.label.style.top = `${pos.y - heightPct}%`;
+  s.sticker.style.top = `${Math.max(cy, 26)}%`;
+}
+const layoutAll = () => SLOT_IDS.forEach(layoutSlot);
+
+/* ----- 차 이미지 바꾸기 (부드럽게) ----- */
+const preloaded = new Set();
+function preloadImg(src) {
+  if (!src || preloaded.has(src)) return;
+  preloaded.add(src);
+  const i = new Image();
+  i.decoding = "async";
+  i.src = src;
 }
 
-function openSticker(i, { scroll = false } = {}) {
+async function renderSlot(slot, { animate = true } = {}) {
+  const s = slots[slot];
+  const car = carById(state[slot]);
+  const token = ++s.token;
+  const fade = animate && !reduceMotion;
+
+  if (fade && s.carId) { s.el.classList.add("is-swapping"); await wait(260); }
+  if (token !== s.token) return;
+
+  if (!car) {
+    s.carId = null;
+    s.ratio = EMPTY_RATIO;
+    s.img.removeAttribute("src");
+    s.reflectImg.removeAttribute("src");
+    s.el.classList.add("is-empty");
+  } else {
+    const src = car.images[slot];
+    const probe = new Image();
+    probe.decoding = "async";
+    probe.src = src;
+    try { await probe.decode(); } catch {}
+    if (token !== s.token) return;
+    const w = probe.naturalWidth || 1200, hgt = probe.naturalHeight || 500;
+    s.ratio = w / hgt;
+    for (const im of [s.img, s.reflectImg]) { im.width = w; im.height = hgt; im.src = src; }
+    s.img.alt = carName(car);
+    s.tint.style.webkitMaskImage = s.tint.style.maskImage = `url("${src}")`;
+    s.carId = car.id;
+    s.el.classList.remove("is-empty");
+  }
+  refreshSlotText(slot);
+  layoutSlot(slot);
+  if (fade) { s.el.classList.add("is-swapping"); void s.el.offsetWidth; }
+  s.el.classList.remove("is-swapping");
+}
+
+function refreshSlotText(slot) {
+  const s = slots[slot];
+  const car = carById(state[slot]);
+  s.add.querySelector(".slot-add-text").textContent = t("gar.add").replace(/^\+\s*/, "");
+  s.btn.setAttribute("aria-label", car
+    ? t("gar.slotLabel", { slot: slotName(slot), car: carName(car) })
+    : t("gar.slotEmptyLabel", { slot: slotName(slot) }));
+  s.btn.setAttribute("aria-haspopup", car ? "false" : "dialog");
+  s.label.textContent = car ? car.model : "";
+  s.pin.hidden = !car;
+  s.pill.querySelector(".switch-name").textContent = car ? car.model : `+ ${slotName(slot)}`;
+  s.pill.classList.toggle("is-empty", !car);
+  if (openSlot === slot) fillSticker(slot);
+}
+
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/* ============================================================
+   스티커 열기/닫기, 자리 누르기
+   ============================================================ */
+let openSlot = null;
+
+function onSlotPress(slot, { scroll = false } = {}) {
+  if (DEBUG && dragMoved) return; // 위치 맞추기 중 드래그 직후 클릭 무시
+  if (!state[slot]) { closeSticker(false); if (scroll) scrollToSlot(slot); openPicker(slot); return; }
+  if (openSlot === slot) closeSticker(true);
+  else openSticker(slot, { scroll });
+}
+
+function openSticker(slot, { scroll = false } = {}) {
   closeSticker(false);
-  const car = CARS[i];
-  openIndex = i;
-  car._g.setAttribute("aria-expanded", "true");
-  car._g.classList.add("is-active");
-  car._pill.setAttribute("aria-pressed", "true");
-  svg.classList.add("has-active");
+  const s = slots[slot];
+  openSlot = slot;
+  fillSticker(slot);
+  s.btn.setAttribute("aria-expanded", "true");
+  s.el.classList.add("is-active");
+  slotsEl.classList.add("has-active");
   hotspotsEl.classList.add("has-active");
-  car._pin.classList.add("is-hidden");
-  car._sticker.hidden = false;
-  requestAnimationFrame(() => car._sticker.classList.add("is-open")); // 등장 애니메이션
-  if (scroll) scrollToCar(car);
+  s.pill.setAttribute("aria-pressed", "true");
+  s.pin.classList.add("is-hidden");
+  s.sticker.hidden = false;
+  requestAnimationFrame(() => s.sticker.classList.add("is-open"));
+  if (scroll) scrollToSlot(slot);
 }
 
 function closeSticker(returnFocus) {
-  if (openIndex < 0) return;
-  const car = CARS[openIndex];
-  car._g.setAttribute("aria-expanded", "false");
-  car._g.classList.remove("is-active");
-  car._pill.setAttribute("aria-pressed", "false");
-  svg.classList.remove("has-active");
+  if (!openSlot) return;
+  const s = slots[openSlot];
+  s.btn.setAttribute("aria-expanded", "false");
+  s.el.classList.remove("is-active");
+  slotsEl.classList.remove("has-active");
   hotspotsEl.classList.remove("has-active");
-  car._pin.classList.remove("is-hidden");
-  car._sticker.classList.remove("is-open");
-  car._sticker.hidden = true;
-  if (returnFocus) car._g.focus({ preventScroll: true });
-  openIndex = -1;
+  s.pill.setAttribute("aria-pressed", "false");
+  s.pin.classList.remove("is-hidden");
+  s.sticker.classList.remove("is-open");
+  s.sticker.hidden = true;
+  if (returnFocus) s.btn.focus({ preventScroll: true });
+  openSlot = null;
 }
 
-// 바깥 클릭 / ESC → 닫기, ← → → 다른 차량
+function setCar(slot, carId) {
+  // 같은 차는 두 자리에 동시에 둘 수 없음
+  if (carId && SLOT_IDS.some((o) => o !== slot && state[o] === carId)) return;
+  state[slot] = carId;
+  persist();
+  renderSlot(slot);
+}
+
+function removeCar(slot) {
+  closeSticker(false);
+  setCar(slot, "");
+  slots[slot].btn.focus({ preventScroll: true });
+}
+
 document.addEventListener("click", () => closeSticker(false));
 document.addEventListener("keydown", (e) => {
+  if (picker.isOpen()) return;
   if (e.key === "Escape") closeSticker(true);
-  if (openIndex < 0) return;
+  if (!openSlot) return;
   if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+    const filled = SLOT_IDS.filter((s) => state[s]);
+    if (filled.length < 2) return;
     e.preventDefault();
     const step = e.key === "ArrowRight" ? 1 : -1;
-    const next = (openIndex + step + CARS.length) % CARS.length;
+    const next = filled[(filled.indexOf(openSlot) + step + filled.length) % filled.length];
     openSticker(next, { scroll: true });
-    CARS[next]._g.focus({ preventScroll: true });
+    slots[next].btn.focus({ preventScroll: true });
   }
 });
 
 /* ============================================================
-   배경 테마 고르기
+   차량 선택 창 (데스크톱: 가운데 모달 / 모바일: 아래 시트)
    ============================================================ */
-const photosEl = document.getElementById("photos");
-const pickerEl = document.getElementById("themePicker");
-const THEME_KEY = "odd-garage-theme";
-const preloaded = new Set();
-let currentTheme = THEMES[0];
+const picker = (() => {
+  let slot = null, opener = null, query = "", cat = "all";
+  const search = h("input", { type: "search", class: "picker-search", autocomplete: "off", spellcheck: "false" });
+  const filters = h("div", { class: "picker-filters", role: "group" });
+  const grid = h("ul", { class: "picker-grid" });
+  const empty = h("p", { class: "picker-empty", hidden: true });
+  const title = h("h2", { class: "picker-title", id: "pickerTitle" });
+  const sub = h("p", { class: "picker-sub", id: "pickerSub" });
+  const closeBtn = h("button", { type: "button", class: "picker-x", text: "×", onclick: () => close() });
+  const dialog = h("div", { class: "picker", role: "dialog", "aria-modal": "true", "aria-labelledby": "pickerTitle", "aria-describedby": "pickerSub", tabindex: "-1" },
+    h("div", { class: "picker-grab", "aria-hidden": "true" }),
+    h("div", { class: "picker-head" }, h("div", {}, sub, title), closeBtn),
+    search, filters, grid, empty);
+  const backdrop = h("div", { class: "picker-backdrop", hidden: true, onclick: (e) => { if (e.target === backdrop) close(); } }, dialog);
+  document.body.appendChild(backdrop);
 
-function preload(theme) {
-  if (preloaded.has(theme.id)) return;
-  preloaded.add(theme.id);
-  const img = new Image();
-  img.src = theme.src;
-}
+  const categories = () => ["all", ...new Set(CARS.map((c) => c.category).filter(Boolean))];
+  const norm = (s) => String(s || "").toLowerCase().normalize("NFKC").replace(/[\s\-_.]/g, "");
 
-function themeAlt(theme) {
-  return t("g.photoAlt", { theme: theme.name });
-}
+  function renderFilters() {
+    filters.setAttribute("aria-label", t("gar.filter"));
+    filters.replaceChildren(...categories().map((c) => h("button", {
+      type: "button", class: "picker-chip", "aria-pressed": String(c === cat),
+      text: t(`gar.cat.${c}`).replace(/^gar\.cat\./, c),
+      onclick: () => { cat = c; renderFilters(); renderGrid(); },
+    })));
+  }
 
-function setTheme(id, { animate = true } = {}) {
-  const theme = THEMES.find((t) => t.id === id) || THEMES[0];
-  if (theme === currentTheme && animate) return;
-  currentTheme = theme;
-  try { localStorage.setItem(THEME_KEY, theme.id); } catch {}
+  function renderGrid() {
+    const q = norm(query);
+    const list = CARS.filter((c) => (cat === "all" || c.category === cat) && (!q || norm(`${c.brand}${c.model}`).includes(q)));
+    empty.hidden = list.length > 0;
+    empty.textContent = t("gar.noResults");
+    grid.replaceChildren(...list.map((car) => {
+      const where = SLOT_IDS.find((s) => state[s] === car.id);
+      const here = where === slot;
+      const noImg = !canPark(car, slot);
+      const taken = !!where && !here;
+      const note = noImg ? t("gar.noImage") : taken ? t(`gar.at.${where}`) : here ? t("gar.here") : "";
+      const card = h("button", {
+        type: "button", class: `picker-card glow${noImg || taken ? " is-off" : ""}${here ? " is-here" : ""}`,
+        "aria-disabled": String(noImg || taken),
+        onclick: () => {
+          if (noImg || taken) return;
+          const s = slot;
+          close(false);
+          if (!here) setCar(s, car.id);
+          slots[s].btn.focus({ preventScroll: true });
+        },
+        onpointerenter: () => { if (!noImg) preloadImg(car.images[slot]); },
+        onfocus: () => { if (!noImg) preloadImg(car.images[slot]); },
+      },
+        h("span", { class: "picker-thumb" },
+          car.images.thumb ? h("img", { src: car.images.thumb, alt: "", width: "360", height: "200", loading: "lazy", decoding: "async" }) : null),
+        h("span", { class: "picker-brand", text: car.brand }),
+        h("span", { class: "picker-model", text: car.model }),
+        note ? h("span", { class: "picker-note", text: note }) : null);
+      return h("li", {}, card);
+    }));
+  }
 
-  pickerEl.querySelectorAll(".theme-btn").forEach((b) => {
-    b.setAttribute("aria-checked", String(b.dataset.theme === theme.id));
+  function open(forSlot) {
+    slot = forSlot;
+    opener = slots[forSlot].btn; // 닫으면 그 자리로 포커스를 돌려줌 (스티커의 [바꾸기] 버튼은 사라지므로)
+    query = ""; cat = "all";
+    search.value = "";
+    search.placeholder = t("gar.search");
+    search.setAttribute("aria-label", t("gar.search"));
+    closeBtn.setAttribute("aria-label", t("common.close"));
+    title.textContent = t("gar.pickTitle");
+    sub.textContent = slotName(slot);
+    renderFilters();
+    renderGrid();
+    backdrop.hidden = false;
+    document.body.classList.add("no-scroll");
+    requestAnimationFrame(() => backdrop.classList.add("is-open"));
+    // 키보드 사용자는 검색창으로, 터치 기기는 키보드가 뜨지 않게 창 자체로 포커스
+    (finePointer ? search : dialog).focus({ preventScroll: true });
+  }
+
+  function close(returnFocus = true) {
+    if (backdrop.hidden) return;
+    backdrop.classList.remove("is-open");
+    document.body.classList.remove("no-scroll");
+    const done = () => { backdrop.hidden = true; };
+    if (reduceMotion) done(); else setTimeout(done, 250);
+    if (returnFocus && opener?.focus) opener.focus({ preventScroll: true });
+    slot = null;
+  }
+
+  search.addEventListener("input", () => { query = search.value; renderGrid(); });
+  dialog.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { e.preventDefault(); close(); return; }
+    if (e.key !== "Tab") return;
+    // 포커스가 창 밖으로 나가지 않게
+    const items = [...dialog.querySelectorAll("button, input")].filter((el) => !el.disabled && el.offsetParent !== null);
+    if (!items.length) return;
+    const first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && (document.activeElement === first || document.activeElement === dialog)) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   });
-  layoutCars(theme);
+
+  onLangChange(() => { if (!backdrop.hidden) { title.textContent = t("gar.pickTitle"); sub.textContent = slotName(slot); search.placeholder = t("gar.search"); renderFilters(); renderGrid(); } });
+  return { open, close, isOpen: () => !backdrop.hidden };
+})();
+
+function openPicker(slot) { picker.open(slot); }
+
+/* ============================================================
+   테마 (배경 + 자리 위치 + 색 보정만 바뀌고 차는 그대로)
+   ============================================================ */
+const currentTheme = () => themeById(state.theme) || THEMES[0];
+const bgAlt = (theme) => t("gar.bgAlt", { theme: L(theme.name) });
+
+function applyGrade(theme) {
+  const g = { brightness: 1, contrast: 1, saturate: 1, tint: "#000000", tintStrength: 0, ...(theme.grade || {}) };
+  slotsEl.style.setProperty("--grade", `brightness(${g.brightness}) contrast(${g.contrast}) saturate(${g.saturate})`);
+  slotsEl.style.setProperty("--tint", g.tint);
+  slotsEl.style.setProperty("--tint-strength", String(g.tintStrength));
+  slotsEl.classList.toggle("has-reflection", theme.reflection !== false);
+}
+
+function setTheme(id, { animate = true, save = true } = {}) {
+  const theme = themeById(id) || THEMES[0];
+  const changed = theme.id !== state.theme;
+  state.theme = theme.id;
+  if (save && changed) persist();
+  pickerEl.querySelectorAll(".theme-btn").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.theme === theme.id)));
+  applyGrade(theme);
+  layoutAll();
+  if (DEBUG) debug.update();
 
   const oldImg = photosEl.querySelector(".garage-photo.is-current");
-  if (!animate || reduceMotion) {
-    oldImg.src = theme.src;
-    oldImg.alt = themeAlt(theme);
+  if (!animate || reduceMotion || !oldImg) {
+    if (oldImg) { oldImg.src = theme.image; oldImg.alt = bgAlt(theme); }
     return;
   }
-  // 새 사진을 위에 올리고, 다 불러오면 서서히 나타나게 한 뒤 예전 사진 제거
-  const img = new Image();
-  img.className = "garage-photo";
-  img.width = IMAGE_SIZE.width;
-  img.height = IMAGE_SIZE.height;
-  img.alt = themeAlt(theme);
-  img.decoding = "async";
-  img.src = theme.src;
+  if (!changed) return;
+  const img = h("img", { class: "garage-photo", width: IMAGE_SIZE.width, height: IMAGE_SIZE.height, alt: bgAlt(theme), decoding: "async", src: theme.image });
   img.decode().catch(() => {}).then(() => {
-    if (currentTheme !== theme) return; // 그 사이 다른 테마를 골랐으면 취소
+    if (state.theme !== theme.id) return; // 그 사이 다른 테마를 골랐으면 취소
     photosEl.appendChild(img);
     requestAnimationFrame(() => {
       img.classList.add("is-current");
-      oldImg?.classList.remove("is-current");
-      setTimeout(() => {
-        photosEl.querySelectorAll(".garage-photo:not(.is-current)").forEach((el) => el.remove());
-      }, 1000);
+      oldImg.classList.remove("is-current");
+      setTimeout(() => photosEl.querySelectorAll(".garage-photo:not(.is-current)").forEach((el) => el.remove()), 1000);
     });
   });
 }
 
 THEMES.forEach((theme) => {
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = "theme-btn glow";
-  btn.dataset.theme = theme.id;
-  btn.setAttribute("role", "radio");
-  btn.setAttribute("aria-checked", "false");
-  btn.innerHTML = `<span class="theme-swatch" aria-hidden="true"></span><span class="theme-name"></span>`;
-  btn.querySelector(".theme-swatch").style.background = theme.swatch;
-  btn.querySelector(".theme-name").textContent = theme.name;
-  btn.addEventListener("pointerenter", () => preload(theme));
-  btn.addEventListener("focus", () => preload(theme));
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    setTheme(theme.id);
-  });
+  const btn = h("button", {
+    type: "button", class: "theme-btn glow", "data-theme": theme.id, role: "radio", "aria-checked": "false",
+    onclick: (e) => { e.stopPropagation(); setTheme(theme.id); },
+    onpointerenter: () => preloadImg(theme.image),
+    onfocus: () => preloadImg(theme.image),
+  }, h("span", { class: "theme-swatch", "aria-hidden": "true" }), h("span", { class: "theme-name", text: L(theme.name) }));
+  btn.querySelector(".theme-swatch").style.background = theme.swatch || "#333";
   pickerEl.appendChild(btn);
 });
 
-let savedTheme = null;
-try { savedTheme = localStorage.getItem(THEME_KEY); } catch {}
-setTheme(savedTheme || THEMES[0].id, { animate: false });
+/* ============================================================
+   공유 — Web Share API, 안 되면 주소 복사
+   ============================================================ */
+async function shareGarage() {
+  const url = garageUrl().toString();
+  const text = t("gar.shareText");
+  window.gtag?.("event", "garage_share", { theme: state.theme });
+  if (navigator.share) {
+    try { await navigator.share({ title: "One Dollar Drive", text, url }); return; }
+    catch (e) { if (e?.name === "AbortError") return; }
+  }
+  try { await navigator.clipboard.writeText(url); toast(t("gar.copied")); }
+  catch { toast(t("common.copyFail")); }
+}
 
 /* ============================================================
-   모바일: 가로 스크롤 (처음엔 가운데 차량, 선택 시 해당 차량으로 이동)
+   모바일: 가로 스크롤 (처음엔 가운데, 자리 선택 시 그 자리로 이동)
    ============================================================ */
-const scroller = document.getElementById("garageScroll");
-const firstPhoto = photosEl.querySelector(".garage-photo");
-
-function scrollToCar(car) {
+function scrollToSlot(slot) {
   if (scroller.scrollWidth <= scroller.clientWidth) return;
-  const center = (car._box.cx / IMAGE_SIZE.width) * scroller.scrollWidth;
+  const center = (currentTheme().slots[slot].x / 100) * scroller.scrollWidth;
   scroller.scrollTo({ left: center - scroller.clientWidth / 2, behavior: reduceMotion ? "auto" : "smooth" });
 }
 function centerGarage() {
-  if (scroller.scrollWidth > scroller.clientWidth) {
-    scroller.scrollLeft = (scroller.scrollWidth - scroller.clientWidth) / 2;
-  }
+  if (scroller.scrollWidth > scroller.clientWidth) scroller.scrollLeft = (scroller.scrollWidth - scroller.clientWidth) / 2;
 }
-if (firstPhoto.complete) centerGarage();
-else firstPhoto.addEventListener("load", centerGarage, { once: true });
 
 /* ============================================================
-   마우스를 따라 차고가 아주 살짝 움직이는 효과 (PC만)
+   마우스를 따라 차고가 아주 살짝 움직이는 효과 (PC만, 위치 맞추기 모드 제외)
    ============================================================ */
-const garage = document.getElementById("garage");
-const stageInner = document.getElementById("stageInner");
-if (finePointer && !reduceMotion) {
+if (finePointer && !reduceMotion && !DEBUG) {
   let tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
   const tick = () => {
     cx += (tx - cx) * 0.08;
@@ -395,16 +552,91 @@ if (finePointer && !reduceMotion) {
 }
 
 /* ============================================================
-   언어가 바뀌면 스티커·윤곽선 이름·사진 설명을 다시 씀
-   (상단 메뉴·모바일 메뉴는 js/header.js 에서 처리)
+   자리 위치 맞추기 도구 (?debug=1 일 때만 만들어짐)
+   - 자리를 끌면 위치(x, y), 오른쪽 아래 손잡이를 끌면 폭(width)
+   - 아래 상자의 값을 [복사]해서 garage-data.js 의 slots 에 붙여넣기
+   ============================================================ */
+let dragMoved = false;
+const debug = (() => {
+  if (!DEBUG) return null;
+  garage.classList.add("is-debug");
+  const pre = h("pre", { class: "dbg-code" });
+  const copy = h("button", { type: "button", class: "btn btn-sm", text: t("gar.copy") });
+  const head = h("p", { class: "dbg-title" });
+  const panel = h("div", { class: "dbg-panel" }, head, pre, copy);
+  document.body.appendChild(panel);
+  const r1 = (n) => Math.round(n * 10) / 10;
+
+  const text = () => {
+    const s = currentTheme().slots;
+    const pad = (k) => `${k}:`.padEnd(8);
+    return `slots: {\n${SLOT_IDS.map((k) => `  ${pad(k)}{ x: ${r1(s[k].x)}, y: ${r1(s[k].y)}, width: ${r1(s[k].width)} },`).join("\n")}\n},`;
+  };
+  const update = () => { head.textContent = `${t("gar.debugTitle")} — ${currentTheme().id}`; pre.textContent = text(); };
+  copy.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(text()); toast(t("gar.copiedVals")); } catch { toast(t("common.copyFail")); }
+  });
+
+  SLOT_IDS.forEach((slot) => {
+    const s = slots[slot];
+    const handle = h("span", { class: "dbg-handle", "aria-hidden": "true" });
+    const tag = h("span", { class: "dbg-tag", text: slot });
+    s.el.append(handle, tag);
+    const startDrag = (e, mode) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const rect = stageInner.getBoundingClientRect();
+      const pos = currentTheme().slots[slot];
+      const start = { x: e.clientX, y: e.clientY, px: pos.x, py: pos.y, pw: pos.width };
+      dragMoved = false;
+      const move = (ev) => {
+        const dx = ((ev.clientX - start.x) / rect.width) * 100;
+        const dy = ((ev.clientY - start.y) / rect.height) * 100;
+        if (Math.abs(dx) + Math.abs(dy) > 0.2) dragMoved = true;
+        if (mode === "move") { pos.x = start.px + dx; pos.y = start.py + dy; }
+        else pos.width = Math.max(5, start.pw + dx * 2);
+        layoutSlot(slot);
+        update();
+      };
+      const up = () => {
+        window.removeEventListener("pointermove", move);
+        window.removeEventListener("pointerup", up);
+        setTimeout(() => { dragMoved = false; }, 0);
+      };
+      window.addEventListener("pointermove", move);
+      window.addEventListener("pointerup", up);
+    };
+    s.btn.addEventListener("pointerdown", (e) => startDrag(e, "move"));
+    handle.addEventListener("pointerdown", (e) => startDrag(e, "size"));
+  });
+  update();
+  return { update };
+})();
+
+/* ============================================================
+   언어가 바뀌면 글자 다시 쓰기 (상단 메뉴는 js/header.js)
    ============================================================ */
 onLangChange(() => {
-  CARS.forEach((car) => {
-    fillSticker(car, car._sticker);
-    car._g.setAttribute("aria-label", t("g.viewSpecs", { car: carName(car) }));
-  });
-  photosEl.querySelectorAll(".garage-photo").forEach((img) => { img.alt = themeAlt(currentTheme); });
+  SLOT_IDS.forEach(refreshSlotText);
+  shareBtn.querySelector(".switch-name").textContent = t("gar.share");
+  shareBtn.setAttribute("aria-label", t("gar.share"));
+  pickerEl.querySelectorAll(".theme-btn").forEach((b) => { b.querySelector(".theme-name").textContent = L(themeById(b.dataset.theme).name); });
+  photosEl.querySelectorAll(".garage-photo").forEach((img) => { img.alt = bgAlt(currentTheme()); });
+  if (DEBUG) debug.update();
 });
+
+/* ============================================================
+   시작
+   ============================================================ */
+setTheme(state.theme, { animate: false, save: false });
+shareBtn.querySelector(".switch-name").textContent = t("gar.share");
+shareBtn.setAttribute("aria-label", t("gar.share"));
+SLOT_IDS.forEach((slot) => { refreshSlotText(slot); layoutSlot(slot); renderSlot(slot, { animate: false }); });
+// 공유 주소로 들어오면 그 차고를 보여주기만 하고, 내 저장값은 덮어쓰지 않음 (직접 바꾸면 그때 저장)
+
+const firstPhoto = photosEl.querySelector(".garage-photo");
+if (firstPhoto.complete) centerGarage();
+else firstPhoto.addEventListener("load", centerGarage, { once: true });
 
 /* ============================================================
    스크롤하면 아래 섹션이 부드럽게 나타남
