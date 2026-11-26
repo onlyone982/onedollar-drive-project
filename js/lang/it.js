@@ -32,7 +32,7 @@ export default {
   "g.step3t": "Guida per un giorno",
   "g.step3b": "Vinci l'estrazione dell'evento e guida l'auto dei tuoi sogni per un giorno intero.",
   "g.ctaShop": "Vai allo shop",
-  "g.ctaDraw": "Dettagli dell'evento",
+  "g.ctaPit": "Prova Pit Stop",
 
   "spec.power": "Potenza",
   "spec.zero100": "0→100",

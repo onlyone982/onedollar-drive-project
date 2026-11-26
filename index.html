@@ -37,7 +37,7 @@
       <ul>
         <li><a href="index.html" aria-current="page">Garage</a></li>
         <li><a href="shop.html">Shop</a></li>
-        <li><a href="draw.html">Draw <span class="nav-badge">EVENT</span></a></li>
+        <li><a href="pitstop.html">Pit Stop <span class="nav-badge">NEW</span></a></li>
         <li><a href="community.html">Community</a></li>
         <li><a href="about.html">About Us</a></li>
         <li><a href="support.html">Support</a></li>
@@ -67,17 +67,18 @@
     <!-- 모바일에서는 좌우로 밀어서 차고를 둘러볼 수 있습니다 -->
     <div class="garage-scroll" id="garageScroll">
       <div class="stage" id="stage">
-        <!-- stage-inner: 마우스를 따라 아주 살짝 움직이는 층 (사진 + 윤곽선 + 스티커가 함께 움직임) -->
+        <!-- stage-inner: 마우스를 따라 아주 살짝 움직이는 층 (차고 + 차량 + 스티커가 함께 움직임) -->
         <div class="stage-inner" id="stageInner">
-          <!-- 배경 사진 (테마를 바꾸면 js가 부드럽게 교체) -->
+          <!-- 1) 빈 차고 사진 (테마를 바꾸면 js가 부드럽게 교체) -->
           <div class="photos" id="photos">
-            <img class="garage-photo is-current" src="assets/themes/forest.webp" width="1672" height="941"
-                 alt="Three supercars parked in a dream garage" fetchpriority="high" decoding="async">
+            <img class="garage-photo is-current" src="assets/garages/forest.webp" width="1672" height="941"
+                 alt="An empty dream garage" fetchpriority="high" decoding="async">
           </div>
+          <!-- 2) 자리 3개: 그림자 → 바닥 반사 → 차량(+테마 색 보정) (js/main.js 가 js/garage-data.js 로 생성) -->
+          <div class="slots" id="slots"></div>
+          <!-- 3) 가장자리 페이드 -->
           <div class="photo-fade" aria-hidden="true"></div>
-          <!-- 차량 윤곽선 (js/cars.js 의 outline 으로 생성) -->
-          <svg class="outlines" id="outlines" viewBox="0 0 1672 941" preserveAspectRatio="none"></svg>
-          <!-- 반짝이는 점, 이름표, 블랙 스티커 -->
+          <!-- 4) 반짝이는 점, 이름표, 블랙 스티커 -->
           <div class="hotspots" id="hotspots"></div>
         </div>
       </div>
@@ -132,7 +133,7 @@
     </ol>
     <div class="how-cta reveal">
       <a class="btn btn-primary glow" href="shop.html" data-i18n="g.ctaShop">Browse the shop</a>
-      <a class="btn btn-ghost glow" href="draw.html" data-i18n="g.ctaDraw">Event details</a>
+      <a class="btn btn-ghost glow" href="pitstop.html" data-i18n="g.ctaPit">Try Pit Stop</a>
     </div>
   </section>
 

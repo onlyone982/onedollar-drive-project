@@ -32,7 +32,7 @@ export default {
   "g.step3t": "超跑一日驾驶",
   "g.step3b": "在活动抽奖中胜出，即可亲自驾驶梦想之车一整天。",
   "g.ctaShop": "逛逛商店",
-  "g.ctaDraw": "活动说明",
+  "g.ctaPit": "试试 Pit Stop",
 
   "spec.power": "最大功率",
   "spec.zero100": "0→100",
